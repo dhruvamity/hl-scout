@@ -29,5 +29,5 @@ uv run hlscout health
 24/7: `uv run python scripts/make_launchd.py`, then follow the instructions in that script (not auto-installed).
 
 ## Known gaps
-Deferred detectors: D-M3..M6 (need explorer actions), D-C3/C4/C7/C8, D-R7, D-B4, G8 margin usage.
-Manual-vs-algo weights unvalidated. Marks come from hourly candles. Arbitrum funder links (P6b) not built.
+Deferred: D-C3 (needs per-coin OI/volume), D-C4 (ADL tags), G8 margin usage (leverage gate used instead). D-M3/M4 need the explorer action log (only recent history); D-C7 needs BTC marks loaded.
+Manual-vs-algo weights unvalidated. Marks come from hourly candles. Arbitrum funder links (P6b) and S3 bulk backfill not built (optional / need credentials).

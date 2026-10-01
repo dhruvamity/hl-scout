@@ -144,3 +144,21 @@ def d_m3_m4_margin_actions(ctx: Ctx) -> Finding | None:
     veto = any(sum(1 for x in times if t0 <= x < t0 + 180 * DAY_MS) >= th.get("veto_count", 2) for t0 in times)
     return Finding("D-M3", "VETO" if veto else "FLAG", "M", 0 if veto else 5, events,
                    {"events": len(events)})
+
+
+def d_m6_borrowed_buying_power(ctx: Ctx) -> Finding | None:
+    """Manual borrows (borrowLend operation=borrow). Supplies/withdrawals are lending, not leverage."""
+    import json
+
+    if ctx.ledger.is_empty():
+        return None
+    rows = ctx.ledger.filter(pl.col("type") == "borrowLend")
+    borrows = []
+    for r in rows.iter_rows(named=True):
+        d = json.loads(r["raw_json"] or "{}")
+        if d.get("operation") == "borrow":
+            borrows.append({"time": r["time"], "token": d.get("token"), "amount": float(d.get("amount") or 0)})
+    if not borrows:
+        return None
+    m = {"borrows": len(borrows), "total": sum(b["amount"] for b in borrows)}
+    return Finding("D-M6", "FLAG", "M", 5, borrows[:10], m)

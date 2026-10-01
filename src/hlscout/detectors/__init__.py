@@ -6,7 +6,7 @@ from hlscout.detectors import automation, flows, optics, risk
 from hlscout.detectors.base import Ctx, Finding
 
 DETECTORS = [
-    flows.d_m1_deposit_inflation, flows.d_m2_rescue_deposit, flows.d_m3_m4_margin_actions,
+    flows.d_m1_deposit_inflation, flows.d_m2_rescue_deposit, flows.d_m3_m4_margin_actions, flows.d_m6_borrowed_buying_power,
     flows.d_m8_income_dressing,
     risk.d_r1_martingale, risk.d_r2_bag_holding, risk.d_r3_negative_skew, risk.d_r4_liquidations,
     risk.d_r5_leverage_spikes, risk.d_r6_size_inconsistency, risk.d_r7_window_edge_loss_hiding,

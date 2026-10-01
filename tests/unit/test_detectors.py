@@ -158,3 +158,18 @@ def test_event_concentration_and_clean_not_flagged():
         w.trip(w.t0 + 100 * DAY + k * HOUR, "BTC", "B", 10.0, 100.0, 120.0)
     f = d_c8_event_concentration(w.ctx())
     assert f is not None and f.code == "D-C8"
+
+
+def test_borrow_flagged():
+    import polars as pl
+
+    from hlscout.detectors.flows import d_m6_borrowed_buying_power
+    from tests.helpers import clean_wallet
+
+    w = clean_wallet()
+    ctx = w.ctx()
+    row = {"time": 5, "hash": "b", "type": "borrowLend", "usdc": None, "user": None, "destination": None,
+           "token": "USDC", "amount": None, "to_perp": None, "fee": None,
+           "raw_json": '{"type":"borrowLend","token":"USDC","operation":"borrow","amount":"900"}'}
+    ctx.ledger = pl.concat([ctx.ledger, pl.DataFrame([row], schema=ctx.ledger.schema)])
+    assert d_m6_borrowed_buying_power(ctx).metrics["total"] == 900.0
