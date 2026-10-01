@@ -84,3 +84,20 @@ async def test_backfill_merges_and_clears_truncation(tmp_path):
     df = pl.read_parquet(raw_path(tmp_path, "fills", addr))
     assert out["fetched"] == 1 and df.height == 2 and df["time"].min() == 2_000_000
     assert df.sort("time")["closed_pnl"].to_list() == [0.0, 3.0]
+
+
+async def test_credit_budget_stops_fetch():
+    import sqlite3
+
+    import pytest
+
+    from hlscout.archive.hypedexer import CreditBudget, OutOfCredits, call_credits
+
+    assert call_credits(0) == 1 and call_credits(25) == 2 and call_credits(1000) == 41
+    con = sqlite3.connect(":memory:", isolation_level=None)
+    tight = CreditBudget(con, monthly=40)  # a full 1000-row page (41 credits) cannot be afforded
+    with pytest.raises(OutOfCredits):
+        await fetch_fills(Fake(), "0xabc", 0, 2_000_000_000_000, limit=1000, budget=tight)
+    ok = CreditBudget(con, monthly=500)
+    rows = await fetch_fills(Fake(), "0xabc", 0, 2_000_000_000_000, limit=1000, budget=ok)
+    assert len(rows) == 2 and ok.used() == 4  # two pages of one row: 2 credits each

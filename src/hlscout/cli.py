@@ -181,9 +181,18 @@ def backfill(config: str = "config/config.yaml", limit: int = 0) -> None:
     todo = truncated_wallets(root)
     todo = todo[:limit] if limit else todo
 
+    from hlscout.archive.hypedexer import CreditBudget, OutOfCredits
+
+    budget = CreditBudget(connect_state(root))
+    typer.echo(f"credits remaining this month: {budget.remaining()}")
+
     async def main() -> None:
         for a in todo:
-            typer.echo(f"{a[:10]} {await backfill_address(g, root, a)}")
+            try:
+                typer.echo(f"{a[:10]} {await backfill_address(g, root, a, budget)}")
+            except OutOfCredits as e:
+                typer.echo(f"stopping: {e}")
+                return
 
     typer.echo(f"{len(todo)} truncated wallets")
     asyncio.run(main())

@@ -25,6 +25,7 @@ ROW_SURCHARGE_TYPES = {
     "historicalOrders", "fundingHistory", "recentTrades", "candleSnapshot",
 }
 ROWS_PER_WEIGHT = 20
+ROWS_PER_WEIGHT_BY_TYPE = {"candleSnapshot": 60}  # rate-limit docs: +1 weight per 60 candles
 ALLOWED_HOSTS = {"api.hyperliquid.xyz"}
 EXPLORER_URL = "https://rpc.hyperliquid.xyz/explorer"
 EXPLORER_WEIGHT = 40
@@ -60,7 +61,7 @@ class InfoClient:
             self.limiter.on_success()
             data = resp.json()
             if rtype in ROW_SURCHARGE_TYPES and isinstance(data, list):
-                self.limiter.debit(len(data) // ROWS_PER_WEIGHT)
+                self.limiter.debit(len(data) // ROWS_PER_WEIGHT_BY_TYPE.get(rtype, ROWS_PER_WEIGHT))
             return data
         raise RuntimeError(f"gave up on {rtype} after repeated 429s")
 

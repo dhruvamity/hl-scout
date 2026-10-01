@@ -64,16 +64,51 @@ def _opt(x: Any) -> float | None:
     return None if x is None else float(x)
 
 
+def call_credits(rows: int) -> int:
+    """Hypedexer REST: at least 1 credit per call plus 1 per 25 rows (docs, rate-limits-and-quotas)."""
+    return 1 + -(-rows // 25)
+
+
+class CreditBudget:
+    """Monthly credit ledger (free tier 5,000). Persisted in SQLite so restarts keep the count."""
+
+    def __init__(self, con: Any, monthly: int = 4500) -> None:
+        self.con, self.monthly = con, monthly
+        con.execute("CREATE TABLE IF NOT EXISTS credits (month TEXT PRIMARY KEY, used INTEGER)")
+
+    def _month(self) -> str:
+        return datetime.now(UTC).strftime("%Y-%m")
+
+    def used(self) -> int:
+        r = self.con.execute("SELECT used FROM credits WHERE month=?", (self._month(),)).fetchone()
+        return r[0] if r else 0
+
+    def remaining(self) -> int:
+        return max(0, self.monthly - self.used())
+
+    def spend(self, n: int) -> None:
+        self.con.execute("INSERT INTO credits VALUES (?,?) ON CONFLICT(month) DO UPDATE SET used=used+?",
+                         (self._month(), n, n))
+
+
+class OutOfCredits(Exception):
+    pass
+
+
 async def fetch_fills(g: Getter, address: str, start_ms: int, end_ms: int, limit: int = 1000,
-                      max_rows: int = 500_000) -> list[dict[str, Any]]:
+                      max_rows: int = 500_000, budget: CreditBudget | None = None) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
     cursor = None
     while len(out) < max_rows:
+        if budget is not None and budget.remaining() < call_credits(limit):
+            raise OutOfCredits(f"{budget.remaining()} credits left")
         params: dict[str, Any] = {"start_time": _iso(start_ms), "end_time": _iso(end_ms), "limit": limit}
         if cursor:
             params["cursor"] = cursor
         page = await g.get(f"/fills/user/{address}", params)
         out.extend(norm_archive_fill(r) for r in page.get("data", []))
+        if budget is not None:
+            budget.spend(call_credits(len(page.get("data", []))))
         cursor = page.get("next_cursor")
         if not page.get("has_more") or not cursor:
             break

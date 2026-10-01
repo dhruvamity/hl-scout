@@ -12,7 +12,7 @@ from hlscout.archive.hypedexer import Getter, derive_closed_pnl, fetch_fills
 from hlscout.ingest.hydrate import FILL_SCHEMA, _merge_write, raw_path
 
 
-async def backfill_address(g: Getter, root: Path, address: str) -> dict:
+async def backfill_address(g: Getter, root: Path, address: str, budget=None) -> dict:
     root = Path(root)
     fp = raw_path(root, "fills", address)
     have = pl.read_parquet(fp)
@@ -23,7 +23,7 @@ async def backfill_address(g: Getter, root: Path, address: str) -> dict:
     hist = pf.get("perpAllTime", {}).get("accountValueHistory") or []
     if hist:
         start = min(start, int(hist[0][0]))
-    rows = await fetch_fills(g, address, start - 86_400_000, first_local)
+    rows = await fetch_fills(g, address, start - 86_400_000, first_local, budget=budget)
     new = pl.DataFrame(rows, schema=FILL_SCHEMA) if rows else pl.DataFrame(schema=FILL_SCHEMA)
     merged = derive_closed_pnl(pl.concat([new, have], how="vertical_relaxed").unique(
         subset=["coin", "tid"], keep="last").sort("time"))
@@ -38,14 +38,23 @@ async def backfill_address(g: Getter, root: Path, address: str) -> dict:
 
 
 def truncated_wallets(root: Path) -> list[str]:
-    """Wallets that look truncated and have not yet had an archive pass."""
-    from hlscout.recon.vet import audit, load_raw
+    """Truncated wallets with no archive pass yet and no veto so far, best first.
 
-    out = []
+    Credits are scarce (free tier ~125k rows/month), so wallets that already carry a veto, fail
+    reconcile or are market makers are skipped: spending credits on them cannot change the outcome.
+    """
+    from hlscout.recon.vet import assess_cached, audit, load_raw
+
+    out: list = []
     for p in sorted((Path(root) / "raw" / "fills").glob("*.parquet")):
         raw = load_raw(root, p.stem)
         if raw["meta"].get("archive", {}).get("done"):
             continue
-        if audit(p.stem, raw)["history_truncated"]:
-            out.append(p.stem)
-    return out
+        a = audit(p.stem, raw)
+        if not a["history_truncated"] or not a["reconcile_ok"]:
+            continue
+        r = assess_cached(root, p.stem)
+        if r["verdict"]["vetoes"]:
+            continue
+        out.append((-(a.get("net_trading_pnl") or 0.0), p.stem))
+    return [x[1] for x in sorted(out)]
