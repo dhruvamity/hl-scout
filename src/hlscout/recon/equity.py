@@ -73,15 +73,19 @@ def equity_series(portfolio: dict, key: str = "perpAllTime") -> pl.DataFrame:
         pl.col("cum_pnl").forward_fill())
 
 
-def twr_curve(equity: pl.DataFrame, flows: pl.DataFrame) -> pl.DataFrame:
+def twr_curve(equity: pl.DataFrame, flows: pl.DataFrame, capital_floor: float = 0.5) -> pl.DataFrame:
     """Per-observation-interval Modified-Dietz returns, TWR index and drawdown.
 
-    r = (E1 - E0 - F) / (E0 + sum_i F_i * w_i), w_i = fraction of the interval the flow was present.
+    r = dPnL / max(E0 + sum_i F_i * w_i, capital_floor * peak_equity), dPnL from pnlHistory
+
+    The floor stops a partly-withdrawn or re-levered account from compounding on a tiny
+    base (which collapses the index to ~0 even for hugely profitable wallets)., w_i = fraction of the interval the flow was present.
     """
     e = equity.sort("time").to_dicts()
+    has_pnl = "cum_pnl" in equity.columns
     fl = flows.sort("time").to_dicts() if not flows.is_empty() else []
     rows = []
-    idx, peak, j = 1.0, 1.0, 0
+    idx, peak, j, peak_e = 1.0, 1.0, 0, 0.0
     for i in range(1, len(e)):
         t0, t1 = e[i - 1]["time"], e[i]["time"]
         E0, E1 = e[i - 1]["equity"], e[i]["equity"]
@@ -91,10 +95,13 @@ def twr_curve(equity: pl.DataFrame, flows: pl.DataFrame) -> pl.DataFrame:
                 F += fl[j]["flow"]
                 W += fl[j]["flow"] * (t1 - fl[j]["time"]) / max(1, t1 - t0)
             j += 1
-        denom = E0 + W
+        peak_e = max(peak_e, E0)
+        denom = max(E0 + W, capital_floor * peak_e)
         # tiny/negative base vs. the flow makes Dietz unstable (coarse points): skip the interval
-        stable = denom >= max(50.0, 0.25 * abs(F))
-        r = (E1 - E0 - F) / denom if stable else 0.0
+        stable = denom >= max(50.0, 0.25 * abs(F), 0.02 * peak_e)
+        # numerator: platform PnL delta (immune to flow misclassification); fall back to E1-E0-F
+        num = e[i]["cum_pnl"] - e[i - 1]["cum_pnl"] if has_pnl else E1 - E0 - F
+        r = num / denom if stable else 0.0
         r = max(r, -0.999)
         idx *= 1 + r
         peak = max(peak, idx)

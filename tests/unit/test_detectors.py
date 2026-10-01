@@ -62,7 +62,7 @@ def test_deposit_inflation_flag():
     w.equity(w.t0 + 31 * DAY, 21_000, 0)
     w.fill(w.t0, "BTC", "B", 1, 100)
     f = F.d_m1_deposit_inflation(w.ctx())
-    assert f.severity == "FLAG" and f.metrics["flow_share"] > 0.9
+    assert f.severity == "VETO" and f.metrics["flow_share"] > 0.9  # naive ROI +2000%, TWR 0
     assert abs(f.metrics["twr"]) < 1e-6  # deposits alone never move TWR
 
 

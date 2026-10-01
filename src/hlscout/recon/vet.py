@@ -74,3 +74,18 @@ def audit(address: str, raw: dict[str, Any]) -> dict[str, Any]:
 async def vet_address(info: Any, address: str, root: Path) -> dict[str, Any]:
     await hydrate_deep(info, address, root)
     return audit(address, load_raw(root, address))
+
+
+def assess_cached(root: Path, address: str, cfg: Any = None, n_trials: int = 5000) -> dict[str, Any]:
+    """Run the full decision engine on already-hydrated raw data (no network)."""
+    from hlscout.scoring.engine import assess
+
+    raw = load_raw(root, address)
+    meta = raw.get("meta", {})
+    fills = raw["fills"]
+    ctx = build_ctx(address, fills, raw["funding"], raw["ledger"], raw["portfolio"], cfg=cfg,
+                    states=raw.get("states", []), role=meta.get("role"),
+                    rate_limit=meta.get("rate_limit"), extra_agents=meta.get("extra_agents"))
+    a = audit(address, raw)
+    return assess(ctx, recon_ok=a["reconcile_ok"], history_truncated=a["history_truncated"]
+                  or meta.get("fills_capped", False), n_trials=n_trials)

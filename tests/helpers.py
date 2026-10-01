@@ -66,12 +66,12 @@ def clean_wallet(n_trips=150, days=240, seed=1, equity0=20_000.0) -> Wallet:
     for k in range(n_trips):
         day = int(k * days / n_trips)
         t = w.t0 + day * DAY + (13 + rnd.randint(0, 6)) * HOUR + rnd.randint(0, 3000) * 1000
-        win = rnd.random() < 0.55
-        move = rnd.uniform(0.3, 1.2) if win else -rnd.uniform(0.2, 0.9)
+        win = rnd.random() < 0.6
+        move = rnd.uniform(0.5, 1.6) if win else -rnd.uniform(0.2, 0.7)
         coin = rnd.choice(["BTC", "ETH", "SOL"])
-        w.trip(t, coin, rnd.choice("BA"), sz=1.0, px=100.0, exit_px=100.0 + move * 1.0,
+        w.trip(t, coin, "B", sz=20.0, px=100.0, exit_px=100.0 + move,
                hold=int(rnd.uniform(0.3, 3) * HOUR))
-        pnl = move * 1.0 * 20 * (1 if True else 0)
+        pnl = move * 20
         e += pnl
         cum += pnl
         w.equity(t + 4 * HOUR, e, cum)

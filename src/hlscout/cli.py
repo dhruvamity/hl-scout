@@ -105,6 +105,62 @@ def universe(config: str = "config/config.yaml", seeds: str = "", local_file: st
 
 
 @app.command()
+def score(config: str = "config/config.yaml", out: str = "reports/latest.md") -> None:
+    """Assess every hydrated address from cached raw data, rank, write the report + scores table."""
+    import json
+    from pathlib import Path
+
+    from hlscout.recon.vet import assess_cached
+    from hlscout.reports.daily import render
+    from hlscout.scoring.engine import rank_qualified
+
+    cfg = load_config(config)
+    root = Path(cfg.data_dir)
+    con = connect_state(root)
+    addrs = sorted(p.stem for p in (root / "raw" / "fills").glob("*.parquet"))
+    results = [assess_cached(root, a, cfg, n_trials=max(len(addrs), 5000)) for a in addrs]
+    rank_qualified(results)
+    con.execute("BEGIN")
+    for r in results:
+        con.execute("INSERT INTO scores(entity, run_id, gates_json, metrics_json, score, stage, category, p_algo)"
+                    " VALUES (?,?,?,?,?,?,?,?)",
+                    (r["address"], "latest", json.dumps(r["gates"], default=str),
+                     json.dumps({k: v for k, v in r["metrics"].items() if k != "months"}, default=str),
+                     r.get("score"), r["stage"], r["category"]["category"], r["category"]["p_algo"]))
+        con.execute("UPDATE addresses SET stage=? WHERE address=?", (r["stage"], r["address"]))
+    con.execute("COMMIT")
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
+    Path(out).write_text(render(results))
+    typer.echo(f"assessed {len(results)}; report -> {out}")
+
+
+@app.command()
+def worker(config: str = "config/config.yaml", enqueue_s1: bool = True, limit: int = 0) -> None:
+    """Queue consumer: S2 light screen -> deep hydrate -> assess, within the rate limit."""
+    import asyncio
+    from pathlib import Path
+
+    from hlscout.clients.info import InfoClient
+    from hlscout.clients.ratelimit import RateLimiter
+    from hlscout.ingest import worker as w
+
+    cfg = load_config(config)
+    root = Path(cfg.data_dir)
+    con = connect_state(root)
+    if enqueue_s1:
+        cands = w.candidates(root, con)
+        cands = cands[:limit] if limit else cands
+        typer.echo(f"enqueued {w.enqueue(con, cands, 'light', 'light_hydrate')} new (of {len(cands)})")
+
+    async def main() -> None:
+        info = InfoClient(RateLimiter(cfg.api.weight_per_min, cfg.api.headroom, cfg.api.lanes),
+                          cfg.api.info_url)
+        await w.run_worker(info, con, root, cfg, asyncio.Event())
+
+    asyncio.run(main())
+
+
+@app.command()
 def compact(date: str, config: str = "config/config.yaml") -> None:
     """Aggregate one day (YYYY-MM-DD) of tape into addr_day_stats."""
     from pathlib import Path
