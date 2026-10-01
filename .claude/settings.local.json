@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p docs/research)",
+      "Bash(cp /root/.claude/uploads/43851ed1-23a5-5d58-92a8-a70e45d6c9b7/d1b191d0-HL_trader_discovery_master.md docs/research/HL_trader_discovery_master.md)",
+      "Bash(cp /root/.claude/uploads/43851ed1-23a5-5d58-92a8-a70e45d6c9b7/1ae21590-grok_results_compiled.json docs/research/grok_results_compiled.json)",
+      "Bash(git add *)",
+      "Bash(git commit -q -m 'Add HL-Scout project plan and research inputs *)"
+    ]
+  }
+}
