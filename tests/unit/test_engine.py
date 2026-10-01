@@ -51,3 +51,16 @@ def test_ranking_within_category():
     c = {**a, "category": {"category": "ADT"}}
     rank_qualified([a, b, c])
     assert a["rank"] == 1 and b["rank"] == 2 and c["rank"] == 1 and a["score"] > b["score"]
+
+
+def test_report_lists_closest_misses():
+    from hlscout.reports.daily import render
+
+    def res(addr, failed, vetoes, t):
+        return {"address": addr, "stage": "vet_fail", "category": {"category": "MDT", "p_algo": 0.1},
+                "gates": [{"gate": g, "pass": False, "value": 0, "threshold": 0} for g in failed],
+                "verdict": {"vetoes": vetoes, "flags": []}, "reasons": failed + vetoes,
+                "metrics": {"tstat": t, "dsr_prob": 0.5, "net_180d": 1000, "genuine_months": 3}}
+
+    md = render([res("0xnear", ["G10", "G1b"], ["D-R1"], 5.0), res("0xfar", ["G2", "G3", "G6"], [], 1.0)])
+    assert md.index("0xnear") < md.index("0xfar") and "Closest misses" in md

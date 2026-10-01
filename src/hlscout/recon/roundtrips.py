@@ -13,6 +13,7 @@ from dataclasses import dataclass
 import polars as pl
 
 EPS = 1e-9
+CLIP_WINDOW_MS = 2000
 TRIP_SCHEMA = {
     "coin": pl.Utf8, "open_ts": pl.Int64, "close_ts": pl.Int64, "side": pl.Utf8,
     "max_size": pl.Float64, "adds": pl.Int64, "reduces": pl.Int64, "vwap_in": pl.Float64,
@@ -49,6 +50,7 @@ class _Trip:
     open_notional: float = 0.0
     complete: bool = True
     close_ts: int = 0
+    open_oid: int | None = None
 
 
 def perp_only(fills: pl.DataFrame) -> pl.DataFrame:
@@ -158,6 +160,13 @@ def build_round_trips(
                     if abs(pos) < EPS:
                         trip.first_clip = abs(qty)
                         trip.open_notional = abs(qty) * r["px"]
+                        trip.open_oid = r["oid"]
+                    elif (r["oid"] is not None and r["oid"] == trip.open_oid) or \
+                            (trip.adds == 0 and r["time"] - trip.open_ts <= CLIP_WINDOW_MS):
+                        # partial fills of the opening order (or a burst within 2 s) are one clip,
+                        # not scale-ins: otherwise a tiny first partial fill inflates "multiple"
+                        trip.first_clip += abs(qty)
+                        trip.open_notional += abs(qty) * r["px"]
                     else:
                         trip.adds += 1
                         trip.add_notional += abs(qty) * r["px"]

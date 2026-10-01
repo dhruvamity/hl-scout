@@ -35,8 +35,8 @@ def test_flip_splits_fill():
 
 
 def test_martingale_underwater_adds():
-    df, _ = build_round_trips(mk([(1, "SOL", "B", 1, 100, 0), (2, "SOL", "B", 2, 90, 0),
-                                  (3, "SOL", "B", 4, 80, 0), (4, "SOL", "A", 7, 95, 5)]))
+    df, _ = build_round_trips(mk([(1, "SOL", "B", 1, 100, 0), (60_000, "SOL", "B", 2, 90, 0),
+                                  (120_000, "SOL", "B", 4, 80, 0), (180_000, "SOL", "A", 7, 95, 5)]))
     r = df.row(0, named=True)
     assert r["adds"] == 2 and r["underwater_add_share"] == 1.0 and r["max_size"] == 7
     assert r["first_clip"] == 1
@@ -80,3 +80,11 @@ def test_same_millisecond_fills_follow_start_position_chain():
     f = f.with_columns(pl.Series("tid", [10, 30, 20]))  # second partial now has the larger tid
     df, broken = build_round_trips(f)
     assert not broken and df.height == 1 and abs(df["pnl"][0] - 10) < 1e-9
+
+
+def test_partial_fills_of_opening_order_are_one_clip_not_adds():
+    rows = [(1000, "SOL", "B", 0.1, 100, 0), (1500, "SOL", "B", 9.9, 99, 0),   # one ladder fill burst
+            (9_000_000, "SOL", "A", 10, 105, 40)]
+    df, _ = build_round_trips(mk(rows))
+    r = df.row(0, named=True)
+    assert r["adds"] == 0 and abs(r["first_clip"] - 10.0) < 1e-9
