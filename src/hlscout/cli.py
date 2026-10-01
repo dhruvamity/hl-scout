@@ -165,6 +165,31 @@ def links(config: str = "config/config.yaml", enqueue_members: bool = True) -> N
 
 
 @app.command()
+def backfill(config: str = "config/config.yaml", limit: int = 0) -> None:
+    """Archive pass for history_truncated wallets (needs HYPEDEXER_API_KEY in the environment)."""
+    import asyncio
+    from pathlib import Path
+
+    from hlscout.archive.backfill import backfill_address, truncated_wallets
+    from hlscout.archive.hypedexer import getter_from_env
+
+    g = getter_from_env()
+    if g is None:
+        typer.echo("HYPEDEXER_API_KEY is not set; archive backfill needs it (free tier: 5k credits/month).")
+        raise typer.Exit(1)
+    root = Path(load_config(config).data_dir)
+    todo = truncated_wallets(root)
+    todo = todo[:limit] if limit else todo
+
+    async def main() -> None:
+        for a in todo:
+            typer.echo(f"{a[:10]} {await backfill_address(g, root, a)}")
+
+    typer.echo(f"{len(todo)} truncated wallets")
+    asyncio.run(main())
+
+
+@app.command()
 def worker(config: str = "config/config.yaml", enqueue_s1: bool = True, limit: int = 0) -> None:
     """Queue consumer: S2 light screen -> deep hydrate -> assess, within the rate limit."""
     import asyncio

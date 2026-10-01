@@ -52,6 +52,7 @@ def grade_months(ctx: Ctx, tf: pl.DataFrame) -> pl.DataFrame:
         return pl.DataFrame(schema={"month": pl.Utf8, "grade": pl.Utf8})
     first = month_of(int(ctx.fills["time"].min()))
     last = month_of(ctx.now_ms)
+    coarse_rows = _coarse_months(ctx, first)
     gate_dd = ctx.cfg.gates.max_dd_twr
     days = (ctx.fills.with_columns((pl.col("time") // DAY_MS).alias("d"),
                                    pl.col("time").map_elements(month_of, return_dtype=pl.Utf8).alias("m"))
@@ -86,7 +87,39 @@ def grade_months(ctx: Ctx, tf: pl.DataFrame) -> pl.DataFrame:
             reasons.append("dd")
         grade = ("unknown" if reasons == ["unknown"] else "violation" if reasons else "genuine")
         rows.append({"month": m, "grade": grade, "reasons": ",".join(reasons)})
-    return pl.DataFrame(rows)
+    return pl.DataFrame(coarse_rows + rows, schema={"month": pl.Utf8, "grade": pl.Utf8, "reasons": pl.Utf8})
+
+
+def _coarse_months(ctx: Ctx, first_fill_month: str) -> list[dict]:
+    """Months before the fill record starts, graded from portfolio equity + ledger flows only (§7.0.8).
+
+    Only emitted when the caller set `ctx.coarse_ok` (archive coverage was tried and ends here).
+    A coarse month is 'coarse' (counts toward tenure) when inflows are small against the month's
+    opening equity and the TWR-style drawdown stays inside the gate; otherwise 'violation'.
+    """
+    if not getattr(ctx, "coarse_ok", False) or ctx.equity.is_empty():
+        return []
+    start = month_of(int(ctx.equity["time"].min()))
+    if start >= first_fill_month:
+        return []
+    rows = []
+    fl = ctx.flows.with_columns(pl.col("time").map_elements(month_of, return_dtype=pl.Utf8).alias("m")) \
+        if not ctx.flows.is_empty() else ctx.flows
+    ev = ctx.equity.with_columns(pl.col("time").map_elements(month_of, return_dtype=pl.Utf8).alias("m"))
+    for m in months_between(start, first_fill_month)[:-1]:
+        sub = ev.filter(pl.col("m") == m)
+        if sub.is_empty():
+            rows.append({"month": m, "grade": "inactive", "reasons": ""})
+            continue
+        e0 = float(sub["equity"][0])
+        inflow = float(fl.filter((pl.col("m") == m) & (pl.col("flow") > 0))["flow"].sum()) \
+            if not fl.is_empty() else 0.0
+        peak = sub["equity"].cum_max()
+        dd = float((1 - sub["equity"] / peak).max())
+        bad = inflow > 0.25 * max(e0, 1000.0) or dd > ctx.cfg.gates.max_dd_twr + 0.2
+        rows.append({"month": m, "grade": "violation" if bad else "coarse",
+                     "reasons": "coarse_flows" if bad else ""})
+    return rows
 
 
 def compute_metrics(ctx: Ctx, n_trials: int = 5000) -> dict:
@@ -106,12 +139,13 @@ def compute_metrics(ctx: Ctx, n_trials: int = 5000) -> dict:
     out["active_last6"] = sum(1 for m in last6 if mg.get(m) not in (None, "inactive"))
     graded = months.filter(pl.col("grade") != "inactive")
     n_active = graded.height
-    n_gen = int((graded["grade"] == "genuine").sum())
+    n_gen = int(graded["grade"].is_in(["genuine", "coarse"]).sum())
+    out["coarse_months"] = int((graded["grade"] == "coarse").sum())
     n_unknown = int((graded["grade"] == "unknown").sum())
     out.update(genuine_months=n_gen, active_months=n_active,
                genuine_coverage=n_gen / max(1, n_active - n_unknown))
     seq = [x for x in months["grade"].to_list() if x != "inactive"]
-    out["first_genuine_idx"] = next((i for i, x in enumerate(seq) if x == "genuine"), None)
+    out["first_genuine_idx"] = next((i for i, x in enumerate(seq) if x in ("genuine", "coarse")), None)
     # last 180d window
     w0 = now - 180 * DAY_MS
     t180 = tf.filter(pl.col("close_ts") >= w0)

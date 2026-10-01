@@ -48,6 +48,8 @@ def audit(address: str, raw: dict[str, Any]) -> dict[str, Any]:
     # history looks truncated if fills start long after the account's first ledger activity
     truncated = bool(first_fill and first_ledger and first_fill - first_ledger > 14 * DAY_MS
                      and fills.height >= 9500)
+    if raw.get("meta", {}).get("archive", {}).get("done"):
+        truncated = False  # archive pass done: what remains before it is graded coarse
     holds = (trips["close_ts"] - trips["open_ts"]) / 1000 if not trips.is_empty() else None
     meta = raw.get("meta", {})
     ctx = build_ctx(address, fills, funding, ledger, pf, states=raw.get("states", []),
@@ -87,6 +89,7 @@ def assess_cached(root: Path, address: str, cfg: Any = None, n_trials: int = 500
     ctx = build_ctx(address, fills, raw["funding"], raw["ledger"], raw["portfolio"], cfg=cfg,
                     states=raw.get("states", []), role=meta.get("role"),
                     rate_limit=meta.get("rate_limit"), extra_agents=meta.get("extra_agents"))
+    ctx.coarse_ok = bool(meta.get("archive", {}).get("done"))
     a = audit(address, raw)
     return assess(ctx, recon_ok=a["reconcile_ok"], history_truncated=a["history_truncated"]
                   or meta.get("fills_capped", False), n_trials=n_trials, extra=extra)

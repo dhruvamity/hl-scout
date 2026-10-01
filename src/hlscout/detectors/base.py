@@ -47,6 +47,7 @@ class Ctx:
     lb: dict | None = None
     marks: Callable[[str, int], float | None] | None = None
     rate_limit: dict | None = None
+    coarse_ok: bool = False
     extra_agents: list | None = None
     _eq_t: list[int] = field(default_factory=list)
     _eq_v: list[float] = field(default_factory=list)
