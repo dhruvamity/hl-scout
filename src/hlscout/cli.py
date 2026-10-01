@@ -117,11 +117,28 @@ def compact(date: str, config: str = "config/config.yaml") -> None:
 
 
 @app.command()
-def vet(address: str) -> None:
-    """Full pipeline on one address (implemented in P3+)."""
-    raise typer.Exit(code=_not_yet("vet"))
+def vet(address: str, config: str = "config/config.yaml") -> None:
+    """Hydrate one address and print the audit (reconstruction + reconciliation)."""
+    import asyncio
+    from pathlib import Path
+
+    from hlscout.clients.info import InfoClient
+    from hlscout.clients.ratelimit import RateLimiter
+    from hlscout.recon.vet import vet_address
+
+    cfg = load_config(config)
+
+    async def main() -> dict:
+        info = InfoClient(RateLimiter(cfg.api.weight_per_min, cfg.api.headroom, cfg.api.lanes),
+                          cfg.api.info_url)
+        try:
+            return await vet_address(info, address.lower(), Path(cfg.data_dir))
+        finally:
+            await info.aclose()
+
+    res = asyncio.run(main())
+    for k, v in res.items():
+        if k not in ("round_trips", "curve"):
+            typer.echo(f"{k}: {v}")
 
 
-def _not_yet(name: str) -> int:
-    typer.echo(f"{name}: not implemented yet")
-    return 2
