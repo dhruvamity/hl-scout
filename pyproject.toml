@@ -12,6 +12,7 @@ dependencies = [
   "duckdb>=1.0",
   "pyarrow>=16",
   "typer>=0.12",
+  "numpy>=2.5.3",
 ]
 
 [dependency-groups]
@@ -30,7 +31,7 @@ packages = ["src/hlscout"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "."]
 
 [tool.ruff]
 line-length = 100

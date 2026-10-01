@@ -1,7 +1,11 @@
 """Fetch per-dex state for already-hydrated addresses, then re-audit them."""
-import asyncio, json, sys
+import asyncio
+import json
+import sys
 from pathlib import Path
+
 import polars as pl
+
 from hlscout.clients.info import InfoClient
 from hlscout.clients.ratelimit import RateLimiter
 from hlscout.ingest.hydrate import raw_path

@@ -17,6 +17,7 @@ log = logging.getLogger(__name__)
 
 FILLS_PAGE = 2000
 FUNDING_PAGE = 500
+MAX_FILLS = 60_000  # hard stop for market-maker-sized books; flagged as capped
 FILL_CAP_SUSPECT = 9500  # public API retains only ~10k most recent fills
 
 
@@ -74,6 +75,7 @@ def norm_ledger(r: dict[str, Any]) -> dict[str, Any]:
 
 async def page_forward(
     info: Poster, payload: dict[str, Any], start: int, page: int, lane: str, key: str,
+    max_rows: int | None = None,
 ) -> list[dict[str, Any]]:
     """Page a time-ascending endpoint forward from `start`; dedupes on `key(row)`."""
     out: list[dict[str, Any]] = []
@@ -90,7 +92,7 @@ async def page_forward(
                 out.append(r)
                 fresh += 1
         last = int(rows[-1]["time"])
-        if len(rows) < page:
+        if len(rows) < page or (max_rows and len(out) >= max_rows):
             break
         start = last if fresh else last + 1
     return out
@@ -129,7 +131,7 @@ async def hydrate_deep(info: Poster, address: str, root: Path, lane: str = "deep
     light = await hydrate_light(info, address, lane)
     fills_raw = await page_forward(
         info, {"type": "userFillsByTime", "user": address, "aggregateByTime": False},
-        max(0, last_time(root, "fills", address) - 1), FILLS_PAGE, lane, "tid")
+        max(0, last_time(root, "fills", address) - 1), FILLS_PAGE, lane, "tid", max_rows=MAX_FILLS)
     fills = _merge_write(
         raw_path(root, "fills", address),
         pl.DataFrame([norm_fill(r) for r in fills_raw], schema=FILL_SCHEMA), ["coin", "tid"])
@@ -156,6 +158,15 @@ async def hydrate_deep(info: Poster, address: str, root: Path, lane: str = "deep
     sp = raw_path(root, "state", address).with_suffix(".json")
     sp.parent.mkdir(parents=True, exist_ok=True)
     sp.write_text(json.dumps(states))
+    meta = {
+        "role": light["role"],
+        "rate_limit": await info.post({"type": "userRateLimit", "user": address}, lane=lane),
+        "extra_agents": await info.post({"type": "extraAgents", "user": address}, lane=lane),
+        "fills_capped": len(fills_raw) >= MAX_FILLS,
+    }
+    mp = raw_path(root, "meta", address).with_suffix(".json")
+    mp.parent.mkdir(parents=True, exist_ok=True)
+    mp.write_text(json.dumps(meta))
     subs = await info.post({"type": "subAccounts", "user": address}, lane=lane)
     p = raw_path(root, "portfolio", address)
     p.parent.mkdir(parents=True, exist_ok=True)

@@ -138,7 +138,11 @@ def vet(address: str, config: str = "config/config.yaml") -> None:
 
     res = asyncio.run(main())
     for k, v in res.items():
-        if k not in ("round_trips", "curve"):
-            typer.echo(f"{k}: {v}")
+        if k in ("round_trips", "curve", "findings"):
+            continue
+        typer.echo(f"{k}: {v}")
+    for f in res["findings"]:
+        if f.severity != "INFO":
+            typer.echo(f"  [{f.severity}] {f.code}: {f.metrics or f.evidence[:2]}")
 
 

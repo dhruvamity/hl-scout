@@ -8,6 +8,9 @@ from typing import Any
 
 import polars as pl
 
+from hlscout.detectors import run_all, verdict
+from hlscout.detectors.automation import classify_algo
+from hlscout.detectors.base import build_ctx
 from hlscout.ingest.hydrate import hydrate_deep, raw_path
 from hlscout.recon import equity as eq
 from hlscout.recon.roundtrips import build_round_trips, perp_only
@@ -22,6 +25,8 @@ def load_raw(root: Path, address: str) -> dict[str, Any]:
         "funding": pl.read_parquet(raw_path(r, "funding", address)),
         "ledger": pl.read_parquet(raw_path(r, "ledger", address)),
         "portfolio": json.loads(raw_path(r, "portfolio", address).with_suffix(".json").read_text()),
+        "meta": json.loads(raw_path(r, "meta", address).with_suffix(".json").read_text())
+        if raw_path(r, "meta", address).with_suffix(".json").exists() else {},
         "states": json.loads(raw_path(r, "state", address).with_suffix(".json").read_text())
         if raw_path(r, "state", address).with_suffix(".json").exists() else [],
     }
@@ -44,7 +49,15 @@ def audit(address: str, raw: dict[str, Any]) -> dict[str, Any]:
     truncated = bool(first_fill and first_ledger and first_fill - first_ledger > 14 * DAY_MS
                      and fills.height >= 9500)
     holds = (trips["close_ts"] - trips["open_ts"]) / 1000 if not trips.is_empty() else None
+    meta = raw.get("meta", {})
+    ctx = build_ctx(address, fills, funding, ledger, pf, states=raw.get("states", []),
+                    role=meta.get("role"), rate_limit=meta.get("rate_limit"),
+                    extra_agents=meta.get("extra_agents"), lb=raw.get("lb"), marks=raw.get("marks"),
+                    now_ms=raw.get("now_ms"))
+    findings = run_all(ctx)
     return {
+        "findings": findings, "verdict": verdict(findings), "category": classify_algo(ctx),
+        "fills_capped": meta.get("fills_capped", False),
         "address": address, "n_fills": fills.height, "n_round_trips": trips.height,
         "coins_with_gaps": sorted(broken), "history_truncated": truncated,
         "reconcile": rec, "reconcile_ok": rec["ok"],
