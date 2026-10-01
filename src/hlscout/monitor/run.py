@@ -31,9 +31,9 @@ def record(con: sqlite3.Connection, e: Event, source: str = "poll") -> None:
 
 
 def request_revet(con: sqlite3.Connection, address: str) -> None:
-    con.execute("INSERT OR IGNORE INTO queue(address, kind, lane, priority) VALUES (?, 'deep', 'deep_vet', 5)",
+    con.execute("INSERT OR IGNORE INTO queue(address, kind, lane, priority) VALUES (?, 'deep', 'deep_vet', 1000000000)",
                 (address,))
-    con.execute("UPDATE queue SET state='pending', attempts=0, priority=5 WHERE address=? AND kind='deep'",
+    con.execute("UPDATE queue SET state='pending', attempts=0, priority=1000000000 WHERE address=? AND kind='deep'",
                 (address,))
     con.execute("UPDATE addresses SET stage='revet' WHERE address=?", (address,))
 

@@ -78,6 +78,10 @@ class ScreenCfg(_Cfg):
     min_alltime_pnl: float = 0
     min_alltime_vlm: float = 1_000_000
     min_month_vlm: float = 100_000
+    deep_cap: int = 400              # full-history vets allowed before raising the cap on purpose
+    max_coarse_dd: float = 0.5       # coarse (flow-unadjusted) PnL drawdown vs peak equity
+    max_open_leverage: float = 15.0  # current notional / equity
+    recent_days: int = 30            # PnL must have moved inside this window
     min_tape_active_days: int = 60  # only enforced once the tape holds >= this many days
     system_prefixes: list[str] = ["0x4000000000000000000000000000000000000", "0x2222222222222222222222222222222222222222"]
 

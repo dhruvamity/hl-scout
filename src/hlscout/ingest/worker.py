@@ -41,11 +41,25 @@ def requeue_stale(con: sqlite3.Connection) -> None:
     con.execute("UPDATE queue SET state='pending' WHERE state='running'")
 
 
-def next_item(con: sqlite3.Connection) -> tuple[int, str, str] | None:
-    # finish deep vets before starting new light hydrates
+URGENT = 1e9  # re-vet requests from the monitor jump the queue
+
+
+def next_item(con: sqlite3.Connection, deep_cap: int | None = None) -> tuple[int, str, str] | None:
+    """Order: urgent re-vets, then ALL cheap light screens, then deep vets best-coarse-score first.
+
+    Light screens cost ~22 weight; deep vets cost hundreds, so the cheap pass must finish first
+    and deep vets are capped (`deep_cap`) to the best-ranked shortlist.
+    """
+    cap_sql = ""
+    args: tuple = ()
+    if deep_cap is not None:
+        cap_sql = ("AND (kind='light' OR priority >= ? OR (SELECT COUNT(*) FROM queue q2 WHERE q2.kind='deep' "
+                   "AND q2.state IN ('done','running') AND q2.priority < ?) < ?)")
+        args = (URGENT, URGENT, deep_cap)
     row = con.execute(
-        "SELECT id, address, kind FROM queue WHERE state='pending' AND attempts < 3 "
-        "ORDER BY CASE kind WHEN 'deep' THEN 0 ELSE 1 END, priority DESC, id LIMIT 1").fetchone()
+        "SELECT id, address, kind FROM queue WHERE state='pending' AND attempts < 3 " + cap_sql +
+        " ORDER BY CASE WHEN priority >= 1000000000 THEN 0 WHEN kind='light' THEN 1 ELSE 2 END, "
+        "priority DESC, id LIMIT 1", args).fetchone()
     if row:
         con.execute("UPDATE queue SET state='running', attempts=attempts+1, updated_at=? WHERE id=?",
                     (datetime.now(UTC).isoformat(), row[0]))
@@ -70,7 +84,29 @@ def s2_screen(light: dict[str, Any], cfg: Config, now_ms: int) -> tuple[bool, st
         return False, "perp_pnl<=0"
     if float(eq["equity"].median()) < cfg.gates.median_equity_min_usd:
         return False, "low_median_equity"
+    sc = cfg.screen
+    pnl = eq["cum_pnl"].fill_null(0.0)
+    dd = float((pnl.cum_max() - pnl).max()) / max(float(eq["equity"].max()), 1.0)
+    if dd > sc.max_coarse_dd:
+        return False, f"coarse_dd>{sc.max_coarse_dd:.0%}"
+    cutoff = now_ms - sc.recent_days * DAY_MS
+    before = eq.filter(eq["time"] <= cutoff)
+    ref = float(before["cum_pnl"][-1]) if not before.is_empty() else float(pnl[0])
+    if float(pnl[-1]) == ref:
+        return False, "inactive_recent"
+    st = light.get("state")
+    if st:
+        ms = st.get("marginSummary", {})
+        av = float(ms.get("accountValue", 0))
+        if av > 0 and float(ms.get("totalNtlPos", 0)) / av > sc.max_open_leverage:
+            return False, "open_leverage"
     return True, "ok"
+
+
+def coarse_score(light: dict[str, Any]) -> float:
+    """Shortlist rank: all-time PnL over median equity (capped so one lucky multiple can't dominate)."""
+    eq = equity_series(light["portfolio"])
+    return min(float(eq["cum_pnl"][-1]) / max(float(eq["equity"].median()), 1.0), 50.0)
 
 
 async def process(info: Any, con: sqlite3.Connection, root: Path, cfg: Config,
@@ -83,7 +119,7 @@ async def process(info: Any, con: sqlite3.Connection, root: Path, cfg: Config,
                     ("s2_pass" if ok else "screened_out", json.dumps(light["role"]),
                      datetime.now(UTC).isoformat(), address))
         if ok:
-            enqueue(con, [address], "deep", "deep_vet", priority=1)
+            enqueue(con, [address], "deep", "deep_vet", priority=coarse_score(light))
         else:
             log.info("S2 drop %s: %s", address[:10], why)
     else:
@@ -112,7 +148,7 @@ async def run_worker(info: Any, con: sqlite3.Connection, root: Path, cfg: Config
     import time
 
     while not stop.is_set():
-        item = next_item(con)
+        item = next_item(con, cfg.screen.deep_cap)
         if item is None:
             await asyncio.sleep(idle_s)
             continue
