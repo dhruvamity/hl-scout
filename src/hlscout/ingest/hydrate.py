@@ -118,8 +118,10 @@ def last_time(root: Path, kind: str, address: str) -> int:
     return int(pl.read_parquet(p, columns=["time"])["time"].max()) if p.exists() else 0
 
 
-async def hydrate_light(info: Poster, address: str, lane: str = "light_hydrate") -> dict[str, Any]:
-    role = await info.post({"type": "userRole", "user": address}, lane=lane)
+async def hydrate_light(info: Poster, address: str, lane: str = "light_hydrate",
+                        with_role: bool = True) -> dict[str, Any]:
+    """userRole costs weight 60 vs ~20 for portfolio: the S2 pass skips it (deep vet checks it)."""
+    role = await info.post({"type": "userRole", "user": address}, lane=lane) if with_role else None
     portfolio = await info.post({"type": "portfolio", "user": address}, lane=lane)
     state = await info.post({"type": "clearinghouseState", "user": address}, lane=lane)
     return {"role": role, "portfolio": dict(portfolio), "state": state}

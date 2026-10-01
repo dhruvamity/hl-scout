@@ -77,7 +77,7 @@ async def process(info: Any, con: sqlite3.Connection, root: Path, cfg: Config,
                   item: tuple[int, str, str], now_ms: int) -> None:
     qid, address, kind = item
     if kind == "light":
-        light = await hydrate_light(info, address, lane="light_hydrate")
+        light = await hydrate_light(info, address, lane="light_hydrate", with_role=False)
         ok, why = s2_screen(light, cfg, now_ms)
         con.execute("UPDATE addresses SET stage=?, role=?, last_hydrated=? WHERE address=?",
                     ("s2_pass" if ok else "screened_out", json.dumps(light["role"]),
