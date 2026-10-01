@@ -168,7 +168,8 @@ class TapeRecorder:
                             if row:
                                 self.buffer.add(row)
             tasks = [asyncio.create_task(self._ping(ws)), asyncio.create_task(self._flusher()),
-                     asyncio.create_task(self._resync(ws))]
+                     asyncio.create_task(self._resync(ws)),
+                     asyncio.create_task(self._beat())]
             try:
                 async for raw in ws:
                     self.handle_message(raw)
@@ -188,9 +189,14 @@ class TapeRecorder:
         while True:
             await asyncio.sleep(self.flush_s)
             n = self.buffer.flush()
-            if self.heartbeat_path:
-                self.heartbeat_path.write_text(str(int(time.time())))
             log.info("flushed %d trades", n)
+
+    async def _beat(self) -> None:
+        """Heartbeat = last time a WS message arrived (so a silent socket goes stale)."""
+        while True:
+            await asyncio.sleep(15)
+            if self.heartbeat_path and time.time() * 1000 - self.last_msg_ms < 60_000:
+                self.heartbeat_path.write_text(str(int(self.last_msg_ms / 1000)))
 
     async def _resync(self, ws: Any) -> None:
         while True:

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>PATH</key>
+		<string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin</string>
+	</dict>
+	<key>KeepAlive</key>
+	<true/>
+	<key>Label</key>
+	<string>com.hlscout.scheduler</string>
+	<key>ProcessType</key>
+	<string>Background</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/usr/bin/caffeinate</string>
+		<string>-s</string>
+		<string>/opt/homebrew/bin/uv</string>
+		<string>run</string>
+		<string>hlscout</string>
+		<string>scheduler</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>StandardErrorPath</key>
+	<string>/Users/dhruv/Desktop/CodeWithD/hl-scout/data/scheduler.err.log</string>
+	<key>StandardOutPath</key>
+	<string>/Users/dhruv/Desktop/CodeWithD/hl-scout/data/scheduler.log</string>
+	<key>ThrottleInterval</key>
+	<integer>30</integer>
+	<key>WorkingDirectory</key>
+	<string>/Users/dhruv/Desktop/CodeWithD/hl-scout</string>
+</dict>
+</plist>

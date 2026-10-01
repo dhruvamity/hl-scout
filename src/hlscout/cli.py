@@ -217,6 +217,57 @@ def monitor(config: str = "config/config.yaml", port: int = 8765) -> None:
 
 
 @app.command()
+def health(config: str = "config/config.yaml") -> None:
+    """Print health problems (exit 1 if any)."""
+    from pathlib import Path
+
+    from hlscout.ops.health import check
+
+    root = Path(load_config(config).data_dir)
+    problems = check(root, connect_state(root))
+    typer.echo("\n".join(problems) if problems else "ok")
+    raise typer.Exit(1 if problems else 0)
+
+
+@app.command()
+def scheduler(config: str = "config/config.yaml") -> None:
+    """Daily jobs (universe, links, score, backup) + health alerts."""
+    import asyncio
+    from pathlib import Path
+
+    from hlscout.ops.scheduler import run_scheduler
+
+    root = Path(load_config(config).data_dir)
+    asyncio.run(run_scheduler(root, config, connect_state(root), asyncio.Event()))
+
+
+@app.command()
+def freeze(config: str = "config/config.yaml") -> None:
+    """Freeze the current ranked list for forward validation (P10)."""
+    from hlscout.validation.forward import freeze as fz
+
+    con = connect_state(load_config(config).data_dir)
+    typer.echo(f"froze {fz(con)} wallets")
+
+
+@app.command()
+def forward(config: str = "config/config.yaml", snap_ts: int = 0) -> None:
+    """Live-vs-backtest report for a frozen list (latest snapshot by default)."""
+    from pathlib import Path
+
+    from hlscout.validation.forward import report
+
+    cfg = load_config(config)
+    con = connect_state(cfg.data_dir)
+    ts = snap_ts or (con.execute("SELECT MAX(snap_ts) FROM forward_lists").fetchone()[0] or 0)
+    if not ts:
+        typer.echo("no frozen list; run `hlscout freeze` first")
+        raise typer.Exit(1)
+    r = report(con, Path(cfg.data_dir), ts)
+    typer.echo({k: v for k, v in r.items() if k != "wallets"})
+
+
+@app.command()
 def worker(config: str = "config/config.yaml", enqueue_s1: bool = True, limit: int = 0) -> None:
     """Queue consumer: S2 light screen -> deep hydrate -> assess, within the rate limit."""
     import asyncio
@@ -284,3 +335,7 @@ def vet(address: str, config: str = "config/config.yaml") -> None:
             typer.echo(f"  [{f.severity}] {f.code}: {f.metrics or f.evidence[:2]}")
 
 
+
+
+if __name__ == "__main__":
+    app()

@@ -37,6 +37,10 @@ CREATE TABLE IF NOT EXISTS links (
   src TEXT, dst TEXT, edge_type TEXT, weight REAL, first_ts INTEGER, last_ts INTEGER, evidence TEXT
 );
 CREATE TABLE IF NOT EXISTS clusters (cluster_id TEXT PRIMARY KEY, members TEXT, method TEXT, confidence REAL);
+CREATE TABLE IF NOT EXISTS forward_lists (
+  snap_ts INTEGER, address TEXT, category TEXT, score REAL, stage TEXT, baseline_json TEXT,
+  PRIMARY KEY (snap_ts, address)
+);
 CREATE TABLE IF NOT EXISTS runs (run_id TEXT PRIMARY KEY, kind TEXT, started_at TEXT, finished_at TEXT, notes TEXT);
 """
 
