@@ -164,10 +164,11 @@ async def hydrate_deep(info: Poster, address: str, root: Path, lane: str = "deep
         "extra_agents": await info.post({"type": "extraAgents", "user": address}, lane=lane),
         "fills_capped": len(fills_raw) >= MAX_FILLS,
     }
+    subs = await info.post({"type": "subAccounts", "user": address}, lane=lane)
+    meta["subaccounts"] = subs or []
     mp = raw_path(root, "meta", address).with_suffix(".json")
     mp.parent.mkdir(parents=True, exist_ok=True)
     mp.write_text(json.dumps(meta))
-    subs = await info.post({"type": "subAccounts", "user": address}, lane=lane)
     p = raw_path(root, "portfolio", address)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.with_suffix(".json").write_text(json.dumps(light["portfolio"]))

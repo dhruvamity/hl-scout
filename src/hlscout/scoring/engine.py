@@ -74,9 +74,9 @@ def evaluate_gates(ctx: Ctx, m: dict, findings: list, cat: dict) -> list[dict]:
 
 
 def assess(ctx: Ctx, recon_ok: bool = True, history_truncated: bool = False,
-           n_trials: int = 5000) -> dict:
+           n_trials: int = 5000, extra: list | None = None) -> dict:
     """Full verdict for one wallet: stage, category, gates, findings, metrics."""
-    findings = run_all(ctx)
+    findings = run_all(ctx) + list(extra or [])
     v = verdict(findings)
     cat = classify_algo(ctx)
     base = {"address": ctx.address, "verdict": v, "category": cat, "findings": findings}

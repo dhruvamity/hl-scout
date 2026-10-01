@@ -33,6 +33,10 @@ CREATE TABLE IF NOT EXISTS scores (
 CREATE TABLE IF NOT EXISTS watch_events (address TEXT, ts INTEGER, event TEXT, coin TEXT, notional REAL, source TEXT);
 CREATE TABLE IF NOT EXISTS ingest_gaps (source TEXT, start_ts INTEGER, end_ts INTEGER, reason TEXT);
 CREATE TABLE IF NOT EXISTS tape_gaps (coin TEXT, start_ts INTEGER, end_ts INTEGER, reason TEXT);
+CREATE TABLE IF NOT EXISTS links (
+  src TEXT, dst TEXT, edge_type TEXT, weight REAL, first_ts INTEGER, last_ts INTEGER, evidence TEXT
+);
+CREATE TABLE IF NOT EXISTS clusters (cluster_id TEXT PRIMARY KEY, members TEXT, method TEXT, confidence REAL);
 CREATE TABLE IF NOT EXISTS runs (run_id TEXT PRIMARY KEY, kind TEXT, started_at TEXT, finished_at TEXT, notes TEXT);
 """
 

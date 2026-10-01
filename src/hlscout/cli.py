@@ -110,6 +110,7 @@ def score(config: str = "config/config.yaml", out: str = "reports/latest.md") ->
     import json
     from pathlib import Path
 
+    from hlscout.links.audit import build_graph, cluster_findings, clusters
     from hlscout.recon.vet import assess_cached
     from hlscout.reports.daily import render
     from hlscout.scoring.engine import rank_qualified
@@ -118,7 +119,15 @@ def score(config: str = "config/config.yaml", out: str = "reports/latest.md") ->
     root = Path(cfg.data_dir)
     con = connect_state(root)
     addrs = sorted(p.stem for p in (root / "raw" / "fills").glob("*.parquet"))
-    results = [assess_cached(root, a, cfg, n_trials=max(len(addrs), 5000)) for a in addrs]
+    n_trials = max(len(addrs), 5000)
+    results = [assess_cached(root, a, cfg, n_trials=n_trials) for a in addrs]
+    # multi-wallet pass (plan §6.2): only finalists are worth the tape query
+    cl = clusters(build_graph(root))
+    for i, r in enumerate(results):
+        if r["stage"] in ("qualified", "needs_qa", "reformed"):
+            extra = cluster_findings(root, root / "tape", r["address"], cl, cfg)
+            if extra:
+                results[i] = assess_cached(root, r["address"], cfg, n_trials=n_trials, extra=extra)
     rank_qualified(results)
     con.execute("BEGIN")
     for r in results:
@@ -132,6 +141,27 @@ def score(config: str = "config/config.yaml", out: str = "reports/latest.md") ->
     Path(out).parent.mkdir(parents=True, exist_ok=True)
     Path(out).write_text(render(results))
     typer.echo(f"assessed {len(results)}; report -> {out}")
+
+
+@app.command()
+def links(config: str = "config/config.yaml", enqueue_members: bool = True) -> None:
+    """Build the link graph + clusters from cached raw data; queue unhydrated cluster members."""
+    from pathlib import Path
+
+    from hlscout.ingest import worker as w
+    from hlscout.links.audit import build_graph, clusters, persist, unhydrated_members
+
+    cfg = load_config(config)
+    root = Path(cfg.data_dir)
+    con = connect_state(root)
+    g = build_graph(root)
+    cl = clusters(g)
+    persist(con, g, cl)
+    typer.echo(f"edges={len(g.edges)} hubs={len(g.hubs)} clusters={len(cl)} "
+               f"max_size={max((len(m) for m in cl.values()), default=0)}")
+    if enqueue_members:
+        todo = unhydrated_members(root, cl)
+        typer.echo(f"queued {w.enqueue(con, todo, 'deep', 'light_hydrate', priority=-1)} cluster members")
 
 
 @app.command()

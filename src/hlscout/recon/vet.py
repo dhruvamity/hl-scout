@@ -76,7 +76,8 @@ async def vet_address(info: Any, address: str, root: Path) -> dict[str, Any]:
     return audit(address, load_raw(root, address))
 
 
-def assess_cached(root: Path, address: str, cfg: Any = None, n_trials: int = 5000) -> dict[str, Any]:
+def assess_cached(root: Path, address: str, cfg: Any = None, n_trials: int = 5000,
+                  extra: list | None = None) -> dict[str, Any]:
     """Run the full decision engine on already-hydrated raw data (no network)."""
     from hlscout.scoring.engine import assess
 
@@ -88,4 +89,4 @@ def assess_cached(root: Path, address: str, cfg: Any = None, n_trials: int = 500
                     rate_limit=meta.get("rate_limit"), extra_agents=meta.get("extra_agents"))
     a = audit(address, raw)
     return assess(ctx, recon_ok=a["reconcile_ok"], history_truncated=a["history_truncated"]
-                  or meta.get("fills_capped", False), n_trials=n_trials)
+                  or meta.get("fills_capped", False), n_trials=n_trials, extra=extra)
