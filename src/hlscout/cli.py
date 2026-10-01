@@ -42,10 +42,10 @@ def tape(config: str = "config/config.yaml", duration_s: int = 0) -> None:
 
     async def main() -> None:
         async def post(p: dict) -> object:
-            return await info.post(p, lane="backfill")
+            return await info.post(p, lane="monitor")  # reserved lane: the tape must never starve
 
         async def gapfill(coin: str) -> list[dict]:
-            return await info.post({"type": "recentTrades", "coin": coin}, lane="backfill")
+            return await info.post({"type": "recentTrades", "coin": coin}, lane="monitor")
 
         rec = TapeRecorder(
             TradeBuffer(root / "tape"), state, lambda: fetch_coins(post),

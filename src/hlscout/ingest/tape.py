@@ -158,18 +158,13 @@ class TapeRecorder:
         disconnected_at = self.last_msg_ms
         async with self.connect() as ws:
             await self._subscribe(ws, self.coins)
-            if disconnected_at:
-                now = int(time.time() * 1000)
-                self.record_gap(disconnected_at, now, "reconnect")
-                if self.gapfill_fn:
-                    for c in self.coins:
-                        for t in await self.gapfill_fn(c):
-                            row = parse_trade(t)
-                            if row:
-                                self.buffer.add(row)
+            # keep-alive and live handling start first; gap fill must never starve the socket
             tasks = [asyncio.create_task(self._ping(ws)), asyncio.create_task(self._flusher()),
-                     asyncio.create_task(self._resync(ws)),
-                     asyncio.create_task(self._beat())]
+                     asyncio.create_task(self._resync(ws)), asyncio.create_task(self._beat())]
+            if disconnected_at:
+                self.record_gap(disconnected_at, int(time.time() * 1000), "reconnect")
+                if self.gapfill_fn:
+                    tasks.append(asyncio.create_task(self._gapfill()))
             try:
                 async for raw in ws:
                     self.handle_message(raw)
@@ -179,6 +174,16 @@ class TapeRecorder:
                 for t in tasks:
                     t.cancel()
                 self.buffer.flush()
+
+    async def _gapfill(self) -> None:
+        for c in self.coins:
+            try:
+                for t in await self.gapfill_fn(c):
+                    row = parse_trade(t)
+                    if row:
+                        self.buffer.add(row)
+            except Exception as e:  # noqa: BLE001 - a failed coin must not stop the rest
+                log.warning("gap fill %s failed: %s", c, type(e).__name__)
 
     async def _ping(self, ws: Any) -> None:
         while True:
