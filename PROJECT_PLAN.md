@@ -8,7 +8,8 @@
 | **Status** | Plan (no code yet) |
 | **Mode** | **Read-only.** No private keys, agent wallets, builder-fee approvals or copy execution, ever |
 | **Inputs** | [`docs/research/HL_trader_discovery_master.md`](docs/research/HL_trader_discovery_master.md) (the "compendium", cited below as `§n`) and [`docs/research/grok_results_compiled.json`](docs/research/grok_results_compiled.json) (Grok verification of 64 X posts, merged into compendium §14) |
-| **Output** | A ranked, explainable list of *qualified* traders with every pass/fail reason, a watchlist monitored live, daily reports and alerts |
+| **Output** | Two ranked, explainable lists, **Manual Disciplined Traders** and **Algorithmic Disciplined Traders**, with every pass/fail reason, a watchlist monitored live, daily reports and alerts |
+| **Decisions (2026-10-01)** | (1) Score each wallet's **entire history**, as far back as data exists. A longer genuine record ranks higher, but the record must be genuine **throughout**: a wallet that only "cleaned up" recently does not qualify (§7.0). (2) Algo traders are **tracked and ranked in their own category**, not excluded (§6.5, §8) |
 
 > **What this bot can and cannot promise.** The best public study (935k wallets) found last month's top-10% stayed top-10% only **19%** of the time (R² 0.036, compendium §6.5). No filter can guarantee future profit, and some cheating (hedges on a CEX, funding from fresh CEX withdrawals) leaves no on-chain trace. The bot's job is to **remove every trader whose record is inflated, hedged, rescued or lucky**, and to hand over a short list that then has to prove itself in **forward tracking**. This is research tooling, not financial advice.
 
@@ -45,9 +46,10 @@
 1. **Scan continuously.** Cover the official leaderboard (~47k rows) **plus** every address that trades, captured from the public trade tape (~84k active addresses/day per the Hypedexer stats in compendium §14.4), including HIP-3 books.
 2. **Rebuild the truth.** Recompute each wallet's PnL, equity and positions from raw fills, funding and the ledger. Never trust a leaderboard row or a vendor score (compendium §1 #3, §8.3).
 3. **Detect manipulation** (§6): deposit-inflated numbers, rescue deposits, margin top-ups, martingaling, hedges across linked wallets, wash trading, sybil/rotation clusters, funding farming, lottery hits and more.
-4. **Qualify consistency** (§7): ≥ 6 months of regular, efficient, disciplined **intraday** trading, with statistical significance after multiple-testing correction.
-5. **Explain every verdict** with reason codes and evidence links (HypurrScan / Hyperdash / HyperX pages for human QA).
-6. **Monitor the survivors live** and drop them automatically when behaviour changes.
+4. **Qualify consistency** (§7): regular, efficient, disciplined **intraday** trading over the **entire history** (minimum 6 months; a longer genuine record ranks higher, and it must be genuine throughout), with statistical significance after multiple-testing correction.
+5. **Categorise** every qualified trader as **Manual Disciplined (MDT)** or **Algorithmic Disciplined (ADT)**, and track and rank both.
+6. **Explain every verdict** with reason codes and evidence links (HypurrScan / Hyperdash / HyperX pages for human QA).
+7. **Monitor the survivors live** and drop them automatically when behaviour changes.
 
 ### 1.2 Non-goals
 - Placing, copying or signing trades (copy tools are listed only so they can be excluded; compendium §3.5).
@@ -55,19 +57,29 @@
 - Market-maker, vault or HFT research (classified and excluded, not studied).
 
 ### 1.3 Definition: "Qualified Intraday Trader" (QIT)
-A wallet (or, correctly, a **wallet cluster**, §6.2) is a QIT only if **all** hard gates pass. Defaults below are configurable (Appendix C). The source of each number is tagged: `[C§x]` = compendium section, `[SYNTH]` = this plan's own synthesis, to be tuned during calibration.
+A wallet (or, correctly, a **wallet cluster**, §6.2) is a QIT only if **all** hard gates pass. Every QIT is then placed in a **category** (§6.5 D-B2):
+
+| Category | Meaning | Ranked? |
+|---|---|---|
+| **MDT: Manual Disciplined Trader** | Passes all gates; behaviour looks human (routine hours, irregular timing, low order-spam, no API agent pattern) | Yes, own leaderboard |
+| **ADT: Algorithmic Disciplined Trader** | Passes all gates; behaviour looks automated (bot fingerprint) but directional, not MM/HFT | Yes, own leaderboard |
+| **UNSURE** | Passes all gates; classifier confidence < 0.7 | Listed under both, marked "unsure" until more data or QA |
+| MM / HFT | Uncopyable inventory or high-frequency book (D-B1) | Tracked for reference, never ranked |
+
+**History window:** the **entire available history** (§7.0). The 180-day figures below are the *minimum*; they are not the evaluation window. Gates G5–G9 and G11 are evaluated on the full history **and** on every rolling period inside it. Defaults below are configurable (Appendix C). The source of each number is tagged: `[C§x]` = compendium section, `[SYNTH]` = this plan's own synthesis, to be tuned during calibration.
 
 | # | Gate | Default | Source |
 |---|---|---|---|
-| G1 | Track record | first perp fill ≥ **180 days** ago, **and** active in ≥ 6 of the last 6 calendar months | user requirement |
+| G1 | Track record | first perp fill ≥ **180 days** ago (minimum; longer ranks higher, §7.0), **and** active in ≥ 6 of the last 6 calendar months | user requirement |
+| G1b | Genuine **throughout** | genuine coverage ≥ **90%** of active months across the whole history, no hard-veto event in **any** period, and the genuine record must start within the first **3 active months** (no "reformed recently" wallets, §7.0) | user requirement |
 | G2 | Regularity | ≥ **60%** of weeks with ≥ 3 active trading days; no gap > 21 days in the last 180 | [SYNTH] |
 | G3 | Intraday style | median hold **5 min – 8 h**; ≥ **70%** of round trips closed within 24 h | [C§6.1] hold-time rules + [SYNTH] |
 | G4 | Not HFT/MM | avg hold ≥ 3 min; maker share < 80%; trades/day < 300; requests per fill below the configured bound | [C§6.2 HyperX], [C§4.1 Whale Street] |
-| G5 | Real profitability | flow-adjusted (TWR) return > 0 **and** net PnL after fees and funding > 0 over 180 days | [C§8.3] |
+| G5 | Real profitability | flow-adjusted (TWR) return > 0 **and** net PnL after fees and funding > 0 over the entire history **and** the last 180 days | [C§8.3] |
 | G6 | Consistency | ≥ **4 of 6** months positive; no single month > **40%** of 180-day net PnL; top 5 trades < **35%** of net PnL | [C§6.1 concentration] + [SYNTH] |
 | G7 | Drawdown | flow-adjusted max DD ≤ **30%** (aim < 15%) | [C§6.2] HyperX 50%, Niakris 22% / 15% |
 | G8 | Leverage and margin | effective leverage (time-weighted) ≤ **10x**; p95 margin usage ≤ 80% | [C§6.2] HyperX 25x veto; Cipher 2–5x |
-| G9 | Liquidations | **0** liquidations in the last 180 days (≤ 1 lifetime, configurable) | [C§10.2] 0x337afda, mk4_lul |
+| G9 | Liquidations | **0** liquidations in the last 180 days and ≤ **1** in the entire history (configurable) | [C§10.2] 0x337afda, mk4_lul |
 | G10 | Integrity | **no** hard-veto detector fired (§6) | this plan |
 | G11 | Statistical edge | daily-return t-stat ≥ 2.0 **and** Deflated Sharpe probability ≥ 0.90 (correcting for the number of wallets scanned) | [SYNTH] |
 | G12 | Size floor | median equity ≥ **$5k** (keeps ROI meaningful and avoids tiny-account ROI spikes) | [C§6.2] Minara $10k, relaxed |
@@ -231,10 +243,11 @@ Budget math (public API, one IP, 1,200 weight/min ≈ **1.73M weight/day**): res
 - Size estimate: ~7–8M trades/day × ~40 B compressed ≈ **0.3–0.6 GB/day** raw. **Verify after day 1** and set retention.
 - What the tape gives that nothing else does: (1) discovery of small intraday traders who are **not** on the leaderboard (inclusion needs ≥ $100k account value or ≥ $10M volume), (2) **who traded against whom** (wash trading, §6.2), (3) **simultaneous opposite trades** by different wallets (hidden hedges, §6.2), (4) **follower lag** (copiers, §6.5).
 
-### 4.4 Historical backfill (Phase 7, the "archive mode")
-The public API holds only the ~10k most recent fills, and the tape only records from the day it starts. The 6-month requirement therefore needs one of:
+### 4.4 Historical backfill (the "archive mode", now **required**)
+The public API holds only the ~10k most recent fills, and the tape only records from the day it starts. Scoring the **entire history** (§7.0) therefore makes archive mode a core component, not an option. It needs one or more of:
 1. **Hypedexer** per wallet (cheap per wallet, credit-limited) for survivors whose `history_truncated=true`.
-2. **Bulk S3** (`node_fills_by_block` official or Hydromancer Reservoir): stream each day's file, keep only rows for candidate addresses (or all addresses, aggregated), discard raw. ~6 months at roughly ~0.5–1 GB/day compressed is about 100–200 GB transfer. Requester-pays egress is roughly **$10–20** one-off; **verify** with `aws s3 ls --request-payer requester --summarize` before downloading. This also gives the cheap screen (S1) six months of history immediately instead of waiting for the tape to age.
+2. **Bulk S3** (`node_fills_by_block` official or Hydromancer Reservoir, plus the older `node_fills` / `node_trades` schemas for earlier dates): stream each day's file, keep only rows for candidate addresses (or all addresses, aggregated), discard raw. At roughly 0.5–1 GB/day compressed, 6 months is about 100–200 GB of transfer and the full history since launch several times that. Requester-pays egress is roughly **$10–20 per 6 months** of data; **verify** with `aws s3 ls --request-payer requester --summarize` before downloading. Process newest-first so the recent screen is ready early, then keep walking back in time in the background. This also gives the cheap screen (S1) months of history immediately instead of waiting for the tape to age.
+3. **`portfolio` allTime** for periods older than any fill archive: coarse equity/PnL history used only as described in §7.0 point 8.
 
 ### 4.5 Arbitrum side (Phase 6b, optional)
 HL USDC deposits arrive through the Arbitrum bridge contract (Bridge2, commonly cited as `0x2Df1c51E09aECF9cacB7bc98cB1742757f163dF7`; **verify**). The depositing EVM address is credited, and withdrawals go back out on Arbitrum. Pulling the USDC `Transfer` logs of a candidate's Arbitrum address (public RPC `eth_getLogs` or an Arbiscan free key) shows **who funded it**, giving cluster edges that never touch HL. Known CEX hot wallets (Arkham labels) go on an ignore list so "both withdrew from Binance" is not treated as a link.
@@ -338,7 +351,7 @@ Connected components over hard + transfer links (behavioural links need ≥ 2 in
 | Code | Behaviour | Detection | Severity |
 |---|---|---|---|
 | **D-B1 HFT / market-maker** | Uncopyable inventory books | Avg hold < 3 min; maker share (`crossed=false`) > 80%; two-sided quoting; trades/day > 300; open legs > 5 | **VETO** (G4) |
-| **D-B2 Bot fingerprint** | Algorithmic trading (fine or not, per config) | `userRateLimit.nRequestsUsed / fills` (order-spam ratio); cancel ratio from `historicalOrders`; inter-trade interval regularity (low entropy); 24/7 activity with no sleep gap; `extraAgents` present; cloid usage | INFO, or VETO when `exclude_algos: true` |
+| **D-B2 Manual vs algo categoriser** | Decides **MDT vs ADT** (never a veto) | Weighted evidence → `p_algo` 0–1: `userRateLimit.nRequestsUsed / fills` (order-spam ratio); cancel/modify ratio from `historicalOrders`; inter-trade timing regularity (low entropy, sub-second reactions); 24/7 activity with no daily sleep gap vs a stable human session window; `extraAgents` present; cloid usage; identical clip sizes; reaction time to price moves. `p_algo ≥ 0.7` → ADT, `≤ 0.3` → MDT, else UNSURE. Recomputed monthly so a switch in style is visible | CATEGORY (both tracked) |
 | **D-B3 Vault / protocol / backstop** | Not a person's book | `userRole == vault`, HLP/vault addresses, `0x4000…+dex_index`, known system addresses | **VETO** |
 | **D-B4 Copier** | Follows another wallet; the edge isn't theirs | Tape: ≥ 70% of opens within 5–120 s after the same-side open of one specific wallet | FLAG (score the leader instead) |
 | **D-B5 Calibration blacklist** | Known MM/hedge/blow-up books | Compendium §10.3 addresses (Wintermute-labelled, Abraxas-labelled, Machi, Garrett-labelled, pension-usdt, Dexter's HFT example) | VETO (also used as tests) |
@@ -353,7 +366,19 @@ Connected components over hard + transfer links (behavioural links need ≥ 2 in
 
 ## 7. Consistency and discipline scoring
 
-Computed on the last **180 days** (configurable to 365), on the cluster book, after detector exclusions.
+Computed on the **entire available history** of the cluster book, after detector exclusions, plus the same metrics per calendar month and per rolling 90-day period.
+
+### 7.0 Full-history window and "genuine throughout"
+**Goal:** the longer the genuine record, the better the trader. A record that only turned genuine recently counts for nothing extra.
+
+1. **Segment the history** into calendar months (from first perp fill to today).
+2. **Grade every month**: `genuine` if no VETO-class detector fires inside it (rescue, margin top-up, martingale, hedge, wash, liquidation, market impact…), the month's DD and leverage stay inside the gates, and data coverage is complete; `inactive` if fewer than the regularity threshold of active days; `violation` otherwise; `unknown` if data is missing.
+3. **Genuine coverage** = genuine months / (active months − unknown months). Must be ≥ 0.90 (G1b).
+4. **No late start:** if the first genuine run begins after the 3rd active month (early history full of violations, clean only lately), the wallet is labelled `reformed` and **not qualified**. It goes on a separate "reformed watch" list instead, so it can be revisited after its clean record is long on its own terms (configurable).
+5. **Any hard VETO event anywhere in history** (e.g. a rescue deposit two years ago) → not qualified, under the default `history_violation_policy: strict`. A `lenient` mode allows violations older than N months to be forgiven, for experiments only.
+6. **Genuine tenure** = number of genuine active months. It feeds the ranking with diminishing returns (`log(1 + months)`), so 36 months beats 12, and 12 beats 6, without letting age outweigh quality.
+7. **Consistency throughout:** the edge must exist in each third of the history (early / middle / recent tercile each net-positive after costs) and the rolling 90-day TWR must be positive in ≥ 70% of windows. One great early year followed by a fade fails; so does a flat history with one recent hot run.
+8. **Coverage honesty:** months before our archive coverage (S3 node fills from 2025-07-27, Hypedexer from Nov 2024, older `node_trades` schema further back) are graded from the coarser `portfolio` equity/PnL history + ledger flows only, tagged `coarse`. Coarse months can count toward tenure only if flows show no deposit inflation or rescues; they never count toward detectors that need fills.
 
 ### 7.1 Regularity ("trades regularly")
 - Active days, active weeks, longest gap, **weekly activity coverage** (G2).
@@ -393,20 +418,25 @@ Computed on the last **180 days** (configurable to 365), on the cluster book, af
 ## 8. Decision engine
 
 ### 8.1 Stages
-`discovered → screened_out | light_ok → deep_ok | reconcile_fail | vet_fail | needs_qa → qualified → watch → (forward_validated | dropped)`
+`discovered → screened_out | light_ok → deep_ok | reconcile_fail | vet_fail | reformed | needs_qa → qualified → watch → (forward_validated | dropped)`
+
+Each `qualified` wallet also carries `category ∈ {MDT, ADT, UNSURE}` and `p_algo`. MM/HFT wallets get `category = MM_HFT` and stay at `vet_fail` (tracked, not ranked).
 
 ### 8.2 Composite score (only for wallets that passed every gate) `[SYNTH]`
-Each component is a **percentile rank** among the current qualified set (robust to scale), then weighted:
+Scores are computed **separately within each category** (MDT and ADT have their own leaderboards, so bots never crowd out humans). Each component is a **percentile rank** within the category's qualified set (robust to scale), then weighted:
 
 | Component | Weight |
 |---|---|
-| Statistical edge (DSR, t-stat, Sortino) | 25 |
-| Consistency (positive months/weeks, best-month share, walk-forward hold-up) | 20 |
-| Risk discipline (DD, loss truncation, leverage stability, sizing CV) | 20 |
-| Efficiency (net expectancy bps after costs, profit factor) | 15 |
-| Regularity (weekly coverage, routine stability) | 10 |
-| Alpha vs beta / regime robustness | 10 |
+| **Genuine tenure** (`log(1 + genuine months)`, §7.0) | 20 |
+| Statistical edge (DSR, t-stat, Sortino) | 20 |
+| Consistency throughout (positive months, terciles, rolling-90d hit rate, best-month share) | 20 |
+| Risk discipline (DD, loss truncation, leverage stability, sizing CV) | 15 |
+| Efficiency (net expectancy bps after costs, profit factor) | 10 |
+| Regularity (weekly coverage, routine stability) | 8 |
+| Alpha vs beta / regime robustness | 7 |
 | **Minus** FLAG penalties (default −5 each, −15 per FLAG family cap) | — |
+
+Tie-break: longer genuine tenure first.
 
 **Outputs per wallet:** stage, score, gate table (pass/fail + value + threshold), detector list with evidence, cluster members, data-completeness flags, and links (`hypurrscan.io/address/…`, `hyperdash.com/address/…`, `hyperx.trade/hyperliquid/trader?address=…`). Optional extra: **minimum copy capital** (Hyperank $10-ticket method).
 
@@ -526,10 +556,10 @@ Estimates assume one developer working with Claude Code, part-time. Each phase e
 | **P2 Universe + cheap screen** | Leaderboard snapshot/diff, seeds import, S1 rules (MinaraCN + tape stats), registry | 3–4 days | Daily universe built; S1 output count and drop reasons logged |
 | **P3 Hydrator + reconstruction** | All Appendix A calls, pagination, subaccounts, agent→master, truncation flags; position/round-trip engine; flows; TWR; reconciliation gate | 1.5–2 weeks | `hlscout vet` reproduces `portfolio` perp PnL within 2% on 20 random wallets; `reconcile_fail` rate reported |
 | **P4 Integrity detectors** | D-M*, D-R*, D-C*, D-B* (single-wallet detectors) with evidence output | 2 weeks | Every detector has ≥ 3 synthetic positive and negative fixtures; calibration negatives (§14.2) fail for the right reasons |
-| **P5 Consistency + decision engine** | §7 metrics, DSR, walk-forward, gates, score, stages, daily Markdown report | 1 week | First end-to-end daily report with ≥ 1,000 deep-vetted wallets and explanations |
+| **P5 Consistency + decision engine** | §7 metrics incl. monthly grading, genuine coverage/tenure, terciles; DSR, walk-forward, gates, MDT/ADT categoriser, per-category scores, stages, daily Markdown report | 1–1.5 weeks | First end-to-end daily report with ≥ 1,000 deep-vetted wallets, two category leaderboards and explanations; synthetic "reformed recently" wallet is labelled `reformed` |
 | **P6 Link graph + multi-wallet detectors** | Ledger/hard links, clustering, cluster-level books, D-H1–D-H5 from tape | 1.5 weeks | Cluster-level re-scoring works; a synthetic hedge pair and wash pair are caught; the Lookonchain-style rotation class is merged |
 | **P6b Arbitrum funding links** (optional) | Bridge deposits, USDC funder edges, CEX ignore list | 4–5 days | Funder edges added with confidence scores |
-| **P7 Archive mode** | Hypedexer overflow; S3/Hydromancer 6-month backfill; S1 on full history | 1–1.5 weeks | `history_truncated` wallets fully reconstructed; backfill cost logged and within budget |
+| **P7 Archive mode (required)** | Hypedexer overflow; S3/Hydromancer backfill walking back to launch (newest first); all three S3 schemas; coarse-month grading from `portfolio` | 1.5–2 weeks | `history_truncated` wallets fully reconstructed; every month of every candidate graded fill-level or `coarse`; backfill cost logged and within budget |
 | **P8 Monitor + alerts + dashboard** | WS/poll watchlist, triggers, live rescue detection, flock/exit-lag, Telegram, Streamlit | 1 week | Simulated liquidation/rescue triggers a drop within one poll cycle; alerts delivered |
 | **P9 24/7 hardening** | Services, sleep inhibit, health checks, pruning, backups, docs-drift check | 3–4 days | 14-day unattended run with no manual intervention |
 | **P10 Forward validation** | 30–60 days of watch; compare live vs backtest envelopes; tune thresholds | ongoing | Calibration report: drop reasons, false-positive review of ≥ 30 `needs_qa` cases |
@@ -583,7 +613,7 @@ Estimates assume one developer working with Claude Code, part-time. Each phase e
 |---|---|---|
 | Persistence is weak even for genuine traders (R² 0.036) | High | Gates on risk behaviour, DSR, walk-forward, mandatory forward validation; communicate as watchlist, not guarantee |
 | Off-venue hedges and CEX-funded sybils are invisible | High | Proxies (D-H6, behavioural links, Arbitrum funders); conservative style gates; QA queue |
-| 10k-fill API cap hides older history | High for active intraday traders | Hypedexer overflow; S3 archive mode (P7); never score a truncated history as 6 months |
+| 10k-fill API cap hides older history | High for active intraday traders | Hypedexer overflow; S3 archive mode (P7); never score a truncated history as complete |
 | Public API rate limit (1,200 weight/min/IP) | Medium | Funnel design; incremental updates; optional paid non-rate-limited provider |
 | Tape only covers time since start | Medium | S3 backfill; tape-based screens activate after 60 days |
 | Rescue detection on history needs mark/liq reconstruction | Medium | 1m candle store; maintenance-margin table; exact in live mode |
@@ -597,9 +627,10 @@ Estimates assume one developer working with Claude Code, part-time. Each phase e
 2. How far back explorer `userDetails` goes; whether S3 node data includes the action log (for historical `updateIsolatedMargin`/`updateLeverage`) and ledger events.
 3. Hydromancer Reservoir per-user fill schema and real daily size vs official `node_fills_by_block`.
 4. Bridge2 contract address and whether deposit ledger entries expose the Arbitrum tx hash.
-5. Whether to **include algorithmic traders** who otherwise pass (config flag `exclude_algos`; default `false` = flag only).
-6. Final "intraday" band: 5 min–8 h median hold (default) vs a stricter 15 min–4 h.
-7. Six months vs twelve months as the default window once archive mode is live.
+5. Final "intraday" band: 5 min–8 h median hold (default) vs a stricter 15 min–4 h.
+6. Calibrate the MDT/ADT classifier: label ~50 wallets by hand (Claude-assisted QA) and tune feature weights until agreement ≥ 85%.
+
+**Settled:** algo traders are tracked and ranked as ADT (not excluded); the window is the entire history, with tenure rewarded and genuineness required throughout (§7.0).
 
 ---
 
@@ -656,7 +687,19 @@ Types confirmed from the `userNonFundingLedgerUpdates` schema (nktkas/hyperliqui
 ## Appendix C — Default config (`config.yaml`)
 
 ```yaml
-window_days: 180
+window: full_history               # evaluate everything available; 180 d is only the minimum
+history:
+  violation_policy: strict          # strict = any hard veto anywhere disqualifies; lenient = forgive older than forgive_after_months
+  forgive_after_months: 24          # used only when lenient
+  genuine_coverage_min: 0.90
+  genuine_start_max_month: 3        # genuine run must start within first N active months
+  rolling90_positive_min: 0.70
+  terciles_all_positive: true
+  coarse_months_count_for_tenure: true
+categories:
+  algo_p_threshold: 0.70            # >= ADT
+  manual_p_threshold: 0.30          # <= MDT; between = UNSURE
+  rank_separately: true
 api:
   weight_per_min: 1200
   headroom: 0.90
@@ -694,9 +737,8 @@ detectors:
   market_impact: {vol_share: 0.20, pnl_share_veto: 0.25}
   behavioural_link: {dt_s: 60, notional_tol: 0.25, min_events: 5}
   copier: {lag_min_s: 5, lag_max_s: 120, share: 0.70}
-  exclude_algos: false
 scoring:
-  weights: {edge: 25, consistency: 20, discipline: 20, efficiency: 15, regularity: 10, alpha: 10}
+  weights: {tenure: 20, edge: 20, consistency: 20, discipline: 15, efficiency: 10, regularity: 8, alpha: 7}
   flag_penalty: 5
 forward_validation_days: 30
 alerts:
@@ -704,4 +746,4 @@ alerts:
 ```
 
 ## Appendix D — Glossary
-**TWR**: time-weighted return; removes the effect of deposits and withdrawals. **Modified Dietz**: daily return formula that weights flows by time present. **DSR**: Deflated Sharpe Ratio; probability a Sharpe is real after accounting for the number of strategies/wallets tried. **MAE/MFE**: maximum adverse/favourable excursion during a trade. **Round trip**: flat → position → flat on one coin. **Cluster**: set of addresses judged to be one book (hard/transfer/behavioural links). **Rescue deposit**: inflow made while a position is near liquidation instead of cutting it. **Martingale**: adding size to a losing position. **HIP-3**: builder-deployed perp dexes (coins prefixed `dex:`). **ADL**: auto-deleveraging. **QIT**: Qualified Intraday Trader (§1.3).
+**TWR**: time-weighted return; removes the effect of deposits and withdrawals. **Modified Dietz**: daily return formula that weights flows by time present. **DSR**: Deflated Sharpe Ratio; probability a Sharpe is real after accounting for the number of strategies/wallets tried. **MAE/MFE**: maximum adverse/favourable excursion during a trade. **Round trip**: flat → position → flat on one coin. **Cluster**: set of addresses judged to be one book (hard/transfer/behavioural links). **Rescue deposit**: inflow made while a position is near liquidation instead of cutting it. **Martingale**: adding size to a losing position. **HIP-3**: builder-deployed perp dexes (coins prefixed `dex:`). **ADL**: auto-deleveraging. **QIT**: Qualified Intraday Trader (§1.3). **MDT / ADT**: Manual / Algorithmic Disciplined Trader, the two ranked categories. **Genuine tenure**: number of active months graded genuine (§7.0). **Reformed**: wallet whose early history has violations and only recent history is clean; tracked separately, not qualified.
