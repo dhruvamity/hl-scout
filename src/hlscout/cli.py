@@ -118,9 +118,20 @@ def score(config: str = "config/config.yaml", out: str = "reports/latest.md") ->
     cfg = load_config(config)
     root = Path(cfg.data_dir)
     con = connect_state(root)
-    addrs = sorted(p.stem for p in (root / "raw" / "fills").glob("*.parquet"))
+    from hlscout.ingest.hydrate import raw_path
+
+    def complete(a: str) -> bool:  # meta.json is written last by hydrate_deep
+        return all(raw_path(root, k, a).with_suffix(".json" if k in ("meta", "portfolio") else ".parquet").exists()
+                   for k in ("fills", "funding", "ledger", "meta", "portfolio"))
+
+    addrs = sorted(p.stem for p in (root / "raw" / "fills").glob("*.parquet") if complete(p.stem))
     n_trials = max(len(addrs), 5000)
-    results = [assess_cached(root, a, cfg, n_trials=n_trials) for a in addrs]
+    results = []
+    for a in addrs:
+        try:
+            results.append(assess_cached(root, a, cfg, n_trials=n_trials))
+        except Exception as e:  # noqa: BLE001 - one bad wallet must not sink the report
+            typer.echo(f"skip {a[:10]}: {type(e).__name__}: {e}")
     # multi-wallet pass (plan §6.2): only finalists are worth the tape query
     cl = clusters(build_graph(root))
     for i, r in enumerate(results):
