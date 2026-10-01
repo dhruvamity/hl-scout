@@ -69,6 +69,42 @@ def tape(config: str = "config/config.yaml", duration_s: int = 0) -> None:
 
 
 @app.command()
+def universe(config: str = "config/config.yaml", seeds: str = "", local_file: str = "") -> None:
+    """Snapshot the leaderboard, update the registry, run the S1 screen, diff vs yesterday."""
+    from datetime import UTC, datetime
+    from pathlib import Path
+
+    from hlscout.ingest import leaderboard as lb
+    from hlscout.ingest.screen import screen_s1
+    from hlscout.ingest.seeds import load_seed_file
+
+    cfg = load_config(config)
+    root = Path(cfg.data_dir)
+    con = connect_state(root)
+    today = datetime.now(UTC).strftime("%Y-%m-%d")
+    raw = Path(local_file) if local_file else lb.download(
+        cfg.screen.leaderboard_url, root / "leaderboard" / "raw.json")
+    df = lb.parse(raw)
+    d = lb.diff(lb.previous_snapshot(root, today), df)
+    lb.snapshot(df, root, today)
+    new = lb.register(con, df["address"].to_list(), "leaderboard")
+    if seeds:
+        new += lb.register(con, load_seed_file(Path(seeds)), "seed")
+    res = screen_s1(df, cfg.screen)
+    keep = res.filter(res["keep"])
+    con.execute("BEGIN")
+    for a in keep["address"].to_list():
+        con.execute("UPDATE addresses SET stage='s1_pass' WHERE address=? AND stage='discovered'", (a,))
+    for a in res.filter(~res["keep"])["address"].to_list():
+        con.execute("UPDATE addresses SET stage='screened_out' WHERE address=? AND stage='discovered'", (a,))
+    con.execute("COMMIT")
+    typer.echo(f"rows={df.height} new_registry={new} board_new={len(d['new'])} "
+               f"board_gone={len(d['gone'])} s1_pass={keep.height}")
+    reasons = res.explode("reasons").group_by("reasons").len().sort("len", descending=True)
+    typer.echo(str(reasons))
+
+
+@app.command()
 def compact(date: str, config: str = "config/config.yaml") -> None:
     """Aggregate one day (YYYY-MM-DD) of tape into addr_day_stats."""
     from pathlib import Path

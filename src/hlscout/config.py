@@ -70,6 +70,18 @@ class GatesCfg(_Cfg):
     median_equity_min_usd: float = 5000
 
 
+class ScreenCfg(_Cfg):
+    """Stage-1 cheap screen (MinaraCN-style floors, relaxed to the plan's G12)."""
+
+    leaderboard_url: str = "https://stats-data.hyperliquid.xyz/Mainnet/leaderboard"
+    min_account_value: float = 5000
+    min_alltime_pnl: float = 0
+    min_alltime_vlm: float = 1_000_000
+    min_month_vlm: float = 100_000
+    min_tape_active_days: int = 60  # only enforced once the tape holds >= this many days
+    system_prefixes: list[str] = ["0x4000000000000000000000000000000000000", "0x2222222222222222222222222222222222222222"]
+
+
 class Config(_Cfg):
     window: str = "full_history"
     history: HistoryCfg = HistoryCfg()
@@ -77,6 +89,7 @@ class Config(_Cfg):
     api: ApiCfg = ApiCfg()
     tape: TapeCfg = TapeCfg()
     gates: GatesCfg = GatesCfg()
+    screen: ScreenCfg = ScreenCfg()
     detectors: dict[str, Any] = {}
     scoring: dict[str, Any] = {}
     forward_validation_days: int = 30
