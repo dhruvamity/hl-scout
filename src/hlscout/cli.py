@@ -190,6 +190,33 @@ def backfill(config: str = "config/config.yaml", limit: int = 0) -> None:
 
 
 @app.command()
+def monitor(config: str = "config/config.yaml", port: int = 8765) -> None:
+    """Watchlist monitor (state polling + alerts) with the local dashboard on 127.0.0.1."""
+    import asyncio
+    import threading
+    from pathlib import Path
+
+    from hlscout.clients.info import InfoClient
+    from hlscout.clients.ratelimit import RateLimiter
+    from hlscout.monitor.dashboard import serve
+    from hlscout.monitor.run import run_monitor
+
+    cfg = load_config(config)
+    root = Path(cfg.data_dir)
+    con = connect_state(root)
+    srv = serve(root, lambda: connect_state(root), port)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    typer.echo(f"dashboard http://127.0.0.1:{port}  health http://127.0.0.1:{port}/health")
+
+    async def main() -> None:
+        info = InfoClient(RateLimiter(cfg.api.weight_per_min, cfg.api.headroom, cfg.api.lanes),
+                          cfg.api.info_url)
+        await run_monitor(info, con, root, asyncio.Event())
+
+    asyncio.run(main())
+
+
+@app.command()
 def worker(config: str = "config/config.yaml", enqueue_s1: bool = True, limit: int = 0) -> None:
     """Queue consumer: S2 light screen -> deep hydrate -> assess, within the rate limit."""
     import asyncio
