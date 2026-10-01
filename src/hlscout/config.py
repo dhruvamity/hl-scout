@@ -38,6 +38,7 @@ class ApiCfg(_Cfg):
         "light_hydrate": 0.15,
         "backfill": 0.10,
     }
+    worker_concurrency: int = 4
     info_url: str = "https://api.hyperliquid.xyz/info"
     ws_url: str = "wss://api.hyperliquid.xyz/ws"
 

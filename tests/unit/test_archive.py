@@ -101,3 +101,25 @@ async def test_credit_budget_stops_fetch():
     ok = CreditBudget(con, monthly=500)
     rows = await fetch_fills(Fake(), "0xabc", 0, 2_000_000_000_000, limit=1000, budget=ok)
     assert len(rows) == 2 and ok.used() == 4  # two pages of one row: 2 credits each
+
+
+def test_partial_history_with_180d_cover_is_not_truncated():
+    import polars as pl
+
+    from hlscout.ingest.hydrate import FILL_SCHEMA
+    from hlscout.recon.vet import audit
+    from tests.helpers import DAY, Wallet
+
+    w = Wallet(t0=1_700_000_000_000)
+    w.deposit(w.t0 - 400 * DAY, 10_000)          # account is older than the fills we hold
+    for i in range(9600):                         # ~10k fills, all within the last 200 days
+        w.fill(w.t0 + 200 * DAY + i * 1_000_000, "BTC", "B" if i % 2 == 0 else "A", 1.0, 100.0)
+    w.equity(w.t0 - 400 * DAY, 10_000, 0)
+    w.equity(w.t0 + 399 * DAY, 10_500, 500)
+    ctx = w.ctx()
+    raw = {"fills": pl.DataFrame(w.fills, schema=FILL_SCHEMA), "funding": ctx.funding, "ledger": ctx.ledger,
+           "portfolio": ctx.portfolio, "meta": {}, "now_ms": w.t0 + 399 * DAY}
+    a = audit("0x" + "a" * 40, raw)
+    assert a["partial_history"] and not a["history_truncated"]
+    raw["now_ms"] = w.t0 + 250 * DAY             # only 50 days of fills: still truncated
+    assert audit("0x" + "a" * 40, raw)["history_truncated"]

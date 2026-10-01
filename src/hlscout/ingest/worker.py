@@ -109,6 +109,25 @@ def coarse_score(light: dict[str, Any]) -> float:
     return min(float(eq["cum_pnl"][-1]) / max(float(eq["equity"].median()), 1.0), 50.0)
 
 
+async def hft_prescreen(info: Any, address: str, cfg: Config) -> dict[str, Any] | None:
+    """One `userFills` call (~22 weight, newest <= 2000 fills) to skip HFT/MM books before a
+    full pull that can cost thousands of weight. Returns the reason dict, or None to proceed."""
+    rows = await info.post({"type": "userFills", "user": address, "aggregateByTime": False},
+                           lane="deep_vet")
+    if not isinstance(rows, list) or len(rows) < 1500:
+        return None  # sparse book: cannot be a high-frequency one
+    t = [int(r["time"]) for r in rows]
+    span_d = max((max(t) - min(t)) / DAY_MS, 1e-3)
+    tpd = len(rows) / span_d
+    maker = sum(1 for r in rows if r.get("crossed") is False) / len(rows)
+    g = cfg.gates
+    if tpd > g.trades_per_day_max:
+        return {"trades_per_day": round(tpd), "span_days": round(span_d, 2)}
+    if maker > g.maker_share_max:
+        return {"maker_share": round(maker, 2)}
+    return None
+
+
 async def process(info: Any, con: sqlite3.Connection, root: Path, cfg: Config,
                   item: tuple[int, str, str], now_ms: int) -> None:
     qid, address, kind = item
@@ -125,6 +144,17 @@ async def process(info: Any, con: sqlite3.Connection, root: Path, cfg: Config,
     else:
         from hlscout.recon.vet import assess_cached, audit, load_raw
 
+        skip = await hft_prescreen(info, address, cfg)
+        if skip:
+            con.execute("UPDATE addresses SET stage='vet_fail', last_hydrated=? WHERE address=?",
+                        (datetime.now(UTC).isoformat(), address))
+            con.execute("INSERT INTO scores(entity, run_id, gates_json, metrics_json, score, stage, category, p_algo)"
+                        " VALUES (?, 'worker', '[]', ?, NULL, 'vet_fail', 'MM_HFT', NULL)",
+                        (address, json.dumps({"prescreen": skip})))
+            log.info("deep %s -> prescreen %s", address[:10], skip)
+            con.execute("UPDATE queue SET state='done', updated_at=? WHERE id=?",
+                        (datetime.now(UTC).isoformat(), qid))
+            return
         await hydrate_deep(info, address, root, lane="deep_vet")
         raw = load_raw(root, address)
         a = audit(address, raw)
@@ -142,13 +172,12 @@ async def process(info: Any, con: sqlite3.Connection, root: Path, cfg: Config,
                 (datetime.now(UTC).isoformat(), qid))
 
 
-async def run_worker(info: Any, con: sqlite3.Connection, root: Path, cfg: Config,
-                     stop: asyncio.Event, idle_s: float = 30.0) -> None:
-    requeue_stale(con)
+async def _loop(info: Any, con: sqlite3.Connection, root: Path, cfg: Config, stop: asyncio.Event,
+                idle_s: float) -> None:
     import time
 
     while not stop.is_set():
-        item = next_item(con, cfg.screen.deep_cap)
+        item = next_item(con, cfg.screen.deep_cap)  # no await between select and update: claim is atomic
         if item is None:
             await asyncio.sleep(idle_s)
             continue
@@ -159,6 +188,15 @@ async def run_worker(info: Any, con: sqlite3.Connection, root: Path, cfg: Config
             con.execute("UPDATE queue SET state=? WHERE id=?",
                         ("failed" if con.execute("SELECT attempts FROM queue WHERE id=?",
                                                  (item[0],)).fetchone()[0] >= 3 else "pending", item[0]))
+
+
+async def run_worker(info: Any, con: sqlite3.Connection, root: Path, cfg: Config,
+                     stop: asyncio.Event, idle_s: float = 30.0) -> None:
+    """`cfg.api.worker_concurrency` loops share one rate limiter, so concurrency hides network
+    latency without raising the weight spent per minute."""
+    requeue_stale(con)
+    await asyncio.gather(*(_loop(info, con, root, cfg, stop, idle_s)
+                           for _ in range(max(1, cfg.api.worker_concurrency))))
 
 
 def candidates(root: Path, con: sqlite3.Connection) -> list[str]:

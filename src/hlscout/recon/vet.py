@@ -51,6 +51,11 @@ def audit(address: str, raw: dict[str, Any]) -> dict[str, Any]:
     # history looks truncated if fills start long after the account's first ledger activity
     truncated = bool(first_fill and first_ledger and first_fill - first_ledger > 14 * DAY_MS
                      and fills.height >= 9500)
+    now_ms = raw.get("now_ms") or int(__import__("time").time() * 1000)
+    covered = bool(first_fill) and (now_ms - first_fill) / DAY_MS >= 180
+    partial = truncated and covered  # recent fills span >= 180 d: older months are graded coarse
+    if partial:
+        truncated = False
     if raw.get("meta", {}).get("archive", {}).get("done"):
         truncated = False  # archive pass done: what remains before it is graded coarse
     holds = (trips["close_ts"] - trips["open_ts"]) / 1000 if not trips.is_empty() else None
@@ -64,7 +69,7 @@ def audit(address: str, raw: dict[str, Any]) -> dict[str, Any]:
         "findings": findings, "verdict": verdict(findings), "category": classify_algo(ctx),
         "fills_capped": meta.get("fills_capped", False),
         "address": address, "n_fills": fills.height, "n_round_trips": trips.height,
-        "coins_with_gaps": sorted(broken), "history_truncated": truncated,
+        "coins_with_gaps": sorted(broken), "history_truncated": truncated, "partial_history": partial,
         "reconcile": rec, "reconcile_ok": rec["ok"],
         "net_trading_pnl": rec.get("ours"), "inflow_total": inflow,
         "twr": float(curve["twr_index"][-1] - 1) if not curve.is_empty() else None,
@@ -93,7 +98,7 @@ def assess_cached(root: Path, address: str, cfg: Any = None, n_trials: int = 500
                     states=raw.get("states", []), role=meta.get("role"),
                     rate_limit=meta.get("rate_limit"), extra_agents=meta.get("extra_agents"),
                     actions=raw.get("actions"), asset_names=raw.get("asset_names"))
-    ctx.coarse_ok = bool(meta.get("archive", {}).get("done"))
     a = audit(address, raw)
+    ctx.coarse_ok = bool(meta.get("archive", {}).get("done")) or a["partial_history"]
     return assess(ctx, recon_ok=a["reconcile_ok"], history_truncated=a["history_truncated"]
                   or meta.get("fills_capped", False), n_trials=n_trials, extra=extra)

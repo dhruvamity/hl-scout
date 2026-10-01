@@ -62,3 +62,23 @@ def test_queue_idempotent_and_deep_first(tmp_path):
     assert first[1:] == ("0xa", "light")  # cheap screens go before deep vets
     requeue_stale(con)  # simulated crash: running -> pending
     assert next_item(con)[1:] == ("0xa", "light")
+
+
+async def test_hft_prescreen():
+    from hlscout.ingest.worker import hft_prescreen
+
+    class Info:
+        def __init__(self, rows):
+            self.rows = rows
+
+        async def post(self, payload, lane=None):
+            return self.rows
+
+    cfg = Config()
+    busy = [{"time": NOW - i * 1000, "crossed": True} for i in range(2000)]  # 2000 fills in 33 minutes
+    assert (await hft_prescreen(Info(busy), "0x1", cfg))["trades_per_day"] > 300
+    calm = [{"time": NOW - i * 3_600_000, "crossed": True} for i in range(2000)]
+    assert await hft_prescreen(Info(calm), "0x1", cfg) is None
+    makers = [{"time": NOW - i * 3_600_000, "crossed": False} for i in range(2000)]
+    assert (await hft_prescreen(Info(makers), "0x1", cfg))["maker_share"] == 1.0
+    assert await hft_prescreen(Info([{"time": NOW, "crossed": True}]), "0x1", cfg) is None
