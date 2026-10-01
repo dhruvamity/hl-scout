@@ -1,0 +1,66 @@
+"""Read-only Info API client. Only POSTs to /info; there is deliberately no exchange code."""
+
+from __future__ import annotations
+
+import logging
+from typing import Any
+
+import httpx
+
+from hlscout.clients.ratelimit import RateLimiter
+
+log = logging.getLogger(__name__)
+
+# (base weight, rows per +1 surcharge). Re-verify against live docs (scripts/check_docs.py).
+BASE_WEIGHT: dict[str, int] = {
+    "clearinghouseState": 2,
+    "spotClearinghouseState": 2,
+    "allMids": 2,
+    "l2Book": 2,
+    "userRole": 60,
+}
+DEFAULT_WEIGHT = 20
+ROW_SURCHARGE_TYPES = {
+    "userFills", "userFillsByTime", "userFunding", "userNonFundingLedgerUpdates",
+    "historicalOrders", "fundingHistory", "recentTrades", "candleSnapshot",
+}
+ROWS_PER_WEIGHT = 20
+ALLOWED_HOSTS = {"api.hyperliquid.xyz"}
+
+
+class InfoClient:
+    def __init__(
+        self,
+        limiter: RateLimiter,
+        url: str = "https://api.hyperliquid.xyz/info",
+        client: httpx.AsyncClient | None = None,
+        max_retries: int = 6,
+    ) -> None:
+        host = httpx.URL(url).host
+        if host not in ALLOWED_HOSTS and host not in ("localhost", "127.0.0.1"):
+            raise ValueError(f"host not allowlisted: {host}")
+        self.url = url
+        self.limiter = limiter
+        self._client = client or httpx.AsyncClient(timeout=30)
+        self.max_retries = max_retries
+
+    async def post(self, payload: dict[str, Any], lane: str = "deep_vet") -> Any:
+        rtype = payload["type"]
+        weight = BASE_WEIGHT.get(rtype, DEFAULT_WEIGHT)
+        for _ in range(self.max_retries):
+            await self.limiter.acquire(weight, lane)
+            resp = await self._client.post(self.url, json=payload)
+            if resp.status_code == 429:
+                pause = self.limiter.on_429()
+                log.warning("429 on %s; pausing %.1fs", rtype, pause)
+                continue
+            resp.raise_for_status()
+            self.limiter.on_success()
+            data = resp.json()
+            if rtype in ROW_SURCHARGE_TYPES and isinstance(data, list):
+                self.limiter.debit(len(data) // ROWS_PER_WEIGHT)
+            return data
+        raise RuntimeError(f"gave up on {rtype} after repeated 429s")
+
+    async def aclose(self) -> None:
+        await self._client.aclose()

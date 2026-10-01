@@ -1,0 +1,3856 @@
+{
+ "meta": {
+  "source": "9 Grok output files",
+  "items": 64,
+  "batch_C": [
+   {
+    "id": "C01",
+    "topic": "Lookonchain 11-wallet BTC->ETH rotation (2026-09-18)",
+    "status": "partially answered",
+    "result": "Post found: x.com/lookonchain/status/2100835870219923791. Over 3 days 11 new wallets (likely one whale) sold 602 BTC ($45.83M) and bought 18,780 ETH. Follow-up 2026-09-21: 5 days, 1,107 BTC ($86.76M) -> 34,422 ETH ($86.5M), staked. Images show only 4 truncated prefixes; Arkham entity page returned 403; all 11 full addresses not found."
+   },
+   {
+    "id": "C02",
+    "topic": "Dune dashboards / % of wallets in profit",
+    "status": "partially answered",
+    "result": "Request is real (@KORypto_JUN 2026-09-28). Replies: 'Dune has community dashboards' (@JoeWeb3z), 'hyperdash or mlm' (@liquidated_hl); no dune.com URL. One lead: @nftclients 2026-06-27 says to search 'hyperliquid' on Dune and that the 'x3research dashboard is the best one' (no URL). Dune IDs 6994144 / 6994277 / 7667431 were not found on X."
+   },
+   {
+    "id": "C03",
+    "topic": "Public X Lists / Communities for HL trader research",
+    "status": "not found",
+    "result": "No usable list URL. Two claims exist (@skell 'Hyperliquid Power Players', 2025-09-18; @AlbertBlocks HL ecosystem list, 2025-06-10) but the links did not expand and both are ecosystem/hype mixes, not trader-research lists. Excluded."
+   },
+   {
+    "id": "C04",
+    "topic": "Numeric cutoffs for profit factor / Sortino / Sharpe",
+    "status": "partially answered",
+    "result": "No wallet-selection cutoff for profit factor, Sortino, Calmar or expectancy. Only: QuantumVaultLab's *bot* paper-test gate (30 days, >=10 trades, profit factor >1.1, drawdown <30%); HyperX (Recovery Factor <1000 suggested, max DD >50% drop); Niakris (Sharpe >1.5). Slash Trade spotlights print Sharpe/DD but state no rule."
+   },
+   {
+    "id": "C05",
+    "topic": "Canonical URLs, pricing, X adoption for tools the raw file could not pin",
+    "status": "partially answered",
+    "result": "Found: hyperank.io (+/how-scoring-works, /guide; no price posted); Exit Window exit-window.fly.dev/waitlist (no repo); ASXN = @asxn_r, hyperscreener.asxn.xyz (free per @0xkayser 2026-08-14); Hypervisor = hypervisor.gg (2025 post only); Hypedexer free tier 5,000 credits/mo (owner, 2026-10-01); Hydromancer Reservoir 'free and open-source ... free, forever' (2026-08-19) + hydromancer.xyz/hyperliquid-historical-data; Isobath (@Isobathalerts) posts whale-collateral alert cards. Not found: LabelYX, CoinClass, PerpFinder, HyperStats, HyperPulse, Dexly, Hyperank price, 0xArchive paid tier, Copin HL app URL, Whale Street expanded URL/code, Exit Window repo."
+   },
+   {
+    "id": "C06",
+    "topic": "Security / phishing items cited without links",
+    "status": "partially answered",
+    "result": "Confirmed on X: @Hyperliquid_Hub 2026-09-29 reports @Hyperliquid_Eco impersonating Hyperliquid ('Do not click any links / connect your wallet'); @1049XBT 09-28 complains of fake-tweet scammers. NOT found on X: Inferno Drainer / 550,019 USDC, hyperiiquid.xyz/.net/.io/.vip, emailveritas scoring hyperliquid.xyz, npm @2oolkit/hyperliquid-cli MAL-2026-3679. Absence is not a clean bill."
+   },
+   {
+    "id": "C07",
+    "topic": "Protocol and product announcements cited without links",
+    "status": "partially answered",
+    "result": "Confirmed: manual borrows live (@HyperliquidX 2026-09-18, $269M borrowed, HYPE/BTC collateral -> USDC/USDT) but the 65%/50% LTVs are NOT in the post or image; HIP-3 on-chain mark (@HansonBirringer 09-24); funding clamps configurable by HIP-3 deployers on the next upgrade (author is @HypeStatsx 09-18, not jeff_hl); Singapore event Oct 5; Hypedexer MCP used on a live address (09-17: hd_user_profile, hd_fills_search, hd_twaps_search, hd_liquidations_search, hl_public_candles, hl_public_clearinghouse_state, hl_public_predicted_fundings); HyperTracker builder-code card 09-30 (top 5: $9.03B volume, 82,835 users, $6.13M revenue). Explicit 'Hypedexer V2' launch wording not found."
+   },
+   {
+    "id": "C08",
+    "topic": "Evidence for the agent's 'shill / noise' labels",
+    "status": "partially answered",
+    "result": "Found: @Crypto_Retardio (ALM) own claim '$1M+ profits for members via copy trading so far - 40%+ win rate on day trades' (unaudited); GoodCryptoApp 'Hyperliquid Mega Influencer List 2026 - Part 7'. The opened @HYPEconomist post is a NEAR meme call, not the quoted 0.1% rule; the opened @JoestarCrypto post does not say he skipped HL copy-pastes. Not found: zaika_hl, Emmah_Jayy, SageWhale, Henrik_on_HL, Khingbenz7, elenalin01, XT Smart Money, Coinpilot, Bloom, Superior."
+   },
+   {
+    "id": "C09",
+    "topic": "Address attributions and calibration claims cited without links",
+    "status": "partially answered",
+    "result": "Found: OnchainLens 2026-09-28 prints the full Wintermute address 0xecb63caa47c7c4e77f60f1ce858cf28dc2b82b00 ($126.25M short, ETH $46.92M, lifetime +$197.22M); @KaiVenn__ 09-21 frames Abraxas ($1.2B shorts, >$100M unrealized loss) as hedge/basis; @Hyperliquid_Hub 09-28: Abraxas ~$859M perp exposure vs ~$172M equity, ZEC $54M, all-time +$92.8M; @Perps_AI 09-25 attributes Lookonchain's Garrett Jin identification (ZEC short +$11.20M, BTC long +$8.38M, another ZEC short -$35.44M); Hyperbotai prints the Boomer-linked and Machi addresses. No confirmation or denial of any label by the labelled parties."
+   },
+   {
+    "id": "C10",
+    "topic": "Evidence for accounts ranked 12-40 in the agent's Top-40",
+    "status": "partially answered",
+    "result": "Opened posts do not show these accounts vetting discretionary perp traders: Nansen post is about its own non-custodial trading agent; Altcopy posts a vault spotlight (PF1, 53% annualized, Calmar 7.36 recomputed from the public PnL curve); hlnames launched .hl.hn with ENS (identity infrastructure). Nothing relevant found for CryptHypoBuster, HyperliquidR, ponyo_fp, FourPillarsFP, GLC_Research, mogie__, ericonomic, shaundadevens, 0xTraderSam, tradexyz, sershokunin, AiCoincom, GHYPURR, whale_alert."
+   },
+   {
+    "id": "C11",
+    "topic": "Discovery: owner-posted discretionary HL wallets with >=12 months track record",
+    "status": "not found",
+    "result": "No trader published their own address together with a 12-month equity curve, fills or PnL calendar. Hits were referral PnL conversions."
+   },
+   {
+    "id": "C12",
+    "topic": "Discovery: community-built artifacts for HL trader scoring",
+    "status": "partially answered",
+    "result": "Found: @kitsunedevs hyperliquid-mcp (2026-07-18): open source, 2 source files, zero API keys, positions/PnL/liquidation price of ANY address, 'read-only by design: no wallet, no signing' (repo t.co not expanded). Not found: public Google Sheet/Notion scorer, TradingView wallet script, browser extension, leaderboard-to-skill repo with a visible commit, Flipside skill dashboard."
+   }
+  ],
+  "batch_C_raw": [
+   {
+    "id": "C01",
+    "status": "partially_answered",
+    "findings": [
+     {
+      "claim": "Lookonchain post on 11 newly created wallets rotating BTC into ETH on Hyperliquid",
+      "handle": "lookonchain",
+      "url": "https://x.com/lookonchain/status/2100835870219923791",
+      "posted_at_utc": "2026-09-18T06:34:37Z",
+      "verbatim_excerpt": "Whales are rotating from $BTC into $ETH!\n\nOver the past 3 days, 11 newly created wallets (likely belonging to the same whale) sold 602 $BTC ($45.83M) on #Hyperliquid and bought 18,780 $ETH ($45.83M).\n\nhttps://arkm.com/explorer/entity/0df9ea45-8523-4b36-a0a4-ba876af036b0"
+     },
+     {
+      "claim": "Follow-up five days later, same account, larger rotation, no 11-address list",
+      "handle": "lookonchain",
+      "url": "https://x.com/lookonchain/status/2101860941113721332",
+      "posted_at_utc": "2026-09-21T02:27:53Z",
+      "verbatim_excerpt": "This mysterious whale keeps rotating from $BTC into $ETH!\n\nOver the past 5 days, the whale sold 1,107 $BTC ($86.76M) on Hyperliquid, then bought 34,422 $ETH ($86.5M) and staked it all."
+     }
+    ],
+    "addresses": [],
+    "notes": "Fact: window is past 3 days, not same day; size is $45.83M each side, not ~$20M. Lookonchain says 'likely belonging to the same whale', not a confirmed entity. Images show only truncated prefixes 0x082123f64716ac2b2444a8ee5d17b, 0xa050ce759cdc54d2894461cc4997a, 0x6bae94bd81823f2bbbe6bcebf6347, 0xab9f64263466fd7bd0f4865ea5192. Arkham entity page returned 403. All 11 full addresses not_found."
+   },
+   {
+    "id": "C02",
+    "status": "partially_answered",
+    "findings": [
+     {
+      "claim": "Request for a Hyperliquid percent-in-profit / win-rate dashboard; no Dune URL in the post",
+      "handle": "KORypto_JUN",
+      "url": "https://x.com/KORypto_JUN/status/2104370349593043233",
+      "posted_at_utc": "2026-09-28T00:39:23Z",
+      "verbatim_excerpt": "Does anyone know a site that shows the overall win rate on Hyperliquid — like what % of all wallets are actually in profit? ... Dune dashboard? HypurrScan?"
+     },
+     {
+      "claim": "Reply names Dune but posts no dashboard or query URL",
+      "handle": "JoeWeb3z",
+      "url": "https://x.com/JoeWeb3z/status/2104381532085584107",
+      "posted_at_utc": "2026-09-28T01:23:49Z",
+      "verbatim_excerpt": "Check out Dune analytics, some great community dashboards track those exact wallet stats."
+     },
+     {
+      "claim": "Reply does not answer with a Dune link",
+      "handle": "chefpino_",
+      "url": "https://x.com/chefpino_/status/2104411133977464924",
+      "posted_at_utc": "2026-09-28T03:21:27Z",
+      "verbatim_excerpt": "Most of people loosing money also on hyperliquid fam"
+     },
+     {
+      "claim": "Reply points to Hyperdash, not Dune",
+      "handle": "liquidated_hl",
+      "url": "https://x.com/liquidated_hl/status/2104421350861324343",
+      "posted_at_utc": "2026-09-28T04:02:02Z",
+      "verbatim_excerpt": "Lots of people use hyperdash I think or mlm"
+     },
+     {
+      "claim": "Dune mentioned only as a search box, not a win-rate query",
+      "handle": "nftclients",
+      "url": "https://x.com/nftclients/status/2070914663471043015",
+      "posted_at_utc": "2026-06-27T16:58:26Z",
+      "verbatim_excerpt": "https://dune.com/home : open it and search \"hyperliquid\" x3research dashboard is the best one"
+     }
+    ],
+    "addresses": [],
+    "notes": "Fact: fetched replies contain no dune.com query or dashboard URL. Keyword search for 6994144, 6994277 and 7667431 returned no X posts. Judgement: those three query IDs were not found posted on X in this pass."
+   },
+   {
+    "id": "C03",
+    "status": "not_found",
+    "findings": [
+     {
+      "claim": "Claimed Hyperliquid Power Players list; fetched text has no list id",
+      "handle": "skell",
+      "url": "https://x.com/skell/status/1968764432881778942",
+      "posted_at_utc": "2025-09-18T19:49:53Z",
+      "verbatim_excerpt": "I've been diving deep into Hyperliquid and built a curated X List: Hyperliquid Power Players. ... https://x.com/"
+     },
+     {
+      "claim": "Claimed HL ecosystem research list; fetched text has no list id",
+      "handle": "AlbertBlocks",
+      "url": "https://x.com/AlbertBlocks/status/1932447801126142295",
+      "posted_at_utc": "2025-06-10T14:40:33Z",
+      "verbatim_excerpt": "If you need a place to get started researching the HL ecosystem, I've put together a list: https://x.com/"
+     }
+    ],
+    "addresses": [],
+    "notes": "No public x.com/i/lists or x.com/i/communities URL with owner and member count was returned. The two list claims above are ecosystem/hype mixes, not trader-research lists, and their links did not expand. Excluded as unusable: both of those posts."
+   },
+   {
+    "id": "C04",
+    "status": "partially_answered",
+    "findings": [
+     {
+      "claim": "Paper-test gates for an AI trader that reads Hyperliquid OI and funding; not a copy-wallet screen",
+      "handle": "QuantumVaultLab",
+      "url": "https://x.com/QuantumVaultLab/status/2077015260800630918",
+      "posted_at_utc": "2026-07-14T13:00:01Z",
+      "verbatim_excerpt": "Before it touches real money, it has to earn it. Thirty days minimum. At least ten trades. Profit factor above 1.1. Drawdown kept under 30 percent. It reads open interest and funding, cross-checked against Hyperliquid."
+     },
+     {
+      "claim": "HyperX suggested Recovery Factor anomaly filter, already opened this task",
+      "handle": "hyperx_trade",
+      "url": "https://x.com/hyperx_trade/status/2102973181183332444",
+      "posted_at_utc": "2026-09-24T04:07:32Z",
+      "verbatim_excerpt": "风险：Recovery Factor 建议 < 1000，Calmar 作辅助，过滤异常钱包"
+     },
+     {
+      "claim": "HyperX hard max-drawdown drop, same post",
+      "handle": "hyperx_trade",
+      "url": "https://x.com/hyperx_trade/status/2102973181183332444",
+      "posted_at_utc": "2026-09-24T04:07:32Z",
+      "verbatim_excerpt": "回撤：勾选 Drawdown，历史最大回撤 > 50% 排除"
+     }
+    ],
+    "addresses": [],
+    "notes": "No post found that states a numeric Sortino, Calmar, gain-to-pain, or expectancy cutoff for picking HL traders. Profit-factor >1.1 is QuantumVault's own bot paper gate, not a wallet screen. Slash Trade spotlights print Sharpe and max DD but state no selection rule. Niakris Sharpe post was not re-opened this pass."
+   },
+   {
+    "id": "C05",
+    "status": "partially_answered",
+    "findings": [
+     {
+      "claim": "Hyperank official domain and public beta; no price posted in the opened owner posts",
+      "handle": "hypeRankio",
+      "url": "https://x.com/hypeRankio/status/2104257093620396387",
+      "posted_at_utc": "2026-09-27T17:09:20Z",
+      "verbatim_excerpt": "Whatever you pick, run it in paper mode first. Same sizing, same limits, no real orders. ... https://hyperank.io"
+     },
+     {
+      "claim": "Hyperank scoring explainer URL",
+      "handle": "hypeRankio",
+      "url": "https://x.com/hypeRankio/status/2103801825291874804",
+      "posted_at_utc": "2026-09-26T11:00:16Z",
+      "verbatim_excerpt": "how the screen works: https://hyperank.io/how-scoring-works"
+     },
+     {
+      "claim": "Whale Street buildathon post; live t.co not expanded; Code line blank",
+      "handle": "BazydloMis57623",
+      "url": "https://x.com/BazydloMis57623/status/2103548912900694418",
+      "posted_at_utc": "2026-09-25T18:15:17Z",
+      "verbatim_excerpt": "It's called Whale Street, made for the @nansen_ai Meridian buildathon. ... In the video it turns down a wallet doing 817 trades a day as a market maker. ... Try it: https://t.co/4WfTiPqTG9 Code:"
+     },
+     {
+      "claim": "Hypervisor product URL from a 2025 dashboard post; no 2026 trader-analytics post opened",
+      "handle": "Hypervisor_hl",
+      "url": "https://x.com/Hypervisor_hl/status/1882092153075286464",
+      "posted_at_utc": "2025-01-22T15:45:11Z",
+      "verbatim_excerpt": "Let's see your dashboards! https://hypervisor.gg/"
+     },
+     {
+      "claim": "Copin owner post is market commentary, not an HL screener URL",
+      "handle": "Copin_io",
+      "url": "https://x.com/Copin_io/status/2034876529570980200",
+      "posted_at_utc": "2026-03-20T06:15:45Z",
+      "verbatim_excerpt": "Commodities like oil, gold, and RWAs are now more popular on Hyperliquid than crypto!"
+     },
+     {
+      "claim": "Exit Window description; waitlist links not expanded in the fetched text",
+      "handle": "kamalbuilds",
+      "url": "https://x.com/kamalbuilds/status/2104342660500918637",
+      "posted_at_utc": "2026-09-27T22:49:21Z",
+      "verbatim_excerpt": "I built Exit Window for the Meridian buildathon to fix exactly that. ... A sentinel watches 242 Nansen-labeled wallets live and checks yours every 30 seconds. ... Try it and join the waitlist today, links below"
+     },
+     {
+      "claim": "ASXN handle and a Hyperliquid lending dashboard URL",
+      "handle": "asxn_r",
+      "url": "https://x.com/asxn_r/status/2104922095264428473",
+      "posted_at_utc": "2026-09-29T13:11:49Z",
+      "verbatim_excerpt": "5/ Find the full dashboard here: https://hyperscreener.asxn.xyz/lending"
+     },
+     {
+      "claim": "Independent user calls ASXN dashboards free",
+      "handle": "0xkayser",
+      "url": "https://x.com/0xkayser/status/2088205590560436679",
+      "posted_at_utc": "2026-08-14T10:06:24Z",
+      "verbatim_excerpt": "the best hyperliquid dashboards are free and built by a research firm that doesn't sell you anything @asxn_r tracks perps, spot, hip-3, hyperevm, revenue, builder codes, validators. hyperscreener is the closest thing the ecosystem has to a bloomberg terminal"
+     },
+     {
+      "claim": "Isobath posts wallet-intelligence cards; no URL or price in the opened posts",
+      "handle": "Isobathalerts",
+      "url": "https://x.com/Isobathalerts/status/2105553365933412355",
+      "posted_at_utc": "2026-10-01T07:00:16Z",
+      "verbatim_excerpt": "A Hyperliquid $BTC whale increased free collateral by $954K, while its short moved from $8.9M to $8.8M."
+     },
+     {
+      "claim": "Hypedexer free tier stated by owner",
+      "handle": "hypedexer",
+      "url": "https://x.com/hypedexer/status/2105566157986238910",
+      "posted_at_utc": "2026-10-01T07:51:06Z",
+      "verbatim_excerpt": "Free tier, 5,000 credits a month: https://docs.hypedexer.com/quickstart"
+     },
+     {
+      "claim": "Hydromancer Reservoir called free and open-source by owner",
+      "handle": "hydromancerxyz",
+      "url": "https://x.com/hydromancerxyz/status/2090008270488363078",
+      "posted_at_utc": "2026-08-19T09:29:36Z",
+      "verbatim_excerpt": "this research was enabled by Reservoir, our free and open-source Hyperliqud historical dataset https://docs.hydromancer.xyz/reservoir free, forever"
+     },
+     {
+      "claim": "Hydromancer historical-data page linked by owner",
+      "handle": "hydromancerxyz",
+      "url": "https://x.com/hydromancerxyz/status/2099363074872627696",
+      "posted_at_utc": "2026-09-14T05:02:15Z",
+      "verbatim_excerpt": "S3? https://hydromancer.xyz/hyperliquid-historical-data"
+     },
+     {
+      "claim": "0xArchive bio says free API key; opened post does not state a paid price",
+      "handle": "0xArchiveIO",
+      "url": "https://x.com/0xArchiveIO/status/2073437680571174934",
+      "posted_at_utc": "2026-07-04T16:04:00Z",
+      "verbatim_excerpt": "His reason: the native API caps history, and every data call competes with the rate limits his trading bot needs. By the end: 30 days of 1-minute history loaded and a working screener."
+     },
+     {
+      "claim": "CoinGlass cited for liquidation totals, not a trader-skill product",
+      "handle": "1881Erdem",
+      "url": "https://x.com/1881Erdem/status/2104334053159862372",
+      "posted_at_utc": "2026-09-27T22:15:09Z",
+      "verbatim_excerpt": "According to CoinGlass data, In the past 24 hours, 66.792 traders were liquidated, the total liquidations comes in at $141.16 million. The largest single liquidation order happened on Hyperliquid - XRP-USD value $3.34M."
+     }
+    ],
+    "addresses": [],
+    "notes": "not_found this pass: LabelYX, CoinClass, PerpFinder, HyperStats, HyperPulse, Dexly, Hyperank price, 0xArchive paid tier, Copin HL app URL, Whale Street expanded URL and code URL, Exit Window repo. 817 trades/day is one video reject, not a stated threshold. ASXN handle is @asxn_r."
+   },
+   {
+    "id": "C06",
+    "status": "partially_answered",
+    "findings": [
+     {
+      "claim": "Hyperliquid_Hub reported an impersonator account",
+      "handle": "Hyperliquid_Hub",
+      "url": "https://x.com/Hyperliquid_Hub/status/2104762743509356590",
+      "posted_at_utc": "2026-09-29T02:38:37Z",
+      "verbatim_excerpt": "A fake account, @Hyperliquid_Eco, is impersonating Hyperliquid and posting misleading content about hyperliquid:native claims. ... Do not click any links Do not connect your wallet"
+     },
+     {
+      "claim": "1049XBT complained about fake Hyperliquid tweet scammers; no domain named",
+      "handle": "1049XBT",
+      "url": "https://x.com/1049XBT/status/2104602381669503040",
+      "posted_at_utc": "2026-09-28T16:01:24Z",
+      "verbatim_excerpt": "the fake hyperliquid tweet scammers is getting annoying"
+     }
+    ],
+    "addresses": [],
+    "notes": "not_found in this X search: Inferno Drainer / 550,019 USDC, hyperiiquid.xyz/.net/.io/.vip, emailveritas scoring hyperliquid.xyz, npm @2oolkit/hyperliquid-cli MAL-2026-3679. No other named phishing domain was posted in the results. Do not treat the absence as a clean bill."
+   },
+   {
+    "id": "C07",
+    "status": "partially_answered",
+    "findings": [
+     {
+      "claim": "Official manual-borrows announcement; $269M borrowed; no LTV percentages in text or image",
+      "handle": "HyperliquidX",
+      "url": "https://x.com/HyperliquidX/status/2100838194317312446",
+      "posted_at_utc": "2026-09-18T06:43:51Z",
+      "verbatim_excerpt": "Manual borrows are live on Hyperliquid. Portfolio margin and manual borrows use the same underlying HyperCore infrastructure, with $269M in assets borrowed today. Users can supply HYPE and BTC as collateral to borrow quote assets (USDC and USDT)."
+     },
+     {
+      "claim": "HIP-3 testnet mark calculated on-chain; deployer no longer sets mark directly",
+      "handle": "HansonBirringer",
+      "url": "https://x.com/HansonBirringer/status/2103099378840088842",
+      "posted_at_utc": "2026-09-24T12:29:00Z",
+      "verbatim_excerpt": "New HIP-3* update on Hyperliquid testnet this morning. The price used to value positions is calculated onchain from three inputs, one of them Hyperliquid's main market for the same asset. ... the deployer no longer sets the mark price directly."
+     },
+     {
+      "claim": "HIP-3 funding clamps said to be deployer-configurable; author is Hypestats, not jeff_hl",
+      "handle": "HypeStatsx",
+      "url": "https://x.com/HypeStatsx/status/2100901248346030403",
+      "posted_at_utc": "2026-09-18T10:54:25Z",
+      "verbatim_excerpt": "On the next network upgrade, funding clamps will be configurable by HIP-3 deployers. See for details. https://hypestats.xyz/news/t1hjyesh"
+     },
+     {
+      "claim": "Singapore community event date and RSVP rule",
+      "handle": "HyperliquidX",
+      "url": "https://x.com/HyperliquidX/status/2105177404394381496",
+      "posted_at_utc": "2026-09-30T06:06:20Z",
+      "verbatim_excerpt": "The Hyperliquid community event will take place on the evening of October 5 in Singapore: https://luma.com/HL2026Community ... you will only be able to attend if your RSVP was accepted."
+     },
+     {
+      "claim": "Hypedexer MCP used on a live address; no V2 launch sentence in this post",
+      "handle": "hypedexer",
+      "url": "https://x.com/hypedexer/status/2100592780087046388",
+      "posted_at_utc": "2026-09-17T14:28:40Z",
+      "verbatim_excerpt": "We put the address through the Hypedexer MCP, seven calls, and read the fills in order. ... The seven calls, on https://t.co/tNS1GHXTfh: hd_user_profile, hd_fills_search (perp, then spot), hd_twaps_search, hd_liquidations_search, hl_public_candles (HYPE and @107, 1m), hl_public_clearinghouse_state, hl_public_predicted_fundings."
+     },
+     {
+      "claim": "HyperTracker 24h HYPE cohort bias, not a 100%-long skill warning",
+      "handle": "HyperTracker",
+      "url": "https://x.com/HyperTracker/status/2102762090943652027",
+      "posted_at_utc": "2026-09-23T14:08:44Z",
+      "verbatim_excerpt": "In the last 24h, almost everyone on Hyperliquid is Bullish or Very Bullish on $HYPE. The only Bearish cohort is Full Rekt, aka wallets down more than $100k."
+     },
+     {
+      "claim": ".hl name search shipped",
+      "handle": "HyperTracker",
+      "url": "https://x.com/HyperTracker/status/2104914845074403408",
+      "posted_at_utc": "2026-09-29T12:43:01Z",
+      "verbatim_excerpt": "@hlnames search is now live. You can now search for any wallet using their .hl names on HyperTracker."
+     },
+     {
+      "claim": "Builder-code volume card, last 30d",
+      "handle": "HyperTracker",
+      "url": "https://x.com/HyperTracker/status/2105293061396041772",
+      "posted_at_utc": "2026-09-30T13:45:54Z",
+      "verbatim_excerpt": "In the last 30d, the Top 5 have generated: > $9.03 billion in Volume > 82,835 users > $6.13 million in Revenue. Shoutout to the Top 5: @MetaMask @TrustWallet @phantom @fomo + an unclaimed builder code"
+     },
+     {
+      "claim": "HyperX 90d wallet screens with full addresses",
+      "handle": "hyperx_trade",
+      "url": "https://x.com/hyperx_trade/status/2105322041952162296",
+      "posted_at_utc": "2026-09-30T15:41:04Z",
+      "verbatim_excerpt": "账户净值 $1.36M，近 90 天永续净盈亏 $875K，胜率 69% ... 历史均杠杆约 2x ... 最大回撤约 11% ... address=0x7491180d3e43719bd8a53cdfbef27a1527a1d90f"
+     },
+     {
+      "claim": "Hyperdash team in Korea this week",
+      "handle": "hypurrdash",
+      "url": "https://x.com/hypurrdash/status/2105295924402741585",
+      "posted_at_utc": "2026-09-30T13:57:17Z",
+      "verbatim_excerpt": "Catch our team in Korea this week!"
+     },
+     {
+      "claim": "NMTD8 calls Hyperdash a favourite frontend",
+      "handle": "NMTD8",
+      "url": "https://x.com/NMTD8/status/2102900891720507498",
+      "posted_at_utc": "2026-09-23T23:20:17Z",
+      "verbatim_excerpt": "Hyperdash one of my favourites. @Borsa_HL #4"
+     }
+    ],
+    "addresses": [
+     {
+      "address": "0x7491180d3e43719bd8a53cdfbef27a1527a1d90f",
+      "label_in_post": "HyperX 90d screen, low-leverage alt long",
+      "source_url": "https://x.com/hyperx_trade/status/2105322041952162296",
+      "from_image": false
+     },
+     {
+      "address": "0xb7658d7c63b6c1fc7254fe9402a95d044db70dbc",
+      "label_in_post": "HyperX 90d screen, September address, alt trend long",
+      "source_url": "https://x.com/hyperx_trade/status/2105152675855933631",
+      "from_image": false
+     }
+    ],
+    "notes": "Fact: HYPE 65% LTV and BTC 50% LTV are not in the official borrow post or its image. Explicit Hypedexer V2 launch wording not_found; the 2026-09-17 post shows MCP use. jeff_hl funding-clamp post not_found; the clamp sentence found is from @HypeStatsx. Seoul post is a quote of @cdottrading, not a dated 'Seoul week' product drop."
+   },
+   {
+    "id": "C08",
+    "status": "partially_answered",
+    "findings": [
+     {
+      "claim": "ALM membership post states the $1M+ copy-trading profits and 40%+ day-trade win-rate figures",
+      "handle": "Crypto_Retardio",
+      "url": "https://x.com/Crypto_Retardio/status/2104316946502320446",
+      "posted_at_utc": "2026-09-27T21:07:11Z",
+      "verbatim_excerpt": "$1M+ profits for members via copy trading so far - 40%+ win rate on day trades"
+     },
+     {
+      "claim": "GoodCryptoApp published a Hyperliquid Mega Influencer List 2026",
+      "handle": "GoodCryptoApp",
+      "url": "https://x.com/GoodCryptoApp/status/2100238276309500082",
+      "posted_at_utc": "2026-09-16T15:00:00Z",
+      "verbatim_excerpt": "Hyperliquid Mega Influencer List 2026 - Part 7. Top Hyperliquid accounts to follow if you want to better understand the ecosystem"
+     },
+     {
+      "claim": "Opened HYPEconomist post is a NEAR meme call, not the quoted 0.1% rule",
+      "handle": "HYPEconomist",
+      "url": "https://x.com/HYPEconomist/status/2105450975867568170",
+      "posted_at_utc": "2026-10-01T00:13:24Z",
+      "verbatim_excerpt": "buy yourself the top NEAR meme now. at under $1M mcap"
+     },
+     {
+      "claim": "Opened JoestarCrypto post does not say he did not farm Hyperliquid copy pastes",
+      "handle": "JoestarCrypto",
+      "url": "https://x.com/JoestarCrypto/status/2104925705779789866",
+      "posted_at_utc": "2026-09-29T13:26:10Z",
+      "verbatim_excerpt": "HIP-3 is slowing down hard since Variational is catching up ... Btw it's not too late to farm Variational"
+     }
+    ],
+    "addresses": [],
+    "notes": "The ALM profit and win-rate lines are the account's own claims, not an independent audit. The 0.1% meme-shill quote and the copy-paste denial were not in the posts opened. not_found this pass: zaika_hl, Emmah_Jayy, SageWhale, Henrik_on_HL, Khingbenz7, elenalin01, XT Smart Money, Coinpilot, Bloom, Superior."
+   },
+   {
+    "id": "C09",
+    "status": "partially_answered",
+    "findings": [
+     {
+      "claim": "OnchainLens labels a full address as Wintermute and quotes position sizes",
+      "handle": "OnchainLens",
+      "url": "https://x.com/OnchainLens/status/2104521982863901005",
+      "posted_at_utc": "2026-09-28T10:41:55Z",
+      "verbatim_excerpt": "WINTERMUTE OPENS $126M IN SHORTS. Wintermute is short $126.25M across Hyperliquid, led by a $46.92M $ETH short. ... lifetime PnL stands at +$197.22M. Address: 0xecb63caa47c7c4e77f60f1ce858cf28dc2b82b00"
+     },
+     {
+      "claim": "Kai Venn frames an Abraxas book as hedge/basis; no address in the text",
+      "handle": "KaiVenn__",
+      "url": "https://x.com/KaiVenn__/status/2102078699021754527",
+      "posted_at_utc": "2026-09-21T16:53:11Z",
+      "verbatim_excerpt": "Abraxas is now sitting on $100M+ in unrealized losses across a ~$1.2B Hyperliquid short book. Except they've also been accumulating spot ETH. So at least part of this book looks more like hedge / basis exposure than a $1.2B bet on the market collapsing."
+     },
+     {
+      "claim": "Hyperliquid_Hub calls Abraxas Capital the owner of a large short book; no address in the text",
+      "handle": "Hyperliquid_Hub",
+      "url": "https://x.com/Hyperliquid_Hub/status/2104410898605781140",
+      "posted_at_utc": "2026-09-28T03:20:30Z",
+      "verbatim_excerpt": "Abraxas Capital is running one of the largest bearish books on Hyperliquid right now. The fund is sitting on roughly $859M in perp exposure against about $172M in equity. ... ZEC: $54M ... All-time portfolio PnL: +$92.8M."
+     },
+     {
+      "claim": "Perps_AI recap attributes Lookonchain's Garrett Jin identification and the three trade numbers",
+      "handle": "Perps_AI",
+      "url": "https://x.com/Perps_AI/status/2103504032392155153",
+      "posted_at_utc": "2026-09-25T15:16:57Z",
+      "verbatim_excerpt": "That's the Hyperliquid account Lookonchain identified as Garrett Jin's in its September 24 report. The trade history shows: • ZEC short: +$11.20M • BTC long: +$8.38M • Another ZEC short: −$35.44M"
+     },
+     {
+      "claim": "Hyperbotai calls a full address Boomer-linked",
+      "handle": "Hyperbotai",
+      "url": "https://x.com/Hyperbotai/status/2105245286281183312",
+      "posted_at_utc": "2026-09-30T10:36:04Z",
+      "verbatim_excerpt": "Boomer-linked wallet: 0xbf732ea04197942783e34730ed6e0f6099575d58"
+     },
+     {
+      "claim": "Hyperbotai prints the Machi tracked wallet in full",
+      "handle": "Hyperbotai",
+      "url": "https://x.com/Hyperbotai/status/2105247944295518213",
+      "posted_at_utc": "2026-09-30T10:46:38Z",
+      "verbatim_excerpt": "Machi Big Brother's tracked wallet: 0x020ca66c30bec2c4fe3861a94e4db4a498a35872"
+     }
+    ],
+    "addresses": [
+     {
+      "address": "0xecb63caa47c7c4e77f60f1ce858cf28dc2b82b00",
+      "label_in_post": "Wintermute, as labelled by OnchainLens",
+      "source_url": "https://x.com/OnchainLens/status/2104521982863901005",
+      "from_image": false
+     },
+     {
+      "address": "0xbf732ea04197942783e34730ed6e0f6099575d58",
+      "label_in_post": "Boomer-linked wallet, linked to @solanadoomer1 by Hyperbotai",
+      "source_url": "https://x.com/Hyperbotai/status/2105245286281183312",
+      "from_image": false
+     },
+     {
+      "address": "0x020ca66c30bec2c4fe3861a94e4db4a498a35872",
+      "label_in_post": "Machi Big Brother's tracked wallet",
+      "source_url": "https://x.com/Hyperbotai/status/2105247944295518213",
+      "from_image": false
+     }
+    ],
+    "notes": "Fact: no Wintermute, Abraxas, Garrett Jin, Boomer, or Machi confirmation/denial post was found. Abraxas 0xb83d… and 0x5b5d… were not printed in full in the posts opened. The $56.4M ZEC short was not in these posts; Hub says ZEC $54M exposure."
+   },
+   {
+    "id": "C10",
+    "status": "partially_answered",
+    "findings": [
+     {
+      "claim": "Nansen post is about its own trading agent, not a public trader screen",
+      "handle": "nansen_ai",
+      "url": "https://x.com/nansen_ai/status/2089245354311274889",
+      "posted_at_utc": "2026-08-17T06:58:03Z",
+      "verbatim_excerpt": "Perps: market/limit orders, TP/SL brackets, leverage, the full Hyperliquid position lifecycle. Non-custodial. Your keys never touch our servers."
+     },
+     {
+      "claim": "Altcopy posts a vault spotlight with a Calmar figure, not a wallet-skill screen",
+      "handle": "altcopytrade",
+      "url": "https://x.com/altcopytrade/status/2105326854924104041",
+      "posted_at_utc": "2026-09-30T16:00:11Z",
+      "verbatim_excerpt": "Vault spotlight: PF1 • 53% annualized return • Calmar 7.36 (return per unit of drawdown) Recomputed from its public PnL curve, not the headline. https://altcopy.trade"
+     },
+     {
+      "claim": ".hl names post is identity infrastructure, not trader ranking",
+      "handle": "hlnames",
+      "url": "https://x.com/hlnames/status/2102070091521355918",
+      "posted_at_utc": "2026-09-21T16:18:59Z",
+      "verbatim_excerpt": "Today we launch .hl.hn with @ensdomains. ENS can now resolve your .hl name."
+     }
+    ],
+    "addresses": [],
+    "notes": "Opened posts do not show these three accounts vetting discretionary perp traders. not_found this pass for a relevant last-6-month post: CryptHypoBuster, MinaraCN beyond the already opened article, HyperliquidR, ponyo_fp, FourPillarsFP, GLC_Research, mogie__, ericonomic, shaundadevens, 0xTraderSam, tradexyz, sershokunin, AiCoincom, GHYPURR, whale_alert."
+   },
+   {
+    "id": "C11",
+    "status": "not_found",
+    "findings": [],
+    "addresses": [],
+    "notes": "No post in this search showed a trader publishing their own Hyperliquid address plus a 12-month equity curve, fills, or PnL calendar. Hits were referral PnL conversions, not owner track records. Judgement: the 12-month self-posted discretionary book remains not_found."
+   },
+   {
+    "id": "C12",
+    "status": "partially_answered",
+    "findings": [
+     {
+      "claim": "kitsune-de style MCP claims read-only any-address queries and no signing",
+      "handle": "kitsunedevs",
+      "url": "https://x.com/kitsunedevs/status/2078289569821167805",
+      "posted_at_utc": "2026-07-18T01:23:40Z",
+      "verbatim_excerpt": "Built hyperliquid-mcp a tiny open-source MCP server (2 source files, zero API keys) ... positions, PnL and liquidation price of ANY address. Read-only by design: no wallet, no signing, it physically can't trade."
+     }
+    ],
+    "addresses": [],
+    "notes": "not_found this pass: public Google Sheet/Notion scorer, TradingView wallet script, browser extension, leaderboard-to-skill repo with a visible commit, Flipside skill dashboard. The kitsune post says no key and no signing; repo t.co was not expanded."
+   }
+  ]
+ },
+ "items": [
+  {
+   "id": "A01",
+   "batch": "A",
+   "url": "https://x.com/HyperTracker/status/2102762090943652027",
+   "fetch_status": "ok",
+   "author": "HyperTracker",
+   "posted_at_utc": "2026-09-23T14:08:44Z",
+   "post_type": "tweet",
+   "verdict": "partly_confirmed",
+   "finding": "HyperTracker HYPE cohort-bias card: all cohorts Bullish/Very Bullish except Full Rekt (wallets down >$100k). Cohort rows e.g. Smart Money 85 pos / $26.3M, Money Prin… 25 / $23.5M, Full Rekt 55 / $3.32M. It is a HyperTracker post (not Hyperdash) and says nothing about discounting 100%-long weeks.",
+   "text_verbatim": "gm\n\nIn the last 24h, almost everyone on Hyperliquid is Bullish or Very Bullish on $HYPE.\n\nThe only Bearish cohort is Full Rekt, aka wallets down more than $100k. \n\nThe house of all finance.",
+   "category": "TRACK",
+   "usefulness_1_to_5": 4,
+   "addresses": [],
+   "tools_mentioned": [
+    "HyperTracker",
+    "CoinMarketMan"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "The only Bearish cohort is Full Rekt, aka wallets down more than $100k.",
+     "metric": "cohort PnL",
+     "operator": "<",
+     "value": "-100000",
+     "unit": "USD",
+     "window": "unspecified"
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "Full Rekt definition",
+     "value": "wallets down more than $100k",
+     "unit": "USD",
+     "window": "unspecified",
+     "context": "tweet text; only cohort called Bearish in last 24h on HYPE"
+    },
+    {
+     "metric": "cohort position counts and values",
+     "value": "see media transcription",
+     "unit": "positions / USD",
+     "window": "chart snapshot, not dated in image",
+     "context": "image attached to post"
+    }
+   ],
+   "links_expanded": [
+    "https://app.coinmarketman.com/hypertracker/perps/HYPE"
+   ],
+   "claim_check_corrections": "Post is HyperTracker only, not Hyperdash. It does not say not to treat 100%-long weeks as skill. It says last 24h almost everyone is Bullish or Very Bullish on HYPE, and only Full Rekt is Bearish."
+  },
+  {
+   "id": "A02",
+   "batch": "A",
+   "url": "https://x.com/HansonBirringer/status/2102894931258011901",
+   "fetch_status": "ok",
+   "author": "HansonBirringer",
+   "posted_at_utc": "2026-09-23T22:56:36Z",
+   "post_type": "tweet",
+   "verdict": "contradicted",
+   "finding": "CONTRADICTED. This post is a Hyperdash volume/revenue brag with no HIP-3 content. The HIP-3 mark-on-chain post is a different tweet: x.com/HansonBirringer/status/2103099378840088842 (2026-09-24).",
+   "text_verbatim": "Today was our highest volume and revenue day here at @hypurrdash. \n\nReally exciting to see all of the hard work the team has been putting in behind the scenes start to pay off publicly.\n\nMore to come soon, a lot more 🫡",
+   "category": "NOISE",
+   "usefulness_1_to_5": 1,
+   "addresses": [],
+   "tools_mentioned": [
+    "Hyperdash"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [],
+   "links_expanded": [],
+   "claim_check_corrections": "This post has no US or HIP-3 content. The HIP-3 mark post is a different tweet the next day."
+  },
+  {
+   "id": "A03",
+   "batch": "A",
+   "url": "https://x.com/hydromancerxyz/status/2067990625224425636",
+   "fetch_status": "ok",
+   "author": "hydromancerxyz",
+   "posted_at_utc": "2026-06-19T15:19:21Z",
+   "post_type": "quote",
+   "verdict": "partly_confirmed",
+   "finding": "Hydromancer Reservoir: free, no API key (tweet). Linked docs: AWS S3 requester-pays; fills incl. liquidations, ADLs, builder and TWAP fills; HIP-3 deployer data; candles/snapshots/orderbook; coverage 'from launch', no date.",
+   "text_verbatim": "alternative indicator for Hyperliquid activity growth - the amount of downloads of our historical data archive. And it's been breaching ATHs\n\nreminder that you too can get complete and free Hyperliquid data on https://docs.hydromancer.xyz/reservoir no API key required\n\nhttps://t.co/anAWtHHpKw",
+   "category": "PARSE_DATA",
+   "usefulness_1_to_5": 4,
+   "addresses": [],
+   "tools_mentioned": [
+    "Hydromancer Reservoir"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "API key",
+     "value": "no API key required",
+     "unit": "",
+     "window": "",
+     "context": "tweet"
+    }
+   ],
+   "links_expanded": [
+    "https://docs.hydromancer.xyz/reservoir",
+    "not expanded",
+    "https://x.com/i/article/2033865477773004801"
+   ],
+   "claim_check_corrections": "Tweet says complete and free data, no API key, and shows download-volume charts. It does not say parquet, requester-pays, daily cadence, or list liq/ADL/builder/TWAP/HIP-3. Those phrases are on the docs page opened from the link: 'Free, forever.'; 'Data is delivered through AWS S3, requester pays'; 'No API key required'; datasets 'Fills — all trades, liquidations, ADLs, builder fills, TWAP fills'; 'Access the data of every HIP-3 deployer'; 'Complete history from launch!' No specific start date on that page."
+  },
+  {
+   "id": "A04",
+   "batch": "A",
+   "url": "https://x.com/i/article/2096610433134120960",
+   "fetch_status": "unavailable",
+   "author": null,
+   "posted_at_utc": null,
+   "post_type": "article",
+   "verdict": "cannot_verify",
+   "finding": "UNAVAILABLE. Grok could not fetch the Hyperank x.com/i/article body (x_thread_fetch error). Method details still unseen.",
+   "text_verbatim": "",
+   "category": "GUIDE",
+   "usefulness_1_to_5": 1,
+   "addresses": [],
+   "tools_mentioned": [],
+   "thresholds_or_rules": [],
+   "numbers": [],
+   "links_expanded": [],
+   "claim_check_corrections": "Article body not fetched. Nearby hypeRankio post A05 is a different object and was opened separately."
+  },
+  {
+   "id": "A05",
+   "batch": "A",
+   "url": "https://x.com/hypeRankio/status/2096629457981235203",
+   "fetch_status": "ok",
+   "author": "hypeRankio",
+   "posted_at_utc": "2026-09-06T15:59:50Z",
+   "post_type": "tweet",
+   "verdict": "partly_confirmed",
+   "finding": "Not the article: a long tweet. Profit is not copyability; Copy Score 'describes how copyable the wallet has been', not a prediction; 0.02% builder fee on copied volume, no subscription/performance fee/token; simulator window 30 days; no numeric score cutoffs. Guide: hyperank.io/guide.",
+   "text_verbatim": "Finding a profitable wallet is easy.\nFinding one that can actually be copied — with a different account size, different entry timing and real execution constraints — is a much harder problem.\nThat is the problem hypeRank is built to solve.\nhypeRank continuously analyzes Hyperliquid wallets, ranks them by copyability and allows users to mirror selected traders under their own allocation and risk limits.\nHere is how the complete workflow works.\n1. Find traders by copyability\nMost leaderboards are sorted by profit.\nThat can tell you who performed well recently, but it does not tell you whether those results can realistically survive being copied.\nA trader may enter thin markets, hold highly concentrated positions, scale in aggressively or close positions in multiple stages. These behaviours matter when another account attempts to follow the same strategy.\nThe hypeRank Leaderboard therefore ranks screened wallets by Copy Score rather than profit alone.\nYou can also use:\nSharpshooters to explore high-win-rate wallets within the same scoring framework\nWallet Checker to analyze any Hyperliquid address\nCompare to evaluate multiple traders side by side\nYou do not need to connect a wallet to use these research tools.\n \n2. Understand what you would actually be copying\nEvery trader page is designed to answer one question:\n“If I copied this wallet, what would I be signing up for?”\nThe page includes:\nCopy Score\nTrader Snapshot\nRisk-adjusted performance\nMaximum drawdown\nWin rate and payoff ratio\nEffective leverage and margin usage\nCurrent on-chain positions\nClosed round trips\nMinimum wallet requirements\nCopy-mode compatibility\nCopy Score is not a prediction or a performance rating. It describes how copyable the wallet has been during the measured period.\nThat distinction matters.\nA profitable trader is not automatically a copyable trader.\n \n3. Choose the right copy mode\nThe same trader can produce very different results depending on how position sizing is mirrored.\nhypeRank currently supports two live copy modes:\nProportional Copy\nYour positions are scaled according to your allocation and the trader’s exposure. The trader’s sizing decisions carry over without requiring the same account size.\nFixed Dollar Copy\nEvery opening and closing action is mirrored using a fixed dollar amount. This can be better suited to traders whose orders are placed in relatively consistent sizes.\nEach wallet is scored separately for every copy mode. The best-fitting mode is highlighted on the trader page.\nThe question is therefore not only “Is this trader good?”\nIt is also “Which copying method fits this trader’s behaviour?”\n4. Test the strategy at your own account size\nThe “If you had copied” simulator replays the trader’s previous 30 days using an allocation you choose.\nIt shows:\nEstimated 30-day P/L\nCapital actually tied up\nMinimum wallet size\nResults under different copy modes\nThis helps reveal something a headline P/L number cannot: whether the strategy is practical for your own capital.\nThe simulator is a historical projection, not a promise of future returns. Its purpose is to show the shape, capital requirements and potential execution cost of copying the strategy.\n \n5. Start in paper mode\nSimulation mode is enabled by default when creating a follow.\nIn paper mode, no orders are sent to the exchange. hypeRank records what would have happened using the trader’s live actions and your selected configuration.\nThis allows you to test:\nYour allocation\nThe selected copy mode\nPosition limits\nExcluded markets\nStop-loss settings\nExecution behaviour\nWhen you are comfortable with the results, the same configuration can be moved to live execution.\n6. Define your own risk boundaries\nFollowing a trader does not mean giving them unrestricted control over your account.\nEvery hypeRank follow has its own allocation and risk configuration, including:\nStop loss\nDaily loss limit\nMaximum open positions\nLeverage cap\nMaximum notional per trade\nMaximum slippage\nExcluded markets\nThese checks run before an order is sent.\nIf an order would breach one of your limits, it is blocked rather than executed first and reported later.\n \n7. Choose where the copy is executed\nTrader discovery and scoring are based on Hyperliquid activity.\nYour own copied orders can currently be executed on:\nHyperliquid\nLighter Robinhood\nThe trader signal remains the same, while you choose the execution venue for each follow.\nEach follow uses one venue, its own allocated balance and its own limits. \nIf a market does not exist on the selected venue, the trade is skipped and recorded with the reason.\n \nBuilt for research first, execution second\nMost of hypeRank can be explored without connecting a wallet.\nYou only need to connect and authorize trading permissions when you decide to run a live follow. On Hyperliquid, execution uses an authorized agent wallet that can place orders but cannot withdraw funds.\nhypeRank charges a 0.02% builder fee on copied volume. There is no subscription, performance fee, lockup or token.\nCopy trading involves real risk, and past performance does not guarantee future results.\nThe goal is not to remove that risk.\nIt is to make the process of selecting, testing and copying a trader more transparent, measurable and controllable.\nExplore the platform: https://hyperank.io\nRead the complete guide: https://hyperank.io/guide",
+   "category": "FILTER",
+   "usefulness_1_to_5": 4,
+   "addresses": [],
+   "tools_mentioned": [
+    "hypeRank",
+    "hyperank.io",
+    "Sharpshooters",
+    "Wallet Checker",
+    "Compare",
+    "Proportional Copy",
+    "Fixed Dollar Copy"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "Copy Score is not a prediction or a performance rating. It describes how copyable the wallet has been during the measured period.",
+     "metric": "Copy Score",
+     "operator": "",
+     "value": "",
+     "unit": "",
+     "window": "measured period"
+    },
+    {
+     "rule_text": "A profitable trader is not automatically a copyable trader.",
+     "metric": "copyability",
+     "operator": "",
+     "value": "",
+     "unit": "",
+     "window": ""
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "builder fee",
+     "value": "0.02",
+     "unit": "percent of copied volume",
+     "window": "",
+     "context": "no subscription, performance fee, lockup or token"
+    },
+    {
+     "metric": "simulator window",
+     "value": "30",
+     "unit": "days",
+     "window": "previous 30 days",
+     "context": "If you had copied simulator"
+    }
+   ],
+   "links_expanded": [
+    "https://hyperank.io",
+    "https://hyperank.io/guide"
+   ],
+   "claim_check_corrections": "This object is a long tweet, not an x.com/i/article. It does say profit is not copyability, names minimum wallet size in the simulator, and says a missing market on the execution venue is skipped. It does not state a venue ticket size or numeric score thresholds."
+  },
+  {
+   "id": "A06",
+   "batch": "A",
+   "url": "https://x.com/OnchainLens/status/2097320422526374392",
+   "fetch_status": "ok",
+   "author": "OnchainLens",
+   "posted_at_utc": "2026-09-08T13:45:29Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Address completed: 0x337afda118de433f5a8c8ad6d6ef48b76d027a06. Liquidated on $1.15M BTC+SOL (~-$42K). Lifetime +$632.0K, 30d +$630.1K (almost all profit is recent), 7 liquidations, net realized +$421.6K, largest loss -$207.2K, fees $40.6K.",
+   "text_verbatim": "TRADER LIQUIDATED ON $1.15M BTC + SOL POSITION\n\nA Hyperliquid trader was liquidated on a combined $1.15M bitcoin:native and $SOL position minutes ago, taking a ~$42K loss.\n\nDespite 7 lifetime liquidation events, the wallet remains up ~$632K on perps.\n\nAddress: 0x337afda118de433f5a8c8ad6d6ef48b76d027a06",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 4,
+   "addresses": [
+    {
+     "address": "0x337afda118de433f5a8c8ad6d6ef48b76d027a06",
+     "label_in_post": "Hyperliquid trader",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [
+    "Onchain Lens"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "combined liquidation notional",
+     "value": "1.15",
+     "unit": "USD millions",
+     "window": "minutes ago",
+     "context": "BTC and SOL"
+    },
+    {
+     "metric": "loss on that liquidation",
+     "value": "~42",
+     "unit": "USD thousands",
+     "window": "minutes ago",
+     "context": "tweet; image says -$42.0K"
+    },
+    {
+     "metric": "lifetime liquidations",
+     "value": "7",
+     "unit": "count",
+     "window": "lifetime",
+     "context": ""
+    },
+    {
+     "metric": "perp PnL",
+     "value": "~632",
+     "unit": "USD thousands",
+     "window": "lifetime perps",
+     "context": "image lifetime +$632.0K and 30d +$630.1K"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Full address is in the tweet text. Image also shows 30-day +$630.1K, net realized +$421.6K, largest loss -$207.2K, fees $40.6K. Liquidation markets on the card include multi-asset, XRP, BTC, HYPE, not only the latest BTC+SOL event."
+  },
+  {
+   "id": "A07",
+   "batch": "A",
+   "url": "https://x.com/lookonchain/status/2100835870219923791",
+   "fetch_status": "ok",
+   "author": "lookonchain",
+   "posted_at_utc": "2026-09-18T06:34:37Z",
+   "post_type": "tweet",
+   "verdict": "partly_confirmed",
+   "finding": "Lookonchain card: over 3 days, 11 new wallets (likely one whale) sold 602 BTC ($45.83M) and bought 18,780 ETH ($45.83M). Follow-up 2026-09-21: 5 days, 1,107 BTC ($86.76M) -> 34,422 ETH, staked. Only 4 address prefixes visible; the 11 full addresses are NOT recoverable. Arkham entity link in post.",
+   "text_verbatim": "Whales are rotating from $BTC into $ETH!\n\nOver the past 3 days, 11 newly created wallets (likely belonging to the same whale) sold 602 $BTC ($45.83M) on #Hyperliquid and bought 18,780 $ETH ($45.83M).\n\nhttps://arkm.com/explorer/entity/0df9ea45-8523-4b36-a0a4-ba876af036b0",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 4,
+   "addresses": [],
+   "tools_mentioned": [
+    "Arkham",
+    "Hyperliquid"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "wallets",
+     "value": "11",
+     "unit": "newly created wallets",
+     "window": "past 3 days",
+     "context": "likely belonging to the same whale"
+    },
+    {
+     "metric": "BTC sold",
+     "value": "602",
+     "unit": "BTC",
+     "window": "past 3 days",
+     "context": "$45.83M on Hyperliquid"
+    },
+    {
+     "metric": "ETH bought",
+     "value": "18780",
+     "unit": "ETH",
+     "window": "past 3 days",
+     "context": "$45.83M"
+    }
+   ],
+   "links_expanded": [
+    "https://arkm.com/explorer/entity/0df9ea45-8523-4b36-a0a4-ba876af036b0"
+   ],
+   "claim_check_corrections": "This URL is that card. Window is past 3 days, not same day. Notional is $45.83M each side, not ~$20M. Lookonchain says likely the same whale, not a confirmed entity. Images do not show 11 full addresses."
+  },
+  {
+   "id": "A08",
+   "batch": "A",
+   "url": "https://x.com/hypurrdash/status/2102120819111453066",
+   "fetch_status": "ok",
+   "author": "hypurrdash",
+   "posted_at_utc": "2026-09-21T19:40:33Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Hyperdash: @solanadoomer1 = 0xbf73…5d58, #1 by 30D net realized PnL +$12,270,577.85 (account value $6.59M), $35M ETH long +$2.2M. Rank 2 0xa5b0…1d41 +$10.13M; rank 3 'MP05' +$9.95M. No win rate or drawdown shown.",
+   "text_verbatim": "After closing his ZEC long earlier this week, @solanadoomer1 went long $35M of ETH and is currently up $2.2M on his position. \n\nHe is currently the #1 top trader globally by realized pnl this month at $12.3M. \n\nhttps://hyperdash.com/address/0xbf732ea04197942783e34730ed6e0f6099575d58",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 4,
+   "addresses": [
+    {
+     "address": "0xbf732ea04197942783e34730ed6e0f6099575d58",
+     "label_in_post": "@solanadoomer1, #1 realized pnl this month",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [
+    "Hyperdash"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "ETH long",
+     "value": "35",
+     "unit": "USD millions",
+     "window": "current",
+     "context": "after closing ZEC long earlier this week"
+    },
+    {
+     "metric": "unrealized on ETH long",
+     "value": "2.2",
+     "unit": "USD millions",
+     "window": "current",
+     "context": ""
+    },
+    {
+     "metric": "realized pnl this month",
+     "value": "12.3",
+     "unit": "USD millions",
+     "window": "this month",
+     "context": "tweet; image 30D net PnL +$12,270,577.85"
+    }
+   ],
+   "links_expanded": [
+    "https://hyperdash.com/address/0xbf732ea04197942783e34730ed6e0f6099575d58"
+   ],
+   "claim_check_corrections": "This is that post. Image shows +$12,270,577.85 net PnL on the 30D tab and account value $6,586,142. No win rate or drawdown shown."
+  },
+  {
+   "id": "A09",
+   "batch": "A",
+   "url": "https://x.com/BazydloMis57623/status/2103548912900694418",
+   "fetch_status": "ok",
+   "author": "BazydloMis57623",
+   "posted_at_utc": "2026-09-25T18:15:17Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Whale Street (Nansen buildathon): six-check listing committee (track record, size, human-or-bot, hidden hedges via linked wallets, concentration, uniqueness). '817 trades/day' is one demo rejection, not a cutoff. No app/repo URL in post.",
+   "text_verbatim": "I built a stock exchange where every listed company is a real Hyperliquid trader.\n\nIt's called Whale Street, made for the @nansen_ai Meridian buildathon.\n\nEach trader is picked and profiled with the Nansen API. Their share price is their actual performance, a NAV computed from live positions and PnL, times whatever premium the crowd is willing to pay on top. When they open, add to or close a position, it lands on the floor as a company filing. If they get liquidated, the company goes bankrupt.\n\nNew listings have to get past a six-check committee that runs on Nansen data: track record, size, human or bot, hidden hedges through linked wallets, concentration, uniqueness. In the video it turns down a wallet doing 817 trades a day as a market maker.\n\nYou can also mirror a trader with real money. Orders go through the Nansen Trading API under hard caps, and the engine refuses to enter far worse than the trader did. The clip shows one refusal and one real $12 fill on Hyperliquid.\n\nEverything else is play money. Bots and AI agents (over MCP) trade alongside people.\n\nTry it: https://t.co/4WfTiPqTG9\nCode:",
+   "category": "FILTER",
+   "usefulness_1_to_5": 3,
+   "addresses": [],
+   "tools_mentioned": [
+    "Whale Street",
+    "Nansen API",
+    "Nansen Trading API",
+    "MCP"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "six-check committee: track record, size, human or bot, hidden hedges through linked wallets, concentration, uniqueness",
+     "metric": "listing checks",
+     "operator": "",
+     "value": "",
+     "unit": "",
+     "window": ""
+    },
+    {
+     "rule_text": "In the video it turns down a wallet doing 817 trades a day as a market maker.",
+     "metric": "trades per day",
+     "operator": "",
+     "value": "817",
+     "unit": "trades/day",
+     "window": "demo"
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "demo reject trade rate",
+     "value": "817",
+     "unit": "trades/day",
+     "window": "video demo",
+     "context": "turned down as a market maker"
+    },
+    {
+     "metric": "real fill shown",
+     "value": "12",
+     "unit": "USD",
+     "window": "clip",
+     "context": "one real Hyperliquid fill"
+    }
+   ],
+   "links_expanded": [
+    "not expanded"
+   ],
+   "claim_check_corrections": "Try-it t.co was not expanded. The Code: line has no URL after it."
+  },
+  {
+   "id": "A10",
+   "batch": "A",
+   "url": "https://x.com/EmberCN/status/2104038318551994481",
+   "fetch_status": "ok",
+   "author": "EmberCN",
+   "posted_at_utc": "2026-09-27T02:40:00Z",
+   "post_type": "quote",
+   "verdict": "partly_confirmed",
+   "finding": "Address completed: 0x9c6a5b4662c722d2c47f43d6c9813cb080ffa4ed. 550,000 SOL long from $80.8, floating +$22.43M, still held. Quoted 2026-08-09 post: TWAP plan 500,000 SOL, 186,000 filled at avg $76.",
+   "text_verbatim": "一个半月时间，SOL 从 $70+ 到现在 $120+。\n\n这个在 8 月初开多 SOL 的鲸鱼，现在浮盈 $2243 万了👍\n这轮行情反弹初期以 $80.8 的价格做多了 55 万枚 SOL 拿到了现在，基本上吃满了 SOL 本轮至今的反弹幅度。\n\nhttps://hypurrscan.io/address/0x9c6a5b4662c722d2c47f43d6c9813cb080ffa4ed#perps\n\n--------------------------------------------------------------------------\n#Bitget 来了就是VIP！Crypto、美股、CFD，全球先机一站布局",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 3,
+   "addresses": [
+    {
+     "address": "0x9c6a5b4662c722d2c47f43d6c9813cb080ffa4ed",
+     "label_in_post": "SOL long whale",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [
+    "HypurrScan"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "unrealized PnL",
+     "value": "2243",
+     "unit": "USD 万 (22.43 million)",
+     "window": "about 1.5 months",
+     "context": "floating profit now"
+    },
+    {
+     "metric": "SOL long size",
+     "value": "550000",
+     "unit": "SOL",
+     "window": "held to now",
+     "context": "entry $80.8 at rebound start"
+    },
+    {
+     "metric": "entry price",
+     "value": "80.8",
+     "unit": "USD",
+     "window": "early August",
+     "context": ""
+    },
+    {
+     "metric": "quoted TWAP plan",
+     "value": "500000",
+     "unit": "SOL",
+     "window": "2026-08-09 quoted post",
+     "context": "filled 186000 SOL at avg $76, plan notional $38 million"
+    }
+   ],
+   "links_expanded": [
+    "https://hypurrscan.io/address/0x9c6a5b4662c722d2c47f43d6c9813cb080ffa4ed#perps"
+   ],
+   "claim_check_corrections": "This post says floating profit $2243万, which is $22.43 million, size 550,000 SOL at $80.8, held about 1.5 months. The TWAP detail is in the quoted 2026-08-09 post: plan 500,000 SOL, then filled 186,000 at avg $76."
+  },
+  {
+   "id": "A11",
+   "batch": "A",
+   "url": "https://x.com/hypedexer/status/2104878996232323421",
+   "fetch_status": "ok",
+   "author": "hypedexer",
+   "posted_at_utc": "2026-09-29T10:20:34Z",
+   "post_type": "thread_root",
+   "verdict": "partly_confirmed",
+   "finding": "Hypedexer 24h stats: 15.05M fills, $10.5B, 84,006 addresses; TWAPs 46.1% finished / 35.3% terminated; HIP-3 $3.09B on 10 dexes (xyz 97.8%). Free tier 5,000 credits/month confirmed. '78 MCP tools' and 'fills since Nov 2024' are NOT in this thread (the latter is in A19).",
+   "text_verbatim": "The other side of 2026-09-29. 24 hours of @HyperliquidX, as indexed.\n\n15.05M fills · $10.5B · 84,006 addresses\nTWAPs: 46.1% finished, 35.3% terminated\nHIP-3: $3.09B on 10 dexes, @tradexyz 98% of the top 100\n\nThe calls are on the card. Re-run them.",
+   "category": "PARSE_DATA",
+   "usefulness_1_to_5": 5,
+   "addresses": [],
+   "tools_mentioned": [
+    "Hypedexer"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "fills",
+     "value": "15.05",
+     "unit": "million",
+     "window": "24h",
+     "context": "indexed"
+    },
+    {
+     "metric": "volume",
+     "value": "10.5",
+     "unit": "USD billions",
+     "window": "24h",
+     "context": ""
+    },
+    {
+     "metric": "addresses",
+     "value": "84006",
+     "unit": "count",
+     "window": "24h",
+     "context": ""
+    },
+    {
+     "metric": "TWAP finished",
+     "value": "46.1",
+     "unit": "percent",
+     "window": "24h",
+     "context": ""
+    },
+    {
+     "metric": "TWAP terminated",
+     "value": "35.3",
+     "unit": "percent",
+     "window": "24h",
+     "context": ""
+    },
+    {
+     "metric": "HIP-3 volume",
+     "value": "3.09",
+     "unit": "USD billions",
+     "window": "24h",
+     "context": "10 dexes"
+    },
+    {
+     "metric": "free tier",
+     "value": "5000",
+     "unit": "credits/month",
+     "window": "",
+     "context": "reply"
+    }
+   ],
+   "links_expanded": [
+    "https://docs.hypedexer.com/quickstart"
+   ],
+   "claim_check_corrections": "Free tier 5,000 credits/month and those five GETs are in the reply. 78 MCP tools and fills-since-Nov-2024 are not in this thread."
+  },
+  {
+   "id": "A12",
+   "batch": "A",
+   "url": "https://x.com/HyperTracker/status/2104914845074403408",
+   "fetch_status": "ok",
+   "author": "HyperTracker",
+   "posted_at_utc": "2026-09-29T12:43:01Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "HyperTracker: wallet search by .hl name (hlnames) is live. No API or leaderboard change.",
+   "text_verbatim": "@hlnames search is now live.\n\nYou can now search for any wallet using their .hl names on HyperTracker 🔍\n\nDon't have a .hl name yet? Check out @hlnames for more info on how to claim.\n\nHyperliquid",
+   "category": "TRACK",
+   "usefulness_1_to_5": 3,
+   "addresses": [],
+   "tools_mentioned": [
+    "HyperTracker",
+    "hlnames"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [],
+   "links_expanded": [],
+   "claim_check_corrections": "No API or leaderboard change is mentioned."
+  },
+  {
+   "id": "A13",
+   "batch": "A",
+   "url": "https://x.com/Hyperbotai/status/2105247944295518213",
+   "fetch_status": "ok",
+   "author": "Hyperbotai",
+   "posted_at_utc": "2026-09-30T10:46:38Z",
+   "post_type": "reply",
+   "verdict": "confirmed",
+   "finding": "Hyperbot card for 0x020ca66c…5872 (labelled Machi): equity $7.77M, position value $149.57M, 19.24x, 1W win rate 81.82%, 1W max DD 12.32%, 3,290 trades, 1M perp PnL +$2.22M; BTC 40x cross. Separate Hyperbotai post 2105245286281183312 links 0xbf73…5d58 to Boomer (@solanadoomer1): 2.32B PUMP long ~$13.64M, equity ~$1.28M.",
+   "text_verbatim": "Machi Big Brother’s tracked wallet:\n0x020ca66c30bec2c4fe3861a94e4db4a498a35872\n\nTrack Live positions:\nhttps://hyperbot.network/trader/0x020ca66c30bec2c4fe3861a94e4db4a498a35872",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 4,
+   "addresses": [
+    {
+     "address": "0x020ca66c30bec2c4fe3861a94e4db4a498a35872",
+     "label_in_post": "Machi Big Brother’s tracked wallet",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [
+    "Hyperbot"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "BTC long",
+     "value": "368",
+     "unit": "BTC",
+     "window": "2026-09-30 10:40 UTC",
+     "context": "~$30.85M, up 299 BTC from 69 BTC"
+    },
+    {
+     "metric": "four longs notional",
+     "value": "149.7",
+     "unit": "USD millions",
+     "window": "snapshot",
+     "context": "parent text"
+    },
+    {
+     "metric": "account equity",
+     "value": "7.81",
+     "unit": "USD millions",
+     "window": "snapshot",
+     "context": "parent text; image $7,771,851.08"
+    }
+   ],
+   "links_expanded": [
+    "https://hyperbot.network/trader/0x020ca66c30bec2c4fe3861a94e4db4a498a35872"
+   ],
+   "claim_check_corrections": "Requested post is the address reply. Parent has the size figures. Boomer is a separate same-day post, not this one."
+  },
+  {
+   "id": "A14",
+   "batch": "A",
+   "url": "https://x.com/CryptHypoBuster/status/2105387702149582875",
+   "fetch_status": "ok",
+   "author": "CryptHypoBuster",
+   "posted_at_utc": "2026-09-30T20:01:59Z",
+   "post_type": "reply",
+   "verdict": "partly_confirmed",
+   "finding": "CryptHypoBuster (IndiciaDesk): tracks 248 whale wallets; two wallets reopened $46.5M of 40x BTC longs (NOT $109M). Image: whale BTC longs $138.6M -> $210.5M; amber = liq within 5% of price. Addresses truncated; selection method of the 248 not stated.",
+   "text_verbatim": "On Hyperliquid you skip the clustering, positions are public per address. That's how I track 248 whale wallets: tonight two that exited during the afternoon spike reopened $46.5M of 40x BTC longs. The address is visible, the identity isn't, and I never assume one.",
+   "category": "TRACK",
+   "usefulness_1_to_5": 3,
+   "addresses": [],
+   "tools_mentioned": [
+    "IndiciaDesk",
+    "Hyperliquid"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "Liq in amber: within 5% of price.",
+     "metric": "liquidation distance",
+     "operator": "<=",
+     "value": "5",
+     "unit": "percent of price",
+     "window": "image legend"
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "wallets tracked",
+     "value": "248",
+     "unit": "whale wallets",
+     "window": "",
+     "context": "tweet and image footer"
+    },
+    {
+     "metric": "reopened 40x BTC longs",
+     "value": "46.5",
+     "unit": "USD millions",
+     "window": "tonight",
+     "context": "two wallets; image $25.5M + $21.0M"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "248 wallets and public positions are in the post. Added longs in the text are $46.5M of 40x, not $109M. Image says whale BTC longs went from $138.6M to $210.5M. No size-weighted leverage figure. Addresses are truncated. How the 248 were chosen is not stated."
+  },
+  {
+   "id": "A15",
+   "batch": "A",
+   "url": "https://x.com/rpahlmeyer/status/2090227288658886856",
+   "fetch_status": "ok",
+   "author": "rpahlmeyer",
+   "posted_at_utc": "2026-08-19T23:59:54Z",
+   "post_type": "quote",
+   "verdict": "confirmed",
+   "finding": "Only says the wallet was liquidated and gives 0x0ddf9bae…a902. The 5.5%-from-liquidation figure is in the quoted post. No dollar loss.",
+   "text_verbatim": "Update: They were liquidated 💀💀💀\n0x0ddf9bae2af4b874b96d287a5ad42eb47138a902",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 2,
+   "addresses": [
+    {
+     "address": "0x0ddf9bae2af4b874b96d287a5ad42eb47138a902",
+     "label_in_post": "liquidated ETH short",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "distance to liquidation before event",
+     "value": "5.5",
+     "unit": "percent",
+     "window": "quoted post same day",
+     "context": "ETH short"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Post only says they were liquidated and gives the address. Quoted post says 5.5% from liquidation on an ETH short. No dollar loss."
+  },
+  {
+   "id": "A16",
+   "batch": "A",
+   "url": "https://x.com/cryppimagic/status/2102686206811058545",
+   "fetch_status": "ok",
+   "author": "cryppimagic",
+   "posted_at_utc": "2026-09-23T09:07:12Z",
+   "post_type": "quote",
+   "verdict": "not_in_post",
+   "finding": "NOT IN POST: it only notes a $DRV HIP-3 perp deployed by Paragon. No API call or `dex` parameter is named (that advice is from docs/agent, not this tweet).",
+   "text_verbatim": "spotted a $DRV perp ticker in the hyperliquid API, deployed by paragon via HIP-3\n\nthere's already a $DRV perp on Aster, but liquidity is dogshit ($5k 24h vol lol)\n\nparagon's moves are pretty interesting tbh: they list crypto tokens the community actually cares about but HL itself won't list. first it was TREAD, now this..",
+   "category": "PARSE_DATA",
+   "usefulness_1_to_5": 2,
+   "addresses": [],
+   "tools_mentioned": [
+    "Hyperliquid API",
+    "Aster",
+    "HIP-3"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "Aster DRV 24h volume",
+     "value": "5",
+     "unit": "USD thousands",
+     "window": "24h",
+     "context": "called dogshit liquidity"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Post says a DRV perp ticker was spotted in the Hyperliquid API, deployed by Paragon via HIP-3. It does not name clearinghouseState, an empty dex parameter, or coin prefixing."
+  },
+  {
+   "id": "A17",
+   "batch": "A",
+   "url": "https://x.com/iam4x/status/2103414101372547182",
+   "fetch_status": "ok",
+   "author": "iam4x",
+   "posted_at_utc": "2026-09-25T09:19:35Z",
+   "post_type": "quote",
+   "verdict": "confirmed",
+   "finding": "Proliquid x HyperTracker: own-account analytics free for linked wallets; closed-trade stats / full-panel unlock at $10k Proliquid volume (quoted release note). Not a public-trader screener.",
+   "text_verbatim": "Good afternoon 😎\n\nYou can now have complete analytics on your @HyperliquidX trades thank's to @HyperTracker \n\nThe data is available for free to traders who linked their Hyperliquid wallet on https://app.proliquid.xyz\n\nGet a complete performance review and get better!",
+   "category": "ANALYSE",
+   "usefulness_1_to_5": 3,
+   "addresses": [],
+   "tools_mentioned": [
+    "Proliquid",
+    "HyperTracker"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "Hyperliquid trade analytics (HyperTracker) ... unlocks at $10k Proliquid volume (locked stats stay blurred)",
+     "metric": "Proliquid volume",
+     "operator": ">=",
+     "value": "10000",
+     "unit": "USD",
+     "window": ""
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "unlock volume",
+     "value": "10000",
+     "unit": "USD Proliquid volume",
+     "window": "",
+     "context": "quoted release notes; locked stats stay blurred"
+    }
+   ],
+   "links_expanded": [
+    "https://app.proliquid.xyz"
+   ],
+   "claim_check_corrections": "This post says analytics are free if the Hyperliquid wallet is linked. The $10k Proliquid-volume unlock is in the quoted Proliquid v0.70.0 note, not in iam4x's own text."
+  },
+  {
+   "id": "A18",
+   "batch": "A",
+   "url": "https://x.com/OnchainLens/status/2103770418196984248",
+   "fetch_status": "ok",
+   "author": "OnchainLens",
+   "posted_at_utc": "2026-09-26T08:55:28Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Address completed: 0x77375a8c9d13bf79afb2a87f1b0ac1dfd5f5bf66 = @mk4_lul. Lifetime +$57.04M (spot+perp), 30d +$14.17M, open $43.63M, NEAR long $28.48M 10x (+$14.74M), 8 open positions, 25 liquidations (image).",
+   "text_verbatim": "MK4 MAKES $57M LIFETIME PROFIT ON HYPERLIQUID\n\nTrader @mk4_lul has $43.63M in open positions with +$12.95M unrealized PnL.\n\nHis biggest position is a $28.4M $NEAR long:\n\n· Position: 5.84M $NEAR worth $28.48M\n· Entry: $2.35\n\n· Unrealized PnL: +$14.74M\n· Lifetime PnL: +$57.04M (spot + perp) 🟢\n\nAddress: 0x77375a8c9d13bf79afb2a87f1b0ac1dfd5f5bf66",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 4,
+   "addresses": [
+    {
+     "address": "0x77375a8c9d13bf79afb2a87f1b0ac1dfd5f5bf66",
+     "label_in_post": "Trader @mk4_lul",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [
+    "Onchain Lens"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "lifetime PnL",
+     "value": "57.04",
+     "unit": "USD millions",
+     "window": "lifetime",
+     "context": "spot + perp"
+    },
+    {
+     "metric": "open positions",
+     "value": "43.63",
+     "unit": "USD millions",
+     "window": "snapshot",
+     "context": ""
+    },
+    {
+     "metric": "unrealized PnL",
+     "value": "12.95",
+     "unit": "USD millions",
+     "window": "snapshot",
+     "context": "account"
+    },
+    {
+     "metric": "NEAR long",
+     "value": "28.48",
+     "unit": "USD millions",
+     "window": "snapshot",
+     "context": "5.84M NEAR, entry $2.35, uPnL +$14.74M"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Content is the mk4 card above. Image also shows 30-day +$14.17M and 25 liquidations."
+  },
+  {
+   "id": "A19",
+   "batch": "A",
+   "url": "https://x.com/hypedexer/status/2104553095455973485",
+   "fetch_status": "ok",
+   "author": "hypedexer",
+   "posted_at_utc": "2026-09-28T12:45:33Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Hypedexer x Trust Wallet: 'every Hyperliquid fill since November 2024', round trips reconstructed, HIP-3 and HIP-4, REST + WebSocket on one key.",
+   "text_verbatim": "Trust Wallet now uses Hypedexer for Hyperliquid market data.\n\nEvery Hyperliquid fill since November 2024, round trips reconstructed from them, HIP-3 and HIP-4 markets, served over REST and WebSocket on one key.\n\nWelcome aboard, @TrustWallet.",
+   "category": "PARSE_DATA",
+   "usefulness_1_to_5": 4,
+   "addresses": [],
+   "tools_mentioned": [
+    "Hypedexer",
+    "Trust Wallet"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "fill coverage start",
+     "value": "November 2024",
+     "unit": "",
+     "window": "since November 2024",
+     "context": "every Hyperliquid fill"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Also states fills since November 2024, round trips reconstructed, HIP-3 and HIP-4, REST and WebSocket, one key. Trust Wallet replied with an emoji handshake only."
+  },
+  {
+   "id": "A20",
+   "batch": "A",
+   "url": "https://x.com/iamalijandro/status/2104594759637508543",
+   "fetch_status": "ok",
+   "author": "iamalijandro",
+   "posted_at_utc": "2026-09-28T15:31:06Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Wintermute short book $126.25M (ETH $46.92M, SOL $11.30M), lifetime +$197.22M. Hedge/two-sided framing is the author's (Jan snapshot ~$101.7M bids / $97.2M asks). No address in post. HYPE-short line is garbled ('963,600').",
+   "text_verbatim": "Wintermute just built a $126.25M short book on Hyperliquid. But the position is already underwater.\n \nThe market maker's lifetime PnL on the platform is +$197.22M. \n\nCurrent unrealized profit: just $963,600.\n \n• Total shorts: $126.25M\n\n• $ETH short: $46.92M (largest exposure)\n\n• $SOL short: $11.30M\n\n• hyperliquid:native short: 963,600\n\n• Lifetime PnL: +$197.22M\n\n• Incoming transfer: 27,372 ETH from FTX/Alameda-linked wallets\n \nHere's the nuance most headlines will skip. \nThis isn't a directional bet. Wintermute is a market maker. Its Hyperliquid positions include hundreds of orders on both sides of the book - roughly $101.7M in bids and $97.2M in asks at a prior January snapshot.\n \nThe visible short book hedges spot inventory, options exposure, and client flows across venues. \n\nA short position on Hyperliquid doesn't mean Wintermute expects prices to fall. It means the firm is managing risk.\n \nThe FTX/Alameda transfer is the wildcard. 27,372 ETH moved to Wintermute. Purpose unconfirmed.\n \nIf the short book is a hedge and not a directional call, what's the real signal in the data?",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 3,
+   "addresses": [],
+   "tools_mentioned": [],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "total shorts",
+     "value": "126.25",
+     "unit": "USD millions",
+     "window": "current",
+     "context": "author says Wintermute"
+    },
+    {
+     "metric": "ETH short",
+     "value": "46.92",
+     "unit": "USD millions",
+     "window": "current",
+     "context": ""
+    },
+    {
+     "metric": "SOL short",
+     "value": "11.30",
+     "unit": "USD millions",
+     "window": "current",
+     "context": ""
+    },
+    {
+     "metric": "HYPE short",
+     "value": "963600",
+     "unit": "count as written",
+     "window": "current",
+     "context": "line says hyperliquid:native short: 963,600; separate line says unrealized profit $963,600"
+    },
+    {
+     "metric": "lifetime PnL",
+     "value": "197.22",
+     "unit": "USD millions",
+     "window": "lifetime",
+     "context": ""
+    },
+    {
+     "metric": "January bids",
+     "value": "101.7",
+     "unit": "USD millions",
+     "window": "prior January snapshot",
+     "context": "author"
+    },
+    {
+     "metric": "January asks",
+     "value": "97.2",
+     "unit": "USD millions",
+     "window": "prior January snapshot",
+     "context": "author"
+    },
+    {
+     "metric": "ETH transfer",
+     "value": "27372",
+     "unit": "ETH",
+     "window": "",
+     "context": "from FTX/Alameda-linked wallets, purpose unconfirmed"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Post does argue MM hedge and two-sided book, citing a prior January snapshot of about $101.7M bids and $97.2M asks. No address. Wintermute is not quoted. HYPE short line is written as 963,600 with no unit, same digits as the unrealized-profit line."
+  },
+  {
+   "id": "A21",
+   "batch": "A",
+   "url": "https://x.com/lookonchain/status/2104774617328140372",
+   "fetch_status": "ok",
+   "author": "lookonchain",
+   "posted_at_utc": "2026-09-29T03:25:48Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Lookonchain: 0xf5629393…7c1d3 sold 25,001 ZEC ($37.84M), bought ~2 months earlier at avg $425, profit >$27M. Spot ZEC via Hyperunit, not an open perp.",
+   "text_verbatim": "Whale 0xf562 dumped 25,001 $ZEC($37.84M), which he bought 2 months ago at an average price of $425, realizing a profit of over $27M!\n\nhttps://hypurrscan.io/address/0xf5629393e446a103a4be1c49a956255e7c87c1d3#txs\nhttps://arkm.com/explorer/address/t1LYNXkQH1Jnwn6reX3cDexpUa6wj1pezDx",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 3,
+   "addresses": [
+    {
+     "address": "0xf5629393e446a103a4be1c49a956255e7c87c1d3",
+     "label_in_post": "Whale 0xf562",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [
+    "HypurrScan",
+    "Arkham"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "ZEC sold",
+     "value": "25001",
+     "unit": "ZEC",
+     "window": "post",
+     "context": "$37.84M"
+    },
+    {
+     "metric": "average buy price",
+     "value": "425",
+     "unit": "USD",
+     "window": "2 months ago",
+     "context": ""
+    },
+    {
+     "metric": "realized profit",
+     "value": "over 27",
+     "unit": "USD millions",
+     "window": "",
+     "context": ""
+    }
+   ],
+   "links_expanded": [
+    "https://hypurrscan.io/address/0xf5629393e446a103a4be1c49a956255e7c87c1d3#txs",
+    "https://arkm.com/explorer/address/t1LYNXkQH1Jnwn6reX3cDexpUa6wj1pezDx"
+   ],
+   "claim_check_corrections": "Also links an Arkham Zcash address, not only HypurrScan. Figures are 25,001 ZEC, $37.84M, avg buy $425, profit over $27M."
+  },
+  {
+   "id": "A22",
+   "batch": "A",
+   "url": "https://x.com/proliquid_xyz/status/2105214047364743629",
+   "fetch_status": "ok",
+   "author": "proliquid_xyz",
+   "posted_at_utc": "2026-09-30T08:31:56Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Proliquid weekly recap: HyperTracker integration shipped (own-account metrics). No whale-data/API change.",
+   "text_verbatim": "It was a big week!\n\nEvery new features shipped, including our integration with @HyperTracker for detailed metrics on your Hyperliquid trading account.\n\nOnly on https://app.proliquid.xyz 🦈",
+   "category": "ANALYSE",
+   "usefulness_1_to_5": 2,
+   "addresses": [],
+   "tools_mentioned": [
+    "Proliquid",
+    "HyperTracker"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [],
+   "links_expanded": [
+    "https://app.proliquid.xyz"
+   ],
+   "claim_check_corrections": "Says the HyperTracker integration for detailed metrics on your own Hyperliquid account shipped. Does not say whale data or an API changed."
+  },
+  {
+   "id": "A23",
+   "batch": "A",
+   "url": "https://x.com/jodezXBT/status/2105285639482826864",
+   "fetch_status": "ok",
+   "author": "jodezXBT",
+   "posted_at_utc": "2026-09-30T13:16:25Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Cryptotraders card: 0xbf73…5d58 'TOP-25 BY 30D PNL' opened $8.54M BTC short at $85,175.10, 40x cross, liq $139,438.56, against a book ~85% long. Source board is cryptotraders.com, not the official leaderboard.",
+   "text_verbatim": "A top-25 trader by 30d PnL on Hyperliquid just opened a $8.54M short on $BTC at 85,175.10, 40x. Going against a book that's ~85% long BTC.\n0xbf732ea04197942783e34730ed6e0f6099575d58",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 3,
+   "addresses": [
+    {
+     "address": "0xbf732ea04197942783e34730ed6e0f6099575d58",
+     "label_in_post": "top-25 trader by 30d PnL",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [
+    "Cryptotraders"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "rank",
+     "value": "top-25",
+     "unit": "",
+     "window": "30d PnL",
+     "context": "on Hyperliquid; image badge TOP-25 BY 30D PNL"
+    },
+    {
+     "metric": "BTC short",
+     "value": "8.54",
+     "unit": "USD millions",
+     "window": "just opened",
+     "context": "entry 85,175.10, 40x"
+    },
+    {
+     "metric": "book long share",
+     "value": "~85",
+     "unit": "percent",
+     "window": "",
+     "context": "book that's ~85% long BTC"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Image source is cryptotraders.com, badge TOP-25 BY 30D PNL. Also shows uPnL -$23k and liq $139,438.56. Reply says free Discord and dashboard, link in bio, no URL in text."
+  },
+  {
+   "id": "A24",
+   "batch": "A",
+   "url": "https://x.com/0xZecup/status/2105429342667067427",
+   "fetch_status": "ok",
+   "author": "0xZecup",
+   "posted_at_utc": "2026-09-30T22:47:26Z",
+   "post_type": "tweet",
+   "verdict": "partly_confirmed",
+   "finding": "0x5b5d…c060: largest ZEC short on HL, 3x, $56.4M, entry 1,501.3, +$2.8M. Rank 2 0xb83d…6e36 ($38.0M short, -$2.5M); rank 3 0x880a…311c (10x, $19.1M). The word 'Abraxas' is NOT in this post.",
+   "text_verbatim": "Largest $ZEC short on Hyperliquid right now:\n\n0x5b5d51203a0f9079f8aeb098a6523a13f298c060\n\nShort 3x · $56.4M  \nEntry 1501 · +$2.8M PnL\n#zcash",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 3,
+   "addresses": [
+    {
+     "address": "0x5b5d51203a0f9079f8aeb098a6523a13f298c060",
+     "label_in_post": "Largest $ZEC short",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "ZEC short",
+     "value": "56.4",
+     "unit": "USD millions",
+     "window": "right now",
+     "context": "3x, entry 1501, +$2.8M PnL"
+    },
+    {
+     "metric": "leverage",
+     "value": "3",
+     "unit": "x",
+     "window": "",
+     "context": ""
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Address and $56.4M ZEC short are in the post. The word Abraxas is not in the post or image. Image says the book was read 27h ago."
+  },
+  {
+   "id": "A25",
+   "batch": "A",
+   "url": "https://x.com/0xArchiveIO/status/2073437680571174934",
+   "fetch_status": "ok",
+   "author": "0xArchiveIO",
+   "posted_at_utc": "2026-07-04T16:04:00Z",
+   "post_type": "tweet",
+   "verdict": "partly_confirmed",
+   "finding": "0xArchive: trader moved an arbitrage screener over live; native API caps history and shares rate limits with the bot; 30 days of 1-minute history loaded. Free API key only in a later post (2026-09-04, 0xarchive.io/signup); pricing tiers not stated.",
+   "text_verbatim": "A trader migrated his Hyperliquid arbitrage screener onto 0xArchive live on stream. 3 hours, unscripted.\n\nHis reason: the native API caps history, and every data call competes with the rate limits his trading bot needs.\n\nBy the end: 30 days of 1-minute history loaded and a working screener.",
+   "category": "PARSE_DATA",
+   "usefulness_1_to_5": 2,
+   "addresses": [],
+   "tools_mentioned": [
+    "0xArchive",
+    "Hyperliquid native API"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "history loaded",
+     "value": "30",
+     "unit": "days of 1-minute history",
+     "window": "demo",
+     "context": "working screener after 3 hours"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Post confirms native history cap and rate-limit collision with a trading bot. It does not say paid, free-key, endpoints, or retention. Bio says get a free API key, but that is not in the post."
+  },
+  {
+   "id": "A26",
+   "batch": "A",
+   "url": "https://x.com/joeblau/status/2081376062177693836",
+   "fetch_status": "ok",
+   "author": "joeblau",
+   "posted_at_utc": "2026-07-26T13:48:17Z",
+   "post_type": "reply",
+   "verdict": "partly_confirmed",
+   "finding": "Only: benchmarked nktkas/hyperliquid and refactored (Bloxwap repo). No WS user-cap finding.",
+   "text_verbatim": "Sure. I built a performance benchmark, measured the current speed of nktkas/hyperliquid, then started refactoring.  It's on the Bloxwap GitHub repo.",
+   "category": "PARSE_DATA",
+   "usefulness_1_to_5": 1,
+   "addresses": [],
+   "tools_mentioned": [
+    "nktkas/hyperliquid",
+    "Bloxwap"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [],
+   "links_expanded": [],
+   "claim_check_corrections": "Post says a benchmark of nktkas/hyperliquid speed and a refactor on the Bloxwap GitHub repo. No JSR version, no 10 vs 14 user cap, no repo URL."
+  },
+  {
+   "id": "A27",
+   "batch": "A",
+   "url": "https://x.com/AiCoinzh/status/2090348112913063948",
+   "fetch_status": "ok",
+   "author": "AiCoinzh",
+   "posted_at_utc": "2026-08-20T08:00:01Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "AiCoin: loss headline 16 million U (1600万U); liquidation 2026-08-20 04:51 Beijing, avg $2,235.36, ~49,800 ETH, $111.34M notional. 'Penision Fund' is a self-filled nickname, not proof of an institution. Does not mention the $26.66M figure.",
+   "text_verbatim": "养老基金贡献昨晚最大爆仓，做空ETH怒亏1600万U\n\n地址：0x0ddf9bae2af4b874b96d287a5ad42eb47138a902\n\n昨晚币圈这轮上涨，先是美国财政部扩大长期国债回购安排，市场将其理解为流动性改善，长端收益率回落，风险资产率先松动\n\n随后，美国SEC公布新的加密资产监管提案，叠加比特币ETF持续流入，市场情绪进一步转暖。BTC从6.42万美元附近冲到7.02万美元，ETH也跟着补涨\n真正让行情失控的，是空头回补。价格突破后，大量空单被迫止损，平仓买盘又继续推高价格，新的空头接着被触发强平，整轮行情从消息刺激变成了典型逼空。市场统计显示，全网空头清算金额超过14亿美元\n\nHyperliquid上受伤最重的地址之一，公开昵称叫Penision Fund，正常拼写应为Pension Fund，也就是“养老基金”。这只是账户自填昵称，不能证明真实机构身份，但账户规模确实不小：全时累计交易量超过120亿美元，爆仓前历史累计盈利约1776万U\n\n这一次，它押的是ETH空头，而且仓位非常激进。根据资金记录，行情启动后，该地址仍持有接近5万枚ETH空单，名义价值超过1亿美元。它可能认为这只是短期反弹，ETH冲高后还会回落，结果却正好站在了逼空行情的对面\n\nAiCoin清算数据显示，北京时间8月20日凌晨4点51分，ETH再次加速上涨，这个地址的保证金终于撑不住了。系统以2235.36美元的均价强平约4.98万枚ETH空单，强平名义金额达到1.1134亿美元，整个过程集中在一分钟内完成，强平之后剩余持仓归零\n\n讽刺的是，账户名字叫“养老基金”，仓位管理却完全不像养老资金。真正的养老资金讲究分散和低波动，它却用1600万U账户扛着超过1亿美元的单边空头，最后只剩一顿饭钱，这下是真的没钱养老了\n\n这件事也提醒所有高杠杆交易者：过去赚过多少钱，不能替今天的仓位补保证金。行情判断可以错，仓位失控却可能直接结束游戏\n\n来源：AiCoin链上数据\n\nAiCoin支持绑定Hyperliquid账户进行交易下单，行情、地址、仓位和交易入口可以放在一起管理\n\n#Hyperliquid #ETH #以太坊 #比特币 #爆仓 #养老基金 #机构交易 #AiCoin",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 4,
+   "addresses": [
+    {
+     "address": "0x0ddf9bae2af4b874b96d287a5ad42eb47138a902",
+     "label_in_post": "Penision Fund / Pension Fund nickname",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [
+    "AiCoin"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "这只是账户自填昵称，不能证明真实机构身份",
+     "metric": "nickname",
+     "operator": "",
+     "value": "",
+     "unit": "",
+     "window": ""
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "realized loss headline",
+     "value": "1600",
+     "unit": "万 U",
+     "window": "this liquidation",
+     "context": "headline and body"
+    },
+    {
+     "metric": "liq avg price",
+     "value": "2235.36",
+     "unit": "USD",
+     "window": "2026-08-20 04:51 Beijing",
+     "context": ""
+    },
+    {
+     "metric": "liq size",
+     "value": "49800",
+     "unit": "ETH",
+     "window": "1 minute",
+     "context": "notional $111.34M"
+    },
+    {
+     "metric": "prior cumulative profit",
+     "value": "1776",
+     "unit": "万 U",
+     "window": "before liquidation",
+     "context": ""
+    },
+    {
+     "metric": "lifetime volume",
+     "value": "over 120",
+     "unit": "USD billions",
+     "window": "all time",
+     "context": ""
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Notional is 1.1134亿美元. Loss is written as 1600万U. Timestamp is 2026-08-20 04:51 Beijing, one minute. Post does not mention BitcoinWorld or $26.66M."
+  },
+  {
+   "id": "A28",
+   "batch": "A",
+   "url": "https://x.com/senpi_ai/status/2103499006621925885",
+   "fetch_status": "ok",
+   "author": "senpi_ai",
+   "posted_at_utc": "2026-09-25T14:56:58Z",
+   "post_type": "tweet",
+   "verdict": "partly_confirmed",
+   "finding": "Senpi: paste wallet for a free read-only 'leak' report (hold losers longer, sizing, fees, funding). 3.2x / $4,120 is a marketing example. No URL or API in post.",
+   "text_verbatim": "Most traders don't have a strategy problem. They have a leak problem.\n\nHolding losers too long. Sizing big on weak setups. Paying fees and funding they didn't notice.\n\nPaste your Hyperliquid wallet → your AI quant finds the leaks and shows you the fix.\n\n\"You hold losers 3.2× longer than winners — ~$4,120 per 90 days.\"\n\nFree, read-only 👇",
+   "category": "ANALYSE",
+   "usefulness_1_to_5": 2,
+   "addresses": [],
+   "tools_mentioned": [
+    "Senpi"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "example loser hold vs winners",
+     "value": "3.2",
+     "unit": "times",
+     "window": "example quote",
+     "context": "~$4,120 per 90 days"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Says paste wallet, free, read-only, and names holding losers, sizing, fees and funding. The 3.2x / $4,120 line is a quoted example. No product URL and no API."
+  },
+  {
+   "id": "A29",
+   "batch": "A",
+   "url": "https://x.com/liquidbots/status/2104581219262529860",
+   "fetch_status": "ok",
+   "author": "liquidbots",
+   "posted_at_utc": "2026-09-28T14:37:18Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "LiquidBots MCP: create bots, change settings, top up margin. Execution tool; no read-only any-address tool. Exclude.",
+   "text_verbatim": "You can now tell Claude to build you a grid bot on Hyperliquid. \n\nThe LiquidBots MCP is live. Connect Claude, ChatGPT, Codex or Grok Bot and your agent can create bots, change their settings and top up margin on a grid that's already running. \n\nEvery trading platform you've used decided what you were allowed to build on it. This one hands that call to you. Wire it into your own scripts, a Google Sheet, a Telegram alert, or some workflow nobody on our team has thought of yet. \n\nAutomate your edge. Now in plain English. \n\nSetup guide:",
+   "category": "NOISE",
+   "usefulness_1_to_5": 1,
+   "addresses": [],
+   "tools_mentioned": [
+    "LiquidBots MCP"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [],
+   "links_expanded": [],
+   "claim_check_corrections": "Actions named: create bots, change settings, top up margin. No read-only any-address tool is listed. Setup guide has no URL."
+  },
+  {
+   "id": "A30",
+   "batch": "A",
+   "url": "https://x.com/Papurrrtrade/status/2104624033891528719",
+   "fetch_status": "ok",
+   "author": "Papurrrtrade",
+   "posted_at_utc": "2026-09-28T17:27:26Z",
+   "post_type": "reply",
+   "verdict": "confirmed",
+   "finding": "PapurrrTrade paper trading claims 'Hyperliquid's own margin formula' but writes no equation.",
+   "text_verbatim": "How the paper side works:\n\n- Market orders walk the live book level by level\n- Limit, TP/SL, reduce-only, cross and isolated\n- Liquidation at Hyperliquid's own margin formula\n- Hourly funding at the live rate\n- A browser rule blocks real orders in paper mode\n\n2/3",
+   "category": "GUIDE",
+   "usefulness_1_to_5": 1,
+   "addresses": [],
+   "tools_mentioned": [
+    "PapurrrTrade"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "Liquidation at Hyperliquid's own margin formula",
+     "metric": "liquidation",
+     "operator": "",
+     "value": "",
+     "unit": "",
+     "window": ""
+    }
+   ],
+   "numbers": [],
+   "links_expanded": [],
+   "claim_check_corrections": "The formula is named and not written out."
+  },
+  {
+   "id": "A31",
+   "batch": "A",
+   "url": "https://x.com/Copin_io/status/2056952349848154452",
+   "fetch_status": "ok",
+   "author": "Copin_io",
+   "posted_at_utc": "2026-05-20T04:17:11Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Copin_io post is a Vietnam event announcement, not Hyperliquid. No Copin HL posts since 2026-04-01.",
+   "text_verbatim": "Proud to support Unchained Summit Vietnam as a Community Partner 🇻🇳\n\nLooking forward to connecting with regulators, exchanges, protocols, and analytics teams gathering in Da Nang this May to exchange ideas and explore the future of Web3 in Vietnam and beyond.\n\nSee you at Furama Resort, Da Nang on May 28–29, 2026.\n\n#UnchainedSummit #Vietnam #Web3 #Blockchain #Crypto #DaNang #Copin #OnchainData #DeFi",
+   "category": "NOISE",
+   "usefulness_1_to_5": 1,
+   "addresses": [],
+   "tools_mentioned": [
+    "Copin"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [],
+   "links_expanded": [],
+   "claim_check_corrections": "Confirmed not HL-specific. Search from:Copin_io (Hyperliquid OR HL) since:2026-04-01 returned no results."
+  },
+  {
+   "id": "A32",
+   "batch": "A",
+   "url": "https://x.com/lbexplorer/status/2094365077734580385",
+   "fetch_status": "ok",
+   "author": "lbexplorer",
+   "posted_at_utc": "2026-08-31T10:02:00Z",
+   "post_type": "tweet",
+   "verdict": "partly_confirmed",
+   "finding": "No trader address posted: the 0x in the text is the token contract. Trader PnL -$1.6M; $350K short from $0.333, liq $0.788.",
+   "text_verbatim": "A Hyperliquid trader with a -$1.6M PnL has decided to short $350K worth of ethereum:0x07f5b6823751c2e2cd4560f28af75ff887102241 from $0.333\n\nHis liquidation price is $0.788....\n\nBy the end of the week",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 2,
+   "addresses": [
+    {
+     "address": "0x07f5b6823751c2e2cd4560f28af75ff887102241",
+     "label_in_post": "token being shorted, written as ethereum:0x07f5...",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "trader PnL",
+     "value": "-1.6",
+     "unit": "USD millions",
+     "window": "unspecified",
+     "context": ""
+    },
+    {
+     "metric": "short notional",
+     "value": "350",
+     "unit": "USD thousands",
+     "window": "",
+     "context": "from $0.333"
+    },
+    {
+     "metric": "liquidation price",
+     "value": "0.788",
+     "unit": "USD",
+     "window": "",
+     "context": ""
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "It is an HL trader card, but the only full address is the token. No trader address. Volume comparison with Lookonchain is not in the post."
+  },
+  {
+   "id": "A33",
+   "batch": "A",
+   "url": "https://x.com/kamalbuilds/status/2104343781172744416",
+   "fetch_status": "ok",
+   "author": "kamalbuilds",
+   "posted_at_utc": "2026-09-27T22:53:48Z",
+   "post_type": "reply",
+   "verdict": "confirmed",
+   "finding": "Reply is only the Exit Window waitlist URL; rules are in the parent thread (see §14.4). 242 Nansen-labelled wallets, 30s polling, 1% adverse-move exit timer.",
+   "text_verbatim": "https://exit-window.fly.dev/waitlist",
+   "category": "FILTER",
+   "usefulness_1_to_5": 3,
+   "addresses": [],
+   "tools_mentioned": [
+    "Exit Window",
+    "Nansen tgm/perp-positions",
+    "Nansen profiler/perp-trades"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "measures how long holders had between the wallet's first sale and price moving 1% against them",
+     "metric": "adverse move",
+     "operator": ">=",
+     "value": "1",
+     "unit": "percent",
+     "window": "after first sale"
+    },
+    {
+     "rule_text": "alarm: any wallet cuts, 2 or more within an hour, only the largest holder, or price nearing that holder's liquidation",
+     "metric": "alarm trigger",
+     "operator": "",
+     "value": "",
+     "unit": "",
+     "window": ""
+    },
+    {
+     "rule_text": "cut of 25%, 50% or the whole position",
+     "metric": "cut size",
+     "operator": "",
+     "value": "25/50/100",
+     "unit": "percent",
+     "window": ""
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "exit window example",
+     "value": "1 minute 7 seconds",
+     "unit": "time to 1% adverse",
+     "window": "NEAR exit Sep 23",
+     "context": "parent"
+    },
+    {
+     "metric": "sentinel wallets",
+     "value": "242",
+     "unit": "Nansen-labeled wallets",
+     "window": "live",
+     "context": "checks every 30 seconds"
+    },
+    {
+     "metric": "LIT smart-money force sale",
+     "value": "2.24",
+     "unit": "USD millions",
+     "window": "example",
+     "context": "before own liq at $2.47"
+    }
+   ],
+   "links_expanded": [
+    "https://exit-window.fly.dev/waitlist"
+   ],
+   "claim_check_corrections": "This reply is only https://exit-window.fly.dev/waitlist. The 4 likes match. Rules and examples are in the parent, not this reply."
+  },
+  {
+   "id": "A34",
+   "batch": "A",
+   "url": "https://x.com/Hypervisor_hl/status/2105388466813177969",
+   "fetch_status": "ok",
+   "author": "Hypervisor_hl",
+   "posted_at_utc": "2026-09-30T20:05:01Z",
+   "post_type": "reply",
+   "verdict": "confirmed",
+   "finding": "One-line question; no product or trader-analytics evidence for Hypervisor.",
+   "text_verbatim": "how often do mainnet changes effect this?",
+   "category": "NOISE",
+   "usefulness_1_to_5": 1,
+   "addresses": [],
+   "tools_mentioned": [],
+   "thresholds_or_rules": [],
+   "numbers": [],
+   "links_expanded": [],
+   "claim_check_corrections": "Content is only the question. Bio says custom analytics dashboards and a Telegram t.co, which was not expanded. No product URL in the post. A 2026-09-21 reply from the same account also asks about mark prices, not a feature launch."
+  },
+  {
+   "id": "A35",
+   "batch": "A",
+   "url": "https://x.com/0xikalgo/status/2026445955151839372",
+   "fetch_status": "unavailable",
+   "author": "0xikalgo",
+   "posted_at_utc": null,
+   "post_type": "tweet",
+   "verdict": "cannot_verify",
+   "finding": "UNAVAILABLE. Fetch failed and keyword search returned nothing. Stays classed as an execution MCP (excluded).",
+   "text_verbatim": "",
+   "category": "PARSE_DATA",
+   "usefulness_1_to_5": 1,
+   "addresses": [],
+   "tools_mentioned": [],
+   "thresholds_or_rules": [],
+   "numbers": [],
+   "links_expanded": [],
+   "claim_check_corrections": "Post not retrieved."
+  },
+  {
+   "id": "A36",
+   "batch": "A",
+   "url": "https://x.com/thefofoshow/status/2080053994194346233",
+   "fetch_status": "ok",
+   "author": "thefofoshow",
+   "posted_at_utc": "2026-07-22T22:14:52Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Install note: official hyperliquid-python-sdk 0.24.0, testnet default, 2,283 markets returned. No trader research.",
+   "text_verbatim": "Installation terminée dans /root/hyperliquid :\n\n  - SDK officiel hyperliquid-python-sdk==0.24.0\n  - Environnement virtuel .venv\n  - Testnet configuré par défaut\n  - Test API réussi : 2 283 marchés reçus\n  - Aucun wallet ni secret enregistré",
+   "category": "PARSE_DATA",
+   "usefulness_1_to_5": 2,
+   "addresses": [],
+   "tools_mentioned": [
+    "hyperliquid-python-sdk"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "SDK version",
+     "value": "0.24.0",
+     "unit": "",
+     "window": "",
+     "context": "official"
+    },
+    {
+     "metric": "markets received",
+     "value": "2283",
+     "unit": "markets",
+     "window": "testnet API test",
+     "context": ""
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "French source text uses 2 283. No trader analytics shown."
+  },
+  {
+   "id": "A37",
+   "batch": "A",
+   "url": "https://x.com/0xAiraa/status/2095274179436184060",
+   "fetch_status": "ok",
+   "author": "0xAiraa",
+   "posted_at_utc": "2026-09-02T22:14:27Z",
+   "post_type": "reply",
+   "verdict": "partly_confirmed",
+   "finding": "OpenCatz AI: generic 15-scout bot (repo github.com/dizcorvus/opencatz-ai). No HL whale output or ranking logic.",
+   "text_verbatim": "3/ What amaze me is \"Opencatz AI\" \n\nAn open-source bot running 15 automated scouts 24/7 across Solana, Robinhood Chain, Base, Ethereum, Ink, Hyperliquid and Polymarket.\n\nTracking new pools, whale wallets, breakouts, and NFT floor sweeps in real time.\n> https://github.com/dizcorvus/opencatz-ai",
+   "category": "NOISE",
+   "usefulness_1_to_5": 1,
+   "addresses": [],
+   "tools_mentioned": [
+    "Opencatz AI"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "scouts",
+     "value": "15",
+     "unit": "automated scouts",
+     "window": "24/7",
+     "context": ""
+    }
+   ],
+   "links_expanded": [
+    "https://github.com/dizcorvus/opencatz-ai"
+   ],
+   "claim_check_corrections": "15 scouts, Hyperliquid, whale wallets, breakouts, and the repo are in this reply. 3 likes match. NFT-gated marketing is not in this reply; later thread posts describe NFT mint paths."
+  },
+  {
+   "id": "A38",
+   "batch": "A",
+   "url": "https://x.com/BrendanPlayford/status/2100661425723326470",
+   "fetch_status": "ok",
+   "author": "BrendanPlayford",
+   "posted_at_utc": "2026-09-17T19:01:26Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Scarlett API/MCP: free for limited time, 12B fine-tuned model, 'live trading on Hyperliquid next'. No read-only mode stated; exclude.",
+   "text_verbatim": "Create you own API keys for the API and MCP free for a limited time :) \n\n- 12 B model fine tuned on trading data \n- Jev for decisioning, fine tuned on paper outcomes \n- Live trading deployed on Hyperliquid next\n\nSign up here for free: https://scarlett.ai/account/\n\nWhat features would you like to see added request below 👇🏽",
+   "category": "NOISE",
+   "usefulness_1_to_5": 1,
+   "addresses": [],
+   "tools_mentioned": [
+    "Scarlett API",
+    "Scarlett MCP",
+    "Jev"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "model size",
+     "value": "12",
+     "unit": "B",
+     "window": "",
+     "context": "fine tuned on trading data"
+    }
+   ],
+   "links_expanded": [
+    "https://scarlett.ai/account/"
+   ],
+   "claim_check_corrections": "No read-only mode or tool list is stated. Signup is free for a limited time."
+  },
+  {
+   "id": "A39",
+   "batch": "A",
+   "url": "https://x.com/pnlsdaily/status/2101969403524858192",
+   "fetch_status": "ok",
+   "author": "pnlsdaily",
+   "posted_at_utc": "2026-09-21T09:38:53Z",
+   "post_type": "tweet",
+   "verdict": "partly_confirmed",
+   "finding": "pnlsdaily: Abraxas-labelled addresses come from the HypurrScan Infos field on the images: 0xb83de012…6e36 (overview $151.6M) and 0x5b5d5120…c060 (overview $180.5M); 5x/10x shorts all red. Shorts $1.2B, >$100M uPnL loss. Hedge/basis claim is not in the post.",
+   "text_verbatim": "Abraxas Capital's short positions on #Hyperliquid have reached $1.2B, with an unrealized loss of over $100M!\n\nhttps://hypurrscan.io/address/0xb83d\nhttps://hypurrscan.io/address/0x5b5d",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 4,
+   "addresses": [
+    {
+     "address": "0xb83de012dba672c76a7dbbbf3e459cb59d7d6e36",
+     "label_in_post": "Abraxas Capital on image Infos panel",
+     "from_image": true,
+     "complete": true
+    },
+    {
+     "address": "0x5b5d51203a0f9079f8aeb098a6523a13f298c060",
+     "label_in_post": "Abraxas Capital on image Infos panel",
+     "from_image": true,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [
+    "HypurrScan"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "short positions",
+     "value": "1.2",
+     "unit": "USD billions",
+     "window": "tweet",
+     "context": "author total"
+    },
+    {
+     "metric": "unrealized loss",
+     "value": "over 100",
+     "unit": "USD millions",
+     "window": "tweet",
+     "context": ""
+    }
+   ],
+   "links_expanded": [
+    "https://hypurrscan.io/address/0xb83d",
+    "https://hypurrscan.io/address/0x5b5d"
+   ],
+   "claim_check_corrections": "Post and images show two addresses labeled Abraxas Capital and large shorts with large negative PnL. Hedge/basis is not in the text or images."
+  },
+  {
+   "id": "A40",
+   "batch": "A",
+   "url": "https://x.com/perpyxyz/status/2102035360561643890",
+   "fetch_status": "ok",
+   "author": "perpyxyz",
+   "posted_at_utc": "2026-09-21T14:00:58Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Perpy mobile app: follow whales, alerts on open/close, iOS+Android. No pricing or API.",
+   "text_verbatim": "Perpy is now live on Google Play. 🟢\n\nTrack whales. Follow the wallets that matter. Get pinged when they open or close positions.\n\nNow available on iOS + Android.\n\nBuilt for crypto traders.\nPowered by #Hyperliquid data.\n\n→ https://www.perpy.xyz/",
+   "category": "TRACK",
+   "usefulness_1_to_5": 2,
+   "addresses": [],
+   "tools_mentioned": [
+    "Perpy"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [],
+   "links_expanded": [
+    "https://www.perpy.xyz/"
+   ],
+   "claim_check_corrections": "1 like matches. Features stated: track whales, follow wallets, ping on open or close, iOS and Android. Pricing and API are not stated."
+  },
+  {
+   "id": "A41",
+   "batch": "A",
+   "url": "https://x.com/Story91_/status/2103997497743995144",
+   "fetch_status": "ok",
+   "author": "Story91_",
+   "posted_at_utc": "2026-09-26T23:57:48Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Cashboard: 40+ widgets (HL: funding, liquidations, whale bets, wallets), desktop $29 once. No trader scoring.",
+   "text_verbatim": "Cashboard is live.\n\n5 months of building, breaking it, rebuilding it. Mostly at night.\n\nThe idea was simple. Every trader I know has 14 tabs open: DexScreener, Hyperliquid, Polymarket, a Dune dashboard, some RWA tracker, Twitter. I wanted all of it on one canvas I could arrange myself.\n\nSo that's what Cashboard is. An infinite board for markets.\n\n40+ live widgets across Solana, Base, Robinhood Chain and Hyperliquid. Drag them wherever you want, zoom out, build your own desk. Funding, liquidations, launchpads, whale bets, tokenized stocks, RWAs, your wallets.\n\nNo login. Your boards stay on your device. Share any board with a link.\n\nWeb is free. Desktop app for Windows and Mac, $29 once, no subscription. https://t.co/Z4l4X5OMEu \n\n$BOARD on @solana \nCA:\n\n4WVg5C2p61Fn2VHvZmiVmPq26dyytr4ooF1DyAd6pump",
+   "category": "TRACK",
+   "usefulness_1_to_5": 2,
+   "addresses": [
+    {
+     "address": "4WVg5C2p61Fn2VHvZmiVmPq26dyytr4ooF1DyAd6pump",
+     "label_in_post": "$BOARD Solana CA",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [
+    "Cashboard",
+    "DexScreener",
+    "Hyperliquid",
+    "Polymarket",
+    "Dune"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "widgets",
+     "value": "40+",
+     "unit": "live widgets",
+     "window": "",
+     "context": "Solana, Base, Robinhood Chain, Hyperliquid"
+    },
+    {
+     "metric": "desktop price",
+     "value": "29",
+     "unit": "USD once",
+     "window": "",
+     "context": "web free, no subscription"
+    }
+   ],
+   "links_expanded": [
+    "not expanded"
+   ],
+   "claim_check_corrections": "12 likes match. Site t.co not expanded. Whale bets are named, not defined as wallet-level."
+  },
+  {
+   "id": "A42",
+   "batch": "A",
+   "url": "https://x.com/CashBoardLive/status/2104461199295529081",
+   "fetch_status": "ok",
+   "author": "CashBoardLive",
+   "posted_at_utc": "2026-09-28T06:40:23Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "CashBoard HL widget: movers, OI, funding vs Binance/Bybit, HIP-3 listings, live marks over HL websocket, tape from $10K; public API, no key. No trader-level data.",
+   "text_verbatim": "hyperliquid markets widget: movers, open interest, funding vs binance and bybit, hip-3 listings. marks tick live over hyperliquid's own websocket and the tape view shows prints from $10K up. public api, no key.",
+   "category": "PARSE_DATA",
+   "usefulness_1_to_5": 2,
+   "addresses": [],
+   "tools_mentioned": [
+    "CashBoard",
+    "Hyperliquid websocket"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "tape print floor",
+     "value": "10000",
+     "unit": "USD",
+     "window": "",
+     "context": "prints from $10K up"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Also names movers, OI, funding vs Binance and Bybit, and prints from $10K. No trader-level data and no endpoint path."
+  },
+  {
+   "id": "A43",
+   "batch": "A",
+   "url": "https://x.com/perpyxyz/status/2105063133433811317",
+   "fetch_status": "ok",
+   "author": "perpyxyz",
+   "posted_at_utc": "2026-09-29T22:32:15Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Perpy free Telegram feed: large long/short moves, profitable closes, daily recap, wallet + PnL context per post (t.me/perpyxyz, t.me/perpy_hyperliquid).",
+   "text_verbatim": "Finding interesting wallets on Hyperliquid usually means spending a lot of time jumping between feeds, profiles and positions.\n\nSo we built a free Telegram feed to make that process easier.\n\nIt surfaces large LONG / SHORT moves, profitable closes and a daily recap of the biggest activity we’re seeing on-chain.\n\nEach post also includes the wallet behind the move and some PnL context, so you can look into the trader yourself instead of just seeing a random position size.\n\nThe goal is pretty simple: make wallet discovery faster and give you a better starting point for your own research.\n\nNo paywall. No subscription required. Just public on-chain data, organized into a feed.\nPerpy Traders → @perpyxyz \n\nNot financial advice. Public on-chain data only.",
+   "category": "TRACK",
+   "usefulness_1_to_5": 3,
+   "addresses": [],
+   "tools_mentioned": [
+    "Perpy Telegram feed"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [],
+   "links_expanded": [
+    "https://t.me/perpyxyz",
+    "https://t.me/perpy_hyperliquid"
+   ],
+   "claim_check_corrections": "Views are 40, not 38. Reply gives the TG links. Addresses are promised in feed posts, not shown here."
+  },
+  {
+   "id": "A44",
+   "batch": "A",
+   "url": "https://x.com/Hyperfoliofun/status/2105363987680432599",
+   "fetch_status": "ok",
+   "author": "Hyperfoliofun",
+   "posted_at_utc": "2026-09-30T18:27:45Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Hyperfolio Pulse: coin shock tape (1/5/15-minute windows). No trader data.",
+   "text_verbatim": "Fresh move: $TREAD -8.53% in 1 minute.\n\nSome dumps take all day. This one took a minute.",
+   "category": "TRACK",
+   "usefulness_1_to_5": 1,
+   "addresses": [],
+   "tools_mentioned": [
+    "Hyperfolio Pulse"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "TREAD move",
+     "value": "-8.53",
+     "unit": "percent",
+     "window": "1 minute",
+     "context": ""
+    }
+   ],
+   "links_expanded": [
+    "https://app.hyperfolio.fun/en/pulse"
+   ],
+   "claim_check_corrections": "0 likes match. Windows are in the reply, not the root."
+  },
+  {
+   "id": "A45",
+   "batch": "A",
+   "url": "https://x.com/MirrorlyLive/status/2105413119061176529",
+   "fetch_status": "ok",
+   "author": "MirrorlyLive",
+   "posted_at_utc": "2026-09-30T21:42:58Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "Mirrorly: nickname 'Venom Gibbon' = 0x9e8b1e51c642f4C8b87c6BA11c53D516a218Afc4, $2,297,810 NEAR short at $5.295. Address only in reply URL (portal.mirrorly.xyz).",
+   "text_verbatim": "Venom Gibbon just dropped $2,297,810 short on $NEAR at $5.295 (Hyperliquid). whale alert.",
+   "category": "TRACK",
+   "usefulness_1_to_5": 3,
+   "addresses": [
+    {
+     "address": "0x9e8b1e51c642f4C8b87c6BA11c53D516a218Afc4",
+     "label_in_post": "Venom Gibbon",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [
+    "Mirrorly"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "NEAR short",
+     "value": "2297810",
+     "unit": "USD",
+     "window": "just opened",
+     "context": "at $5.295"
+    }
+   ],
+   "links_expanded": [
+    "https://portal.mirrorly.xyz/leaderboard/Hyperliquid/0x9e8b1e51c642f4C8b87c6BA11c53D516a218Afc4"
+   ],
+   "claim_check_corrections": "0 likes match. This card has no streak. Address is in the reply, not the root. Bio TG t.co was not expanded."
+  },
+  {
+   "id": "A46",
+   "batch": "A",
+   "url": "https://x.com/MirrorlyLive/status/2105417547185082775",
+   "fetch_status": "ok",
+   "author": "MirrorlyLive",
+   "posted_at_utc": "2026-09-30T22:00:34Z",
+   "post_type": "tweet",
+   "verdict": "partly_confirmed",
+   "finding": "Mirrorly: nickname 'Citadel' = 0x9B864dDE6ED1c21608b1665a0ac0fAA4F7E36e6E, +$70,122 on UNI. A tracker nickname, not the firm.",
+   "text_verbatim": "Citadel cooked +$70,122 on $UNI (Hyperliquid). Wild ROI.",
+   "category": "TRACK",
+   "usefulness_1_to_5": 2,
+   "addresses": [
+    {
+     "address": "0x9B864dDE6ED1c21608b1665a0ac0fAA4F7E36e6E",
+     "label_in_post": "Citadel",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [
+    "Mirrorly"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "UNI PnL",
+     "value": "70122",
+     "unit": "USD",
+     "window": "unspecified",
+     "context": "cooked +$70,122"
+    }
+   ],
+   "links_expanded": [
+    "https://portal.mirrorly.xyz/leaderboard/Hyperliquid/0x9B864dDE6ED1c21608b1665a0ac0fAA4F7E36e6E"
+   ],
+   "claim_check_corrections": "Likes are 2, not 1. Address is in the reply, not the root."
+  },
+  {
+   "id": "B01",
+   "batch": "B",
+   "url": "https://x.com/lucas_faster/status/1919348617154101588",
+   "fetch_status": "ok",
+   "author": "lucas_faster",
+   "posted_at_utc": "2025-05-05T11:09:04Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "CONFIRMED. HyperX 30d screen: win rate >=70%, equity >=$10k, realized >=$10k, 5-100 completed trades, ROI >=50% (ROI = PnL / max(100, start + max net deposits)) -> 99 wallets. Body also: equity-curve veto, weekly cull, copy deposit >=15 USDC. Rejected example 0xcb7b6dd3…1efe; kept example 0xace0a4…03fd still truncated.",
+   "text_verbatim": "试过市面上的几个工具，都不太顺手，找钱包的效率偏低。干脆自己动手做了一个分析和跟单平台。在跟单流的玩法中，聪明钱的发现与维护效率才是决定能否长期坚持、持续赚钱的核心关键。\n今天来分享一下我是如何用 HyperX 来搞定这件事的。HyperX 提供了灵活强大的筛选条件和核心指标一页全览的设计。无论是初次挑选钱包，还是日常的追踪与淘汰，效率直接拉满。我自己的使用感受是：原来需要一天的事，现在一小时搞定，效率提升至少 10 倍。\n聪明钱发现 Step 1：筛选先行，快速淘汰\n设置聪明钱初步筛选标准，大幅减少了后续分析成本，筛一次就能把大部分噪音筛掉，以下是我的参数举例：\n时间周期选择 30 天\n胜率：≥ 70%\n账户余额：≥ 10,000 美金\n已实现利润：≥ 10,000 美金\n已完成交易数 5 -100 次，👉 说明：低于 5 次的账户太少样本，难以判断稳定性；高于 100 次容易筛出高频机器人，我更偏好中低频、偏人工操作的选手\nROI 收益率：≥ 50%，👉 这里我设得比较严格，ROI = 盈亏 / max(100, 起始账户价值 + 最大净存款)，重点挑选高质量、持续盈利的钱包\n最终在这组“硬条件”筛选后，其实只剩下 99 个钱包，供我们进一下筛选和跟单。",
+   "category": "FILTER",
+   "usefulness_1_to_5": 4,
+   "addresses": [
+    {
+     "address": "0xcb7b6dd3b61c438746d998a4237d7c4cb4eb1efe",
+     "label_in_post": "rejected example",
+     "from_image": false,
+     "complete": true
+    },
+    {
+     "address": "0xace0a4...03fd",
+     "label_in_post": "kept example",
+     "from_image": false,
+     "complete": false
+    }
+   ],
+   "tools_mentioned": [
+    "HyperX"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "胜率：≥ 70%",
+     "metric": "win rate",
+     "operator": ">=",
+     "value": "70",
+     "unit": "percent",
+     "window": "30d"
+    },
+    {
+     "rule_text": "账户余额：≥ 10,000 美金",
+     "metric": "equity",
+     "operator": ">=",
+     "value": "10000",
+     "unit": "USD",
+     "window": ""
+    },
+    {
+     "rule_text": "已实现利润：≥ 10,000 美金",
+     "metric": "realized",
+     "operator": ">=",
+     "value": "10000",
+     "unit": "USD",
+     "window": "30d"
+    },
+    {
+     "rule_text": "已完成交易数 5 -100 次",
+     "metric": "completed trades",
+     "operator": "between",
+     "value": "5-100",
+     "unit": "trades",
+     "window": "30d"
+    },
+    {
+     "rule_text": "ROI 收益率：≥ 50%，ROI = 盈亏 / max(100, 起始账户价值 + 最大净存款)",
+     "metric": "ROI",
+     "operator": ">=",
+     "value": "50",
+     "unit": "percent",
+     "window": "30d"
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "wallets after hard screen",
+     "value": "99",
+     "unit": "wallets",
+     "window": "30d",
+     "context": ""
+    }
+   ],
+   "links_expanded": [
+    "https://hyper.faster100x.com/hyperliquid/trader?address=0xcb7b6dd3b61c438746d998a4237d7c4cb4eb1efe",
+    "https://hyper.faster100x.com/hyperliquid/copy-trading"
+   ],
+   "claim_check_corrections": "All numeric rules match. Full body also has curve veto, weekly cull, copy deposit >=15 USDC."
+  },
+  {
+   "id": "B02",
+   "batch": "B",
+   "url": "https://x.com/thedefiedge/status/2016118571483447674",
+   "fetch_status": "ok",
+   "author": "thedefiedge",
+   "posted_at_utc": "2026-01-27T11:58:19Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "CONFIRMED. thedefiedge: Hyperdash lets you mirror up to 3 wallets at once (replicates net exposure); filter for swing/position traders; avoid wallets with tons of open positions (qualitative).",
+   "text_verbatim": "Perp trading is brutal. 90% of traders lose money. \n\nBut there's a cheat code most people don't know about: profitable wallets on Hyperliquid are fully visible. \n\nThere are free tools that let you see exactly how consistent winners are positioned. It's like copying off the kid who always aces the test.\n\n3 tools I've been using:\n\n/1 @HyperTracker tracks millions of Hyperliquid wallets and buckets them by size and profitability. \n\nYou get:\n• Real-time positioning from top performers\n•  Liquidation risk across price ranges\n•  Directional bias trends over time\n\nI've been building a watchlist of traders who consistently outperform. One pattern keeps showing up: smaller and unprofitable wallets skew way more bullish on average. Make of that what you want, but I find it useful for gauging crowd sentiment.\n\n/2 @hypurrdash just dropped their v2 trading terminal with copytrading baked in. You can mirror up to 3 wallets simultaneously, and the system replicates their net exposure.\n\nA couple tips:\n•  Filter for swing or position traders working longer timeframes\n•  Avoid wallets with tons of positions open. You might accidentally copytrade a market maker.\n\n/3 @trysuper_ offers similar tracking and copytrading, but with more control:\n\n• Long-only or short-only filtering\n• Token whitelists and blacklists\n• A copytrading backtester (actually useful)\n\nDon't just ape blindly. Execution lag means you won't perfectly replicate returns. \n\nI come in with my own thesis first, then use these tools to gut-check or find new ideas.\n\nI haven't automated anything yet. Just tracking and learning. If you test it, start small.",
+   "category": "GUIDE",
+   "usefulness_1_to_5": 4,
+   "addresses": [],
+   "tools_mentioned": [
+    "HyperTracker",
+    "Hyperdash",
+    "Super"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "Filter for swing or position traders working longer timeframes",
+     "metric": "style",
+     "operator": "",
+     "value": "",
+     "unit": "",
+     "window": ""
+    },
+    {
+     "rule_text": "Avoid wallets with tons of positions open",
+     "metric": "open positions",
+     "operator": "",
+     "value": "",
+     "unit": "",
+     "window": ""
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "copy cap",
+     "value": "3",
+     "unit": "wallets",
+     "window": "",
+     "context": "mirror up to 3"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Handle written @hypurrdash. Tons of positions is qualitative."
+  },
+  {
+   "id": "B03",
+   "batch": "B",
+   "url": "https://x.com/13_niakris/status/2041157827692032048",
+   "fetch_status": "ok",
+   "author": "13_niakris",
+   "posted_at_utc": "2026-04-06T14:15:23Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "CONFIRMED all six: max DD 22%+ skip (aim <15%); last trade 7+ days = asleep; AI risk alerts + high vol -> size x0.5; >5 open positions; hold 24h+ for holders / <1h for scalpers; Sharpe >1.5 or lottery.",
+   "text_verbatim": "6 questions before you copy in Coinpilot and blow up your bank like 99%\n\nFound a trader: ROI 69%, Win Rate 65%.  \nFinger hovering over Copy…  \n\nSTOP.  \n\n99% of retail gets wrecked because they skip these questions.  \nI tested them on Hyperliquid - they actually work.  \n\nSave this checklist - join the top 1%\n\n1️⃣ Max Drawdown 22%+? Skip. It’s a ticking bomb. Aim for <15%  \n2️⃣ Last trade 7+ days ago? Trader is asleep  \n3️⃣ AI risk alerts + high vol? Cut size to ×0.5  \n4️⃣ >5 open positions? Correlation will destroy you  \n5️⃣ Average hold 24h+? Ok for holders. Scalper? Need <1h  \n6️⃣ Sharpe Ratio >1.5? No = pure lottery ticket  \n\nNumbers don’t lie.  \n\nThe next pump or dump will be YOURS.\n\nCopy smart:",
+   "category": "FILTER",
+   "usefulness_1_to_5": 3,
+   "addresses": [],
+   "tools_mentioned": [
+    "Coinpilot"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "Max Drawdown 22%+? Skip. Aim for <15%",
+     "metric": "max drawdown",
+     "operator": ">=",
+     "value": "22",
+     "unit": "percent",
+     "window": ""
+    },
+    {
+     "rule_text": "Last trade 7+ days ago? Trader is asleep",
+     "metric": "last trade age",
+     "operator": ">=",
+     "value": "7",
+     "unit": "days",
+     "window": ""
+    },
+    {
+     "rule_text": "AI risk alerts + high vol? Cut size to ×0.5",
+     "metric": "size",
+     "operator": "*",
+     "value": "0.5",
+     "unit": "",
+     "window": ""
+    },
+    {
+     "rule_text": ">5 open positions? Correlation will destroy you",
+     "metric": "open positions",
+     "operator": ">",
+     "value": "5",
+     "unit": "positions",
+     "window": ""
+    },
+    {
+     "rule_text": "Average hold 24h+? Ok for holders. Scalper? Need <1h",
+     "metric": "average hold",
+     "operator": "",
+     "value": "24h / 1h",
+     "unit": "",
+     "window": ""
+    },
+    {
+     "rule_text": "Sharpe Ratio >1.5? No = pure lottery ticket",
+     "metric": "Sharpe",
+     "operator": ">",
+     "value": "1.5",
+     "unit": "",
+     "window": ""
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "example ROI",
+     "value": "69",
+     "unit": "percent",
+     "window": "",
+     "context": ""
+    },
+    {
+     "metric": "example win rate",
+     "value": "65",
+     "unit": "percent",
+     "window": "",
+     "context": ""
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Wording is Sharpe Ratio >1.5? No = lottery, which matches skip if Sharpe is not above 1.5."
+  },
+  {
+   "id": "B04",
+   "batch": "B",
+   "url": "https://x.com/reisnertobias/status/2049410876109697529",
+   "fetch_status": "ok",
+   "author": "reisnertobias",
+   "posted_at_utc": "2026-04-29T08:50:03Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "CONFIRMED. 0x3b11…8112 'best OIL trader': all-time +$1.4M, volume $62,339,743.85; 30d DD 1.0%, WR 80%, Sharpe 13.15; found on Hyperdash, alerts via @lit_trade.",
+   "text_verbatim": "I think I found the best OIL Trader on Hyperliquid\n\n0x3b11267dfc4b9ebe8427e8f557056b4b6ce98112\n\nAll Time PnL: +$1.4M\nVolume: $62,339,743.85\n\nLast 30 Days:\nDrawdown 1.0%\nWin Rate 80%\nSharpe 13.15\n\nFound on @hypurrdash, getting alerts and see his buys on the chart with @lit_trade",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 3,
+   "addresses": [
+    {
+     "address": "0x3b11267dfc4b9ebe8427e8f557056b4b6ce98112",
+     "label_in_post": "best OIL trader",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [
+    "Hyperdash",
+    "lit_trade"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "all-time PnL",
+     "value": "1.4",
+     "unit": "USD millions",
+     "window": "all time",
+     "context": ""
+    },
+    {
+     "metric": "volume",
+     "value": "62339743.85",
+     "unit": "USD",
+     "window": "all time",
+     "context": ""
+    },
+    {
+     "metric": "drawdown",
+     "value": "1.0",
+     "unit": "percent",
+     "window": "last 30 days",
+     "context": ""
+    },
+    {
+     "metric": "win rate",
+     "value": "80",
+     "unit": "percent",
+     "window": "last 30 days",
+     "context": ""
+    },
+    {
+     "metric": "Sharpe",
+     "value": "13.15",
+     "unit": "",
+     "window": "last 30 days",
+     "context": ""
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Volume is exact $62,339,743.85. 59 likes match."
+  },
+  {
+   "id": "B05",
+   "batch": "B",
+   "url": "https://x.com/reisnertobias/status/2049522367680938043",
+   "fetch_status": "ok",
+   "author": "reisnertobias",
+   "posted_at_utc": "2026-04-29T16:13:05Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "CONFIRMED. 0xe650…f1a9 equities trader: 30d DD 20.2%, WR 79%, Sharpe 10.58. No all-time PnL or tool named.",
+   "text_verbatim": "Found another great Equities Trader on Hyperliquid\n\n0xe6503009ee1a648c3775b6b8444afdddb786f1a9\n\nPerformance 30D\nDrawdown: 20.2%\nWin Rate: 79%\nSharpe: 10.58",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 3,
+   "addresses": [
+    {
+     "address": "0xe6503009ee1a648c3775b6b8444afdddb786f1a9",
+     "label_in_post": "equities trader",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "drawdown",
+     "value": "20.2",
+     "unit": "percent",
+     "window": "30d",
+     "context": ""
+    },
+    {
+     "metric": "win rate",
+     "value": "79",
+     "unit": "percent",
+     "window": "30d",
+     "context": ""
+    },
+    {
+     "metric": "Sharpe",
+     "value": "10.58",
+     "unit": "",
+     "window": "30d",
+     "context": ""
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "42 likes match. No all-time PnL or tool named in this post."
+  },
+  {
+   "id": "B06",
+   "batch": "B",
+   "url": "https://x.com/chase_mew_/status/2079212386532139461",
+   "fetch_status": "ok",
+   "author": "chase_mew_",
+   "posted_at_utc": "2026-07-20T14:30:37Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "CONFIRMED. 935,000 wallets, 1 year: top-10% -> top-10% next month 19%; 'only half' profitable next month AND 45.5% for prior top trader vs 42.3% random; R2 0.036. 'Top 10%' and 'profitable' are not defined.",
+   "text_verbatim": "I did an analysis of 935,000 Hyperliquid wallets over a year. Trying to find the best traders, with the goal of copy-trading them.\n\nHowever, if you look at the top 10% of traders each month, only 19% of them are in the top 10% the next month. And only half of them are even profitable the next month.\n\nThe probability of a random user being profitable in a given month is 42.3%. And the probability of previously top trader being profitable in a following month is 45.5%. Historic success has almost no correlation with future success (0.036 R²).\n\nWho is successful at trading is only very slightly above what would be expected from a purely random distribution.",
+   "category": "FILTER",
+   "usefulness_1_to_5": 5,
+   "addresses": [],
+   "tools_mentioned": [],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "wallets",
+     "value": "935000",
+     "unit": "wallets",
+     "window": "1 year",
+     "context": ""
+    },
+    {
+     "metric": "top-10% persistence",
+     "value": "19",
+     "unit": "percent",
+     "window": "month t to t+1",
+     "context": ""
+    },
+    {
+     "metric": "random profitable",
+     "value": "42.3",
+     "unit": "percent",
+     "window": "a given month",
+     "context": ""
+    },
+    {
+     "metric": "prior top profitable",
+     "value": "45.5",
+     "unit": "percent",
+     "window": "following month",
+     "context": ""
+    },
+    {
+     "metric": "R2",
+     "value": "0.036",
+     "unit": "",
+     "window": "historic vs future",
+     "context": ""
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Wallets are written 935,000. Likes are 500. Half and 45.5% both appear. No definition of top 10% or profitable."
+  },
+  {
+   "id": "B07",
+   "batch": "B",
+   "url": "https://x.com/djkanzen/status/2079221726991491284",
+   "fetch_status": "ok",
+   "author": "djkanzen",
+   "posted_at_utc": "2026-07-20T15:07:44Z",
+   "post_type": "reply",
+   "verdict": "confirmed",
+   "finding": "CONFIRMED. HyperTracker builder reply: 5 segments (top scalpers, counter scalpers, top day traders, counter day traders, top swing traders); re-queried every 1-6h on single-coin performance; streaking wallets drop out. No segment definitions.",
+   "text_verbatim": "Follow @HyperTracker \n\nWe’ll be attacking exactly this in a novel way\n\nWe’ve created 5 segments: top scalpers, counter scalpers, top day traders, counter day traders, top swing traders\n\nWe’re running search queries every 1-6 hours looking for the best wallets based on single coin performance\n\nHot streaking wallets can qualify for a segment then fail by the evening and be removed. So each segment is constantly fresh with the best coin specialist traders at that exact moment",
+   "category": "FILTER",
+   "usefulness_1_to_5": 3,
+   "addresses": [],
+   "tools_mentioned": [
+    "HyperTracker"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "segments",
+     "value": "5",
+     "unit": "",
+     "window": "",
+     "context": ""
+    },
+    {
+     "metric": "requery",
+     "value": "1-6",
+     "unit": "hours",
+     "window": "",
+     "context": "single coin performance"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Builder claim is in the bio, Building @CoinMarketMan and @HyperTracker, not in the reply text."
+  },
+  {
+   "id": "B08",
+   "batch": "B",
+   "url": "https://x.com/koolkrypto223/status/2079224409043423245",
+   "fetch_status": "ok",
+   "author": "koolkrypto223",
+   "posted_at_utc": "2026-07-20T15:18:23Z",
+   "post_type": "reply",
+   "verdict": "partly_confirmed",
+   "finding": "PARTLY. Reply: discretionary traders earn most of the year's PnL in 3-5 big trades; flat months are normal. 'Top-100 all-time / runs a fund' is bio, not reply text.",
+   "text_verbatim": "I don't think this is a good way to look at profitable discretionary traders.\n\nMost of the time you're waiting around for the next idea and then you make most of your years PNL in 3-5 big trades, the rest of the time you slowly bleed a little on losing ideas that you cut. My perps PNL is generally very flat for long stretches so I'd be labeled as bad by your method because I'm profitable one month, flat/slightly down the next.\n\nThis would only really be indicative of good systematic traders, and even then certain strategies can be amazing but have long flat stretches.",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 4,
+   "addresses": [],
+   "tools_mentioned": [],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "Monthly top-decile method would label a discretionary book bad if one month is profitable and the next is flat or slightly down.",
+     "metric": "monthly rank",
+     "operator": "not a cutoff",
+     "value": "",
+     "unit": "",
+     "window": "month"
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "large trades per year that make most of yearly PnL",
+     "value": "3-5",
+     "unit": "trades",
+     "window": "year",
+     "context": "discretionary style described by author"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Post body confirms 3-5 big trades make most of the year's PnL and that flat/slightly-down months would mislabel him. It does not say 'green every month' or 'monthly not-top-10% != unskilled'. 'Top 100 All Time Hyperliquid PNL' and 'I run a fund' are in the bio, not the post. No address. Date and author match."
+  },
+  {
+   "id": "B09",
+   "batch": "B",
+   "url": "https://x.com/MinaraCN/article/2094646483396284853",
+   "fetch_status": "ok",
+   "author": "MinaraCN",
+   "posted_at_utc": "2026-09-01T04:40:12Z",
+   "post_type": "article",
+   "verdict": "partly_confirmed",
+   "finding": "PARTLY (filters and counts confirmed). MinaraCN 2026-09-01: 43,618 addresses -> 1,681 pass (equity >=$10k; all-time PnL and ROI >0; all-time volume >=$1M; month volume >=$100k; compare 1D/1W/1M/all-time; score; check public fills). Top 12 split 8:3:1 (two-way high turnover : day/scalp : concentrated directional). Windows are 1D/1W/1M/all-time (the raw file's '7d' is a paraphrase); score inputs listed but no weights, no CSV link. Seven full example addresses with per-address fill stats (§14.3). Caveat from the authors: a snapshot CSV cannot prove 365-day consistency.",
+   "text_verbatim": "过去一周，我们分析了 43,618 个 Hyperliquid 地址，以此来解答一个问题：真正赚钱的账户，最常使用什么样的交易方式？\n答案并不是“更早押中某个币”。在进一步研究的 12 个排名靠前的盈利账户中，最常见的反而是强调执行的策略。8 个账户呈现出高周转、双向交易的特征；3 个更像主动日内交易者或超短线交易者；只有 1 个属于集中式方向交易。\n真正值得观察的，是地址如何进出市场：交易节奏、买卖平衡、资金周转、持仓集中度、市场选择，以及资金反复周转时每承担一单位风险能产生多少利润。\n从 43,618 个地址中，如何筛出 1,681 个盈利账户\n筛选分为五步。\n1. 汇总完整榜单数据\n我们载入了 CSV 中的全部 43,618 条记录，包括地址、排名、昵称、账户价值，以及 1 日、1 周、1 个月和历史累计的 PnL、ROI 与交易量。使用完整数据，可以避免从少数样本中挑选符合预期的案例。\n2. 排除失真的小样本\n入选账户需同时满足以下条件：账户价值不低于 $10,000；历史累计 PnL 和 ROI 均为正；累计交易量至少 100 万美元；月交易量至少 $100,000。这样可以排除本金过小但 ROI 异常高、长期不活跃，以及只靠单笔交易盈利的账户。\n3. 检查盈利是否延续至近期\n我们对比了账户在 1 日、1 周、1 个月和历史累计四个区间内的 PnL 与 ROI，重点观察周度和月度表现。过去曾有一笔成功交易并不足够；如果账户近期已经不再盈利，也不会获得较高评分。\n4. 综合衡量盈利、规模与活跃度\n评分同时考虑历史累计 PnL、历史累计 ROI、账户价值、累计交易量、月交易量，以及近期盈利区间的数量。将多项指标放在一起，可以减少单一指标排名造成的偏差。\n5. 从成交记录判断交易方式\n对于排名靠前的地址，我们进一步查看了 Hyperliquid 的公开成交记录，分析它们交易哪些资产、交易频率、是否同时进行买入和卖出、产生了多少交易量，以及交易是否集中在少数标的上。\n这一层分析把问题从“谁赚了钱”推进到“它可能是怎样赚到钱的”。\n最终共有 1,681 个账户通过筛选。我们从中选出综合评分较高的 12 个地址，进一步分析其成交行为。\n交易风格主要话分为三类\n这套方法仍然只能提供近似判断。榜单 CSV 给出的是 1 日、1 周、1 个月和历史累计的截面数据，而不是完整的每日净值曲线。因此，我们无法证明某个账户在 365 天内持续、平稳地实现了复利。\n但相比只看榜单排名，这套筛选更严格：账户必须同时具备正 PnL、正 ROI、足够的账户价值和交易量、近期盈利延续，并且其交易行为能够被观察和分析。\n12 个账户最终呈现出 8∶3∶1 的分布。三组之间不只是交易速度不同，更可能依赖不同的收益来源。\n高周转、双向执行　地址数: 8　占比: 66.7%　可能的收益来源: 反复积累的小额执行优势、价差、短周期均值回归或库存管理\n主动日内交易 / 超短线交易　地址数: 3　占比: 25.0%　可能的收益来源: 短期方向波动、动量、反转或事件带来的波动\n集中式方向交易　地址数: 1　占比: 8.3%　可能的收益来源: 减少入场次数、延长持仓时间，等待单一市场出现较大行情\n第一类：通过高周转反复积累小额优势\n这 8 个地址的样本共包含 16,000 笔成交，交易量合计 5,137 万美元。整体买卖流量几乎完全平衡：买入占 49.4%，卖出占 50.6%。\n在 API 返回的成交区间内，8 个地址中有 6 个实现了正的已平仓净收益。合计已平仓净收益为 $156,464，约等于交易量的 0.305%。\n这类策略主要靠周转赚钱。与庞大的交易额相比，单次优势并不大，但同一过程会被重复数千次。它们不需要等待市场出现大行情，只需要让很小的执行优势在大量交易中持续存在。\n仅凭公开成交记录，我们不能证明这些地址就是做市商。我们看不到它们的挂单、Maker/Taker 身份、完整库存，也不知道它们是否在其他平台进行对冲。不过，公开行为与几类相近的方法相符：\n同时在市场两侧报价或交易；\n捕捉小额价差或短暂的价格偏离；\n在短期方向波动后降低库存；\n短周期均值回归；\n跨市场或跨资产对冲。\n下面三个地址展示了这种模式的不同形态。\n0xe4c6ae25959d7fc66cf2dd5965fb78c5e09c4048 返回的 2,000 笔成交对应 2,492 万美元的交易量。该区间产生 $113,079 的已平仓净收益，相当于 0.454%。BTC 占观察期交易量的 69.2%，买入成交占 56.7%。它更像一套集中在流动性最深市场中的大额执行策略。\n0x523852be2db1a76a0e088ecbff32e849544054e5（perpfumbler）则把类似的方法分散到 BTC、xyz:SP500、HYPE、xyz:XYZ100 和 xyz:TSLA。返回的成交记录覆盖 1,227 万美元名义价值，产生 $28,864 已平仓净收益，相当于 0.235%；买入成交占 43.4%。这个地址并不是围绕单一资产表达观点，而是在多个市场重复使用高周转方法。\n0x399965e15d4e61ec3529cc98b7f7ebb93b733336 是速度最快的案例。API 返回的 2,000 笔成交只覆盖约 20 分钟，相邻成交间隔中位数为 0.21 秒。买入占 49.85%，卖出占 50.15%。该区间在 144 万美元交易量上产生 $2,187 已平仓净收益，相当于 0.152%。\n三个地址的交易资产和单笔规模不同，但背后的经济逻辑接近：找到一个很小的优势，控制仓位，使账户可以双向交易，然后不断重复。\n第二类：依靠短期行情的日内与超短线交易\n另有 3 个地址同样交易频繁，但买卖流量没有达到双向执行组的平衡标准。它们明显偏向一侧，因此收益更依赖短期价格方向。\n三个地址的样本共包含 5,071 笔成交，交易量合计 1,535 万美元，加权后的买入占比为 70.1%。虽然它们在榜单上的历史累计盈利达到 6,143 万美元，但三个返回区间的已平仓净收益全部为负。\n这个差异很重要。它们确实是历史盈利账户，但近期样本没有表现出双向执行组那种小而稳定的执行优势。它们的盈利可能更集中在少数行情中：方向型日内交易者可以在一段交易中亏损，再依靠之后的行情收复损失；类似做市的策略则通常会把收益更均匀地分布在大量周转中。\n这三个地址的日内集中方式也各不相同。\n0x8c625ff57d8a4374784c7eff585dfdc42ccec974 高度集中于 DOGE，DOGE 占返回交易量的 93.0%。API 返回了 23.35 天内的 1,071 笔成交，其中买入占 30.1%，卖出占 69.9%。这种行为不像中性流动性供给，更像围绕一个高波动市场反复执行同一方向的交易计划。\n0x77375a8c9d13bf79afb2a87f1b0ac1dfd5f5bf66 交易 ETH、SOL、PUMP 和 BTC，但样本成交中有 94.7% 为买入。该区间的交易量为 1,409 万美元，已平仓净收益为 -$142,648，而账户历史累计盈利仍有 4,706 万美元。这段可见记录可能对应主动建仓、对冲其他地方的风险敞口，也可能只是更大规模盈利策略中的亏损一侧。\n0xc926ddba8b7617dbc65712f20cf8e1b58b8598d3 的单笔规模小得多，平均每笔约 $161。返回的 2,000 笔成交中，买入占 67.1%。行为上符合快速超短线或短期方向策略，但该样本区间亏损了 $14,572。\n这一组的共同点不只是高频，而是高频叠加明显的方向偏向。执行能力仍然重要，但策略要赚钱，还需要价格朝预期方向运动。\n第三类：低频建仓，集中押注单一方向\n12 个地址中，只有 1 个符合集中式方向交易的特征。\n0x862dd8e68f30693e3d3c9daa42a440bc6d2a1f0c 在 12.05 天内仅返回 14 笔成交。所有成交都是买入，标的全部为 @107。观察到的交易量为 $18,504，样本区间内没有已实现盈亏。\n该账户在榜单上的历史累计盈利为 645 万美元，但公开记录无法证明这部分历史利润来自上述 14 笔成交。我们只能得出一个更窄的结论：在样本区间内，该地址正在建立集中仓位，而不是围绕短期库存反复交易。\n从成交行为看，这类方向策略通常表现为交易频率低、执行单边、资产集中度高，并依赖之后出现的价格变化，而不是靠即时周转获得收益。\n在综合评分最高的 12 个账户中，这种类型也最少见。集中式方向交易当然可能获得巨额利润，但对于同时兼顾盈利、持续性、规模和活跃度的高分账户来说，它并不是最常见的方法。\n交易方式不同，选择的资产也不同\n这些地址并没有共同偏爱的资产。它们会根据自己试图捕捉的优势来选择市场。\nBTC、ETH 和 SOL 占据了大部分交易量。这些市场流动性深，能够容纳更大的交易规模，也便于频繁进出。HYPE、PUMP、xyz:SKHY 和 xyz:CRCL 的成交笔数相对于交易量明显更多，说明单笔规模更小、资金周转更快。\nBTC　交易量: $23.75M　样本成交笔数: 1,537　平均每笔交易额: $15,449\nETH　交易量: $10.93M　样本成交笔数: 751　平均每笔交易额: $14,559\nSOL　交易量: $5.36M　样本成交笔数: 564　平均每笔交易额: $9,507\nxyz:SP500　交易量: $3.42M　样本成交笔数: 192　平均每笔交易额: $17,815\nHYPE　交易量: $2.75M　样本成交笔数: 1,423　平均每笔交易额: $1,932\nPUMP　交易量: $2.25M　样本成交笔数: 1,200　平均每笔交易额: $1,878\nxyz:SKHY　交易量: $2.13M　样本成交笔数: 834　平均每笔交易额: $2,557\nxyz:CRCL　交易量: $1.48M　样本成交笔数: 993　平均每笔交易额: $1,485\n差异非常明显。BTC 的平均单笔规模约为 HYPE 的 8 倍；xyz:SP500 的平均单笔规模在表中最高，而 xyz:CRCL 属于最低的一档。\n在高周转双向组中，BTC 的样本交易量为 2,166 万美元。ETH、xyz:SP500、HYPE、xyz:SKHY 和 xyz:CRCL 构成第二梯队。这些地址似乎会在流动性深的市场中承载较大仓位，再到规模较小的市场中寻找更密集的执行机会。\n日内交易组则更集中于 ETH、SOL、PUMP、BTC 和 DOGE。这种资产组合更符合追逐短期方向波动和波动率的策略，而不是单纯追求市场深度。\n结论并不是“盈利账户更喜欢 BTC”，而是资产选择本身就是策略设计的一部分。高周转策略需要流动性，超短线策略需要足够的波动，集中式方向策略则需要对某一个市场有明确判断。\n真正可复制的，是交易方法，而非某次交易行为\n12 个地址对市场方向没有一致判断，交易的资产不同，时间尺度也不一样。\n真正拉开差异的，是利润产生的方式。双向组在样本区间内周转了 5,137 万美元，赚取约 0.305%。它们依赖的是很小、可重复、与执行有关的优势。日内组承担了更明显的方向偏移，短期结果也更不稳定。最后一个地址则把风险集中在单一市场中等待行情。\n因此，这批盈利地址中最常见的策略不能只概括为“高频”。更准确地说，它们通过高周转、双向执行，在控制库存风险的同时，把很小的优势重复兑现许多次。\n这也解释了为什么只复制某个地址的最新持仓，往往得不到真正有用的信息。持仓只是交易系统在某一时刻的结果。策略本身藏在交易节奏、买卖平衡、仓位大小、市场选择、资金周转和风险管理之中。\n欢迎各位免费使用 Minara：\nhttps://minara.ai/\nhttps://strategy.minara.ai",
+   "category": "FILTER",
+   "usefulness_1_to_5": 5,
+   "addresses": [
+    {
+     "address": "0xe4c6ae25959d7fc66cf2dd5965fb78c5e09c4048",
+     "label_in_post": "high-turnover two-sided example",
+     "from_image": false,
+     "complete": true
+    },
+    {
+     "address": "0x523852be2db1a76a0e088ecbff32e849544054e5",
+     "label_in_post": "perpfumbler",
+     "from_image": false,
+     "complete": true
+    },
+    {
+     "address": "0x399965e15d4e61ec3529cc98b7f7ebb93b733336",
+     "label_in_post": "fastest high-turnover example",
+     "from_image": false,
+     "complete": true
+    },
+    {
+     "address": "0x8c625ff57d8a4374784c7eff585dfdc42ccec974",
+     "label_in_post": "DOGE-concentrated day trader",
+     "from_image": false,
+     "complete": true
+    },
+    {
+     "address": "0x77375a8c9d13bf79afb2a87f1b0ac1dfd5f5bf66",
+     "label_in_post": "ETH/SOL/PUMP/BTC directional sample",
+     "from_image": false,
+     "complete": true
+    },
+    {
+     "address": "0xc926ddba8b7617dbc65712f20cf8e1b58b8598d3",
+     "label_in_post": "small-ticket short-term directional",
+     "from_image": false,
+     "complete": true
+    },
+    {
+     "address": "0x862dd8e68f30693e3d3c9daa42a440bc6d2a1f0c",
+     "label_in_post": "concentrated directional, all buys of @107",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [
+    "Minara",
+    "Hyperliquid public fills",
+    "leaderboard CSV"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "账户价值不低于 $10,000；历史累计 PnL 和 ROI 均为正；累计交易量至少 100 万美元；月交易量至少 $100,000。",
+     "metric": "equity, all-time PnL, all-time ROI, all-time volume, month volume",
+     "operator": ">= / >",
+     "value": "10000 / 0 / 0 / 1000000 / 100000",
+     "unit": "USD",
+     "window": "all-time and month"
+    },
+    {
+     "rule_text": "评分同时考虑历史累计 PnL、历史累计 ROI、账户价值、累计交易量、月交易量，以及近期盈利区间的数量。 No numeric weights published.",
+     "metric": "composite score",
+     "operator": "unweighted description only",
+     "value": "",
+     "unit": "",
+     "window": "1d/1w/1m/all-time"
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "leaderboard rows loaded",
+     "value": "43618",
+     "unit": "addresses",
+     "window": "CSV snapshot",
+     "context": "full official-style dump"
+    },
+    {
+     "metric": "accounts passing screen",
+     "value": "1681",
+     "unit": "accounts",
+     "window": "screen",
+     "context": "after five-step filter"
+    },
+    {
+     "metric": "accounts fill-inspected",
+     "value": "12",
+     "unit": "accounts",
+     "window": "top composite score",
+     "context": "8 high-turnover two-sided, 3 day/scalp, 1 concentrated directional"
+    },
+    {
+     "metric": "account value minimum",
+     "value": "10000",
+     "unit": "USD",
+     "window": "screen",
+     "context": "hard filter"
+    },
+    {
+     "metric": "all-time volume minimum",
+     "value": "1000000",
+     "unit": "USD",
+     "window": "all-time",
+     "context": "hard filter"
+    },
+    {
+     "metric": "month volume minimum",
+     "value": "100000",
+     "unit": "USD",
+     "window": "month",
+     "context": "hard filter"
+    }
+   ],
+   "links_expanded": [
+    "https://minara.ai/",
+    "https://strategy.minara.ai"
+   ],
+   "claim_check_corrections": "Filters and 43,618 rows match. Recent-profit check uses 1日/1周/1个月/历史, not a stated 7d window; '7d' is the raw file's paraphrase of 1周. Scoring factors are listed but no weights. Result count 1,681 and the 12-address fill study are in the article and were not in the raw paraphrase. No CSV download link. Author and date match."
+  },
+  {
+   "id": "B10",
+   "batch": "B",
+   "url": "https://x.com/hyperx_trade/status/2100489602935210165",
+   "fetch_status": "ok",
+   "author": "hyperx_trade",
+   "posted_at_utc": "2026-09-17T07:38:41Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "CONFIRMED. HyperX filters (part 1): Total Score >40, Profit >60, Stability >50, Risk Ctrl >50, Win Rate >50%, All PnL / Total PnL >$20K, Leverage >1x; Account Value >$20K, ROI 20-50%, Median Trade Duration >1h; plus Fill Realized and trade-count filters.",
+   "text_verbatim": "聪明钱筛选（上）：先用筛选条件将百万个钱包缩成短名单\n\nHyperliquid 上可追踪钱包超过百万。最常见的问题不是找不到高收益，而是跟到：曲线陡、回撤腰斩、3 分钟超短线、25x 以上杠杆、账户只剩零头的钱包。\n\n今天教大家如何正确使用 HyperX 的筛选功能～\n👉 https://hyperx.trade/hyperliquid/wallet-discover?ref=HYPER\n首先，打开左侧 Filter Options\n\n第一优先级：HyperX Score（硬门槛）\n🔸 Total Score > 40\n🔸 Profit > 60，Stability > 50，Risk Ctrl > 50\n🔸 Win Rate > 50%\n🔸 All PnL / Total PnL > $20K\n🔸 Leverage > 1x，确认账户在真实交易\n\n数据拆开看：Profit 看赚不赚钱，Stability 看曲线稳不稳，Risk Ctrl 看会不会把本金打穿。\n\n第二优先级：Common Filters（排除蚂蚁仓）\n🔸 Account Value > $20K\n🔸 Fill Realized > $10K\n🔸 Total Completed Trades > 10\n🔸 ROI 卡在 20%–50%，不追几百倍的小本金神单\n🔸 Median Trade Duration > 1h\n\n点 Search，筛选出来的是收益合理、持仓时间跟得上的短名单。\n\n下篇再写：列表上怎么看曲线和回撤，点进详情还要看哪些指标，以及怎么点跟单。👏",
+   "category": "FILTER",
+   "usefulness_1_to_5": 5,
+   "addresses": [],
+   "tools_mentioned": [
+    "HyperX",
+    "Hyperliquid"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "Total Score > 40",
+     "metric": "Total Score",
+     "operator": ">",
+     "value": "40",
+     "unit": "score",
+     "window": ""
+    },
+    {
+     "rule_text": "Profit > 60，Stability > 50，Risk Ctrl > 50",
+     "metric": "Profit / Stability / Risk Ctrl",
+     "operator": ">",
+     "value": "60 / 50 / 50",
+     "unit": "score",
+     "window": ""
+    },
+    {
+     "rule_text": "Win Rate > 50%",
+     "metric": "win rate",
+     "operator": ">",
+     "value": "50",
+     "unit": "percent",
+     "window": ""
+    },
+    {
+     "rule_text": "All PnL / Total PnL > $20K",
+     "metric": "All PnL / Total PnL",
+     "operator": ">",
+     "value": "20000",
+     "unit": "USD",
+     "window": ""
+    },
+    {
+     "rule_text": "Leverage > 1x，确认账户在真实交易",
+     "metric": "leverage",
+     "operator": ">",
+     "value": "1",
+     "unit": "x",
+     "window": ""
+    },
+    {
+     "rule_text": "ROI 卡在 20%–50%",
+     "metric": "ROI",
+     "operator": "between",
+     "value": "20-50",
+     "unit": "percent",
+     "window": ""
+    },
+    {
+     "rule_text": "Median Trade Duration > 1h",
+     "metric": "median trade duration",
+     "operator": ">",
+     "value": "1",
+     "unit": "hours",
+     "window": ""
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "Total Score",
+     "value": ">40",
+     "unit": "score",
+     "window": "hard gate",
+     "context": "HyperX Score"
+    },
+    {
+     "metric": "Profit",
+     "value": ">60",
+     "unit": "score",
+     "window": "hard gate",
+     "context": "HyperX Score"
+    },
+    {
+     "metric": "Stability",
+     "value": ">50",
+     "unit": "score",
+     "window": "hard gate",
+     "context": "HyperX Score"
+    },
+    {
+     "metric": "Risk Ctrl",
+     "value": ">50",
+     "unit": "score",
+     "window": "hard gate",
+     "context": "image label Risk Ctrl; tweet says Risk Ctrl"
+    },
+    {
+     "metric": "Win Rate",
+     "value": ">50%",
+     "unit": "percent",
+     "window": "hard gate",
+     "context": "HyperX Score"
+    },
+    {
+     "metric": "All PnL / Total PnL",
+     "value": ">20000",
+     "unit": "USD",
+     "window": "all-time label",
+     "context": "tweet wording All PnL / Total PnL > $20K"
+    },
+    {
+     "metric": "Leverage",
+     "value": ">1x",
+     "unit": "x",
+     "window": "current/filter",
+     "context": "确认账户在真实交易"
+    },
+    {
+     "metric": "Account Value",
+     "value": ">20000",
+     "unit": "USD",
+     "window": "Common Filters",
+     "context": ""
+    },
+    {
+     "metric": "Fill Realized",
+     "value": ">10000",
+     "unit": "USD",
+     "window": "Common Filters",
+     "context": "not 'realized' alone"
+    },
+    {
+     "metric": "Total Completed Trades",
+     "value": ">10",
+     "unit": "trades",
+     "window": "Common Filters",
+     "context": ""
+    },
+    {
+     "metric": "ROI",
+     "value": "20%-50%",
+     "unit": "percent",
+     "window": "Common Filters",
+     "context": "卡在 20%–50%，不追几百倍的小本金神单"
+    },
+    {
+     "metric": "Median Trade Duration",
+     "value": ">1h",
+     "unit": "hours",
+     "window": "Common Filters",
+     "context": ""
+    }
+   ],
+   "links_expanded": [
+    "https://hyperx.trade/hyperliquid/wallet-discover?ref=HYPER"
+   ],
+   "claim_check_corrections": "Exact labels: Risk Ctrl not 'Risk'; All PnL / Total PnL > $20K; Fill Realized > $10K not bare realized; Median Trade Duration > 1h. ROI wording is 卡在 20%–50%. Leverage > 1x is to confirm the account is actually trading. Image matches the text. Author and date match."
+  },
+  {
+   "id": "B11",
+   "batch": "B",
+   "url": "https://x.com/DexterOnchain/status/2101051112149352715",
+   "fetch_status": "ok",
+   "author": "DexterOnchain",
+   "posted_at_utc": "2026-09-18T20:49:55Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "CONFIRMED. DexterOnchain (HyperX founder) 2026-09-18: 0xb7e0…d1aa is rank 1 of 511 copyable; 90d total score 84.3, copy-fit 100.0; HyperX tags HFT/MM + Direction Neutral + Large Capital; 98 round trips, 77.5% win, realized $6.84M on $557.29M volume; funding -$155.9K, own fees $163.2K. First trade 2026-05-10 (account <5 months old); all-time realized only $6.48M over 170 round trips; open positions all short at 25.0x avg leverage, unrealized -$756.8K. Address complete in post.",
+   "text_verbatim": "Trader page (live positions / PnL): https://hyperx.trade/hyperliquid/trader?address=0xb7e0b9fbc9479330d70bcc82a7d4325a20e8d1aa&ref=FASTER100X\nOn-chain address: 0xb7e0b9fbc9479330d70bcc82a7d4325a20e8d1aa\nChapter 1 Why copy this one\n\nCopy this one now. In a pool of 511 copyable wallets, this anonymous wallet is rank 1. HyperX gives the last 90 days a total score of 84.3 and a copy-fit score of 100.0. Copy-fit at 100.0 is the product saying the round trips are slow enough to follow, the leftover dollars still show after fees, and this is the wallet to open first.\nHyperX 90-day components: profit 92.0, stability 83.8, win-rate 77.6, risk 88.4, efficiency 56.5, experience 54.5. In the 90-day window from 2026-06-22 to 2026-09-18 he closed 98 complete round trips, won 77.5% of them, and realized $6.84M on $557.29M of volume. HyperX tags: HFT/MM, Direction Neutral, Large Capital. Wallet tags: Smart Money, Big Winner, Profit Machine, Whale, Crypto Native. Direction Neutral means he runs longs and shorts. Large Capital is the size you are standing next to. HFT/MM is the fill pattern — hundreds of adds and reduces inside one round trip — which is why you copy the round trip, not every add and reduce. Median hold is still 19.0 hours.\nThree pitches, all from the 90-day tape. It is copyable: median round trip 19.0 hours, a typical round trip lasts more than 30 minutes, late-fill gap $0.0 per $10,000 of volume, so a few seconds late is fine. The math works: about $112.9 left per $10,000 of volume after fees and lag. And it is #1 of 511. That is the reason you hit Copy instead of scrolling.\nOpen the trader page and hit Copy. Rank 1 of 511, copy-fit score 100.0, about $112.9 left per $10,000 of volume.\nLast 7 days total score 21.3 and copy-fit score 0.0 on 6 round trips (win rate 100.0%, realized $272.4k, $-43.8 per $10,000 volume); last 30 days total score 78.9 and copy-fit score 100.0 on 35 round trips (win rate 80.0%, realized $4.71M, $87.8 per $10,000 volume); last 90 days total score 84.3 and copy-fit score 100.0 on 98 round trips (win rate 77.5%, realized $6.84M, $122.9 per $10,000 volume); all-time total score 64.9 and copy-fit score 100.0 on 170 round trips since the first trade on 2026-05-10 (win rate 67.7%, realized $6.48M, $82.3 per $10,000 volume). Seven days is only 6 round trips — too small, don't panic over one week, the product ranks on 90 days.\nHe is on a win streak of 8, with a max win streak of 19 and a max losing streak of 3. Win/loss ratio 2.664, profit factor 8.567. Longs in 90 days: 45 wins and 13 losses, PnL $5.91M. Shorts: 31 wins and 9 losses, PnL $933.9k. Both directions contributed. That is the Two Way Whale.\nChapter 2 What you keep\n\nThe unit is dollars per $10,000 of volume. You do not clone $557.29M. You copy a slice, and HyperX already nets the fees.\nOn 90-day volume of $557.29M he makes $122.9 per $10,000 of volume. You pay $10.0 in fees per $10,000 of volume (exchange $4.5 + HyperX $5.5). Late-fill gap is $0.0 per $10,000 of volume. After fees and lag, about $112.9 left per $10,000 of volume.\nA typical round trip lasts more than 30 minutes. Median complete trade is 19.0 hours; average hold is 80.8 hours. Hold-time mix on those 98 complete round trips: under 1 hour 7.0% (7 rounds), 1–24 hours 48.0% (48 rounds), over 24 hours 45.0% (45 rounds). Most of the round trips last hours to a couple of days. You can keep up without staring at every fill.\nHyperX already ran the all-in fee check on a full mirror of the 90 days: copy fees of $557.3k, about 8.14% of his net profit. That percentage is the proof the leftover dollars are still there after the cut. His own fees in the window were $163.2k, and 90-day funding was -$155.9k. The copy stack is heavier than his raw exchange bill, which is why the product subtracts $10.0 from $122.9 up front and shows about $112.9 left.\nLeverage-adjusted ROI is 132.0% and score ROI is 2331.2% — those are his numbers at his size. What you keep is the leftover dollars per $10,000 of volume you actually copy, at a size you can lose.\nChapter 3 What to copy\n\nPrimary market is BTC, 54.0% of 90-day volume. Copy BTC round trips first. BTC in 90 days: 22 round trips, 15 wins, 68.2% win rate, PnL $1.83M, fees $81.0k.\nAdd only the two biggest-PnL coins after BTC. PUMP: 2 round trips, 2 wins, 100.0% win rate, PnL $1.35M, fees $3,397. ETH: 10 round trips, 7 wins, 70.0% win rate, PnL $1.30M, fees $33.7k. That is the copy map: BTC as the core, PUMP and ETH as the other two dollar names.\nHYPE is the live extra, not a third hunt list. In 90 days HYPE ran 18 round trips, 15 wins, 83.3% win rate, PnL $791.4k, fees $12.5k, and it is open on the trader page right now. Follow it when it is live. Skip the add/reduce noise.\nHyperX tagged this wallet HFT/MM: copy the round trip, not every add and reduce. Median hold is still 19.0 hours. The open BTC short is 121.74 BTC, notional $9.30M, entry $76,367.6, 584 fills this round on $9.30M of volume. The open HYPE short is 18,337.55 HYPE, notional $1.50M, entry $81.68, 637 fills this round on $1.50M of volume. Those fill counts are the noise. You copy the short. You do not clone 584 clicks.\nCopy the round trip, not every add and reduce. Median hold is 19.0 hours — a few seconds late is fine.\nFollow live direction on the trader page: open positions are all short. Perp equity $1.12M, wallet equity $4.48M, notional $11.55M, unrealized -$756.8k, average leverage 25.0x, 2 coins, margin used 37.0%. Current drawdown $234.3k (3.5%); max profit drawdown $584.5k (12.6%). Floating loss is a sizing note: he is large and still in the trade, so you size down and stay with the live side.\nHigh leverage is the other usage note, not a stop sign. HyperX logged average leverage at or above 10x on 6 days, peak 14.1x, and the risk warning reads High leverage detected (6 times with avg leverage >= 10x). His perp account is about $1.12M against about $11.55M notional. Size to what you can lose. Do not clone the 25.0x.\nChapter 4 Copy it like this\n\nCopy now: #1 of 511 copyable wallets, 90d copy-fit 100.0. Open the trader page at the top and hit Copy\nYou can keep up: median round trip 19.0 hours, a typical round trip lasts more than 30 minutes, a few seconds late is fine, no need to stare at the book\nThe math works: per $10,000 volume he makes $122.9, you pay $10.0 fees, about $112.9 left\nCopy BTC round trips (54.0% of 90d volume), HyperX tagged HFT/MM so skip the add/reduce noise\nSize to what you can lose, don't clone his 25.0x; his perp account is about $1.12M, notional about $11.55M\nFollow live direction on the trader page: open positions are all short\nDon't panic over one week: 7d has only 6 round trips, the product ranks on 90d. Reconsider if median hold drops under 10 minutes, copy-fit falls below 15, or he goes quiet for 7 days\nThe trader page is linked at the top of this article — open it and hit Copy.",
+   "category": "FILTER",
+   "usefulness_1_to_5": 5,
+   "addresses": [
+    {
+     "address": "0xb7e0b9fbc9479330d70bcc82a7d4325a20e8d1aa",
+     "label_in_post": "anonymous wallet, rank 1 of 511 copyable",
+     "from_image": false,
+     "complete": true
+    }
+   ],
+   "tools_mentioned": [
+    "HyperX"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "Reconsider if median hold drops under 10 minutes, copy-fit falls below 15, or he goes quiet for 7 days",
+     "metric": "median hold / copy-fit / inactivity",
+     "operator": "<",
+     "value": "10 minutes / 15 / 7 days",
+     "unit": "mixed",
+     "window": "live"
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "copy rank",
+     "value": "1 of 511",
+     "unit": "rank",
+     "window": "copyable pool",
+     "context": "rank 1 / #1 of 511"
+    },
+    {
+     "metric": "90d funding",
+     "value": "-155900",
+     "unit": "USD",
+     "window": "90d",
+     "context": "90-day funding was -$155.9k"
+    },
+    {
+     "metric": "his own fees",
+     "value": "163200",
+     "unit": "USD",
+     "window": "90d",
+     "context": "His own fees in the window were $163.2k"
+    },
+    {
+     "metric": "HyperX tags",
+     "value": "HFT/MM, Direction Neutral, Large Capital",
+     "unit": "tags",
+     "window": "90d",
+     "context": "Wallet tags separately Smart Money, Big Winner, Profit Machine, Whale, Crypto Native"
+    }
+   ],
+   "links_expanded": [
+    "https://hyperx.trade/hyperliquid/trader?address=0xb7e0b9fbc9479330d70bcc82a7d4325a20e8d1aa&ref=FASTER100X"
+   ],
+   "claim_check_corrections": "Address matches exactly. Also tagged Large Capital. Copy-fit 100.0 and total score 84.3 are 90-day HyperX scores, not an official HL board rank. Author is DexterOnchain, bio says Founder @hyperx_trade. Date matches."
+  },
+  {
+   "id": "B12",
+   "batch": "B",
+   "url": "https://x.com/hypeRankio/status/2101640190049550478",
+   "fetch_status": "ok",
+   "author": "hypeRankio",
+   "posted_at_utc": "2026-09-20T11:50:42Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "CONFIRMED. Hyperank: every HL order must be >=$10; across 2,278 ranked traders median minimum copy capital $386 (proportional median $481, fixed $185); image cumulative: $100 -> 446 traders (20%), $500 -> 1,275 (56%), $1,000 -> 1,618 (71%), $5,000 -> 2,104 (92%) — so 'half under $500' is really 56%; 17 of 39 wallets with score >=90 copyable under $500; cheapest score-92 needs $46. The 2,720 figure is not in this post.",
+   "text_verbatim": "The top of a copy trading leaderboard is not as expensive as people assume.\n\nOn #Hyperliquid every order has to be worth at least $10. Below a certain wallet size a trader's smaller orders fall under that line and never get placed, so you copy part of what they do instead of all of it. For every trader we rank, we measure where that line sits.\n\nAcross 2,278 ranked traders the middle one needs $386.\n\nHalf sit under $500. One in five can be followed with less than $100.\n\nIt also depends on how you size the copy: proportional needs $481 at the median, fixed dollar needs $185.\n\nOf the 39 traders scoring 90 or above, 17 can be copied with under $500. The cheapest of them scores 92 and needs $46.\n\nThe number is on every trader page, because \"is this trader good\" and \"can I actually follow them\" are two different questions.",
+   "category": "FILTER",
+   "usefulness_1_to_5": 4,
+   "addresses": [],
+   "tools_mentioned": [
+    "Hyperank",
+    "hypeRank.io",
+    "Hyperliquid"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "On Hyperliquid every order has to be worth at least $10.",
+     "metric": "order notional",
+     "operator": ">=",
+     "value": "10",
+     "unit": "USD",
+     "window": "per order"
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "median minimum copy capital",
+     "value": "386",
+     "unit": "USD",
+     "window": "2,278 ranked traders",
+     "context": "middle one needs $386"
+    },
+    {
+     "metric": "proportional median min copy capital",
+     "value": "481",
+     "unit": "USD",
+     "window": "ranked",
+     "context": "proportional needs $481 at the median"
+    },
+    {
+     "metric": "fixed-dollar median min copy capital",
+     "value": "185",
+     "unit": "USD",
+     "window": "ranked",
+     "context": "fixed dollar needs $185"
+    },
+    {
+     "metric": "score>=90 copyable under $500",
+     "value": "17 of 39",
+     "unit": "traders",
+     "window": "score 90 or above",
+     "context": ""
+    },
+    {
+     "metric": "cheapest score>=90 capital",
+     "value": "46",
+     "unit": "USD",
+     "window": "score 92",
+     "context": "cheapest of them scores 92 and needs $46"
+    },
+    {
+     "metric": "HL minimum order",
+     "value": "10",
+     "unit": "USD",
+     "window": "per order",
+     "context": "every order has to be worth at least $10"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "All stated numbers match. This post does not mention 2,720. Image adds cumulative counts: 446 at $100 (20%), 1,275 at $500 (56%), 1,618 at $1,000 (71%), 2,104 at $5,000 (92%). 'Half sit under $500' is the 56% bar, not exactly 50%. Author and date match."
+  },
+  {
+   "id": "B13",
+   "batch": "B",
+   "url": "https://x.com/hypurrdash/status/2102793170169848172",
+   "fetch_status": "ok",
+   "author": "hypurrdash",
+   "posted_at_utc": "2026-09-23T16:12:14Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "CONFIRMED text numbers: 1,235 BTC ($103M) sold in 23 min, +$2.4M; all-time +$8.57M since June; BTC win rate 35% over 26 trades and $885M volume. Address only a truncated image chip (0xaeaa…2416).",
+   "text_verbatim": "A BTC trader just sold 1,235 BTC ($103mm) in 23 minutes, locking in $2.4M on a long they built between Sep 18 and 21 at an average entry of $81,765. \n\nThey still hold 250 BTC and are up $8.57mm all time since they started trading on Hyperliquid in June. His life to date win rate on BTC is 35% across $885M of volume and 26 individual trades.",
+   "category": "CALIBRATION",
+   "usefulness_1_to_5": 4,
+   "addresses": [
+    {
+     "address": "0xaeaa...2416",
+     "label_in_post": "chart wallet chip",
+     "from_image": true,
+     "complete": false
+    }
+   ],
+   "tools_mentioned": [
+    "Hyperdash",
+    "Hyperliquid"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "BTC sold",
+     "value": "1235",
+     "unit": "BTC",
+     "window": "23 minutes",
+     "context": "$103mm"
+    },
+    {
+     "metric": "locked-in PnL on that long",
+     "value": "2400000",
+     "unit": "USD",
+     "window": "close of long built Sep 18-21",
+     "context": "average entry $81,765"
+    },
+    {
+     "metric": "remaining position",
+     "value": "250",
+     "unit": "BTC",
+     "window": "after the sale",
+     "context": ""
+    },
+    {
+     "metric": "all-time PnL",
+     "value": "8570000",
+     "unit": "USD",
+     "window": "since June on Hyperliquid",
+     "context": "up $8.57mm all time"
+    },
+    {
+     "metric": "BTC win rate",
+     "value": "35",
+     "unit": "percent",
+     "window": "life to date on BTC",
+     "context": "26 individual trades, $885M volume"
+    },
+    {
+     "metric": "BTC volume",
+     "value": "885000000",
+     "unit": "USD",
+     "window": "life to date BTC",
+     "context": ""
+    },
+    {
+     "metric": "BTC trade count",
+     "value": "26",
+     "unit": "trades",
+     "window": "life to date BTC",
+     "context": ""
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Numbers match and are life-to-date BTC stats since June, not a 30d window. The +$8.57mm is all-time Hyperliquid PnL, stated next to the BTC win-rate sentence. Image address is truncated 0xaeaa...2416 only. Also sold 1,235 BTC ($103mm) in 23 minutes for +$2.4M. Author and date match."
+  },
+  {
+   "id": "B14",
+   "batch": "B",
+   "url": "https://x.com/hyperx_trade/status/2102973181183332444",
+   "fetch_status": "ok",
+   "author": "hyperx_trade",
+   "posted_at_utc": "2026-09-24T04:07:32Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "CONFIRMED all numbers (part 2): equity curve must trend up; drop max DD >50%; Recovery Factor <1000 (Calmar auxiliary); active >2 months; kill on: no live state or no trade 30d, equity <$10K, avg hold <3 min, leverage >25x (check historical average), margin use >90%, 30d tag big loser / losing trader / high risk, copy-fee share >70%.",
+   "text_verbatim": "聪明钱筛选（下）：列表复核与详情页核验\n\nhttps://hyperx.trade/hyperliquid/wallet-discover?ref=HYPER\n\n短名单出来后，不要立刻 Copy。先查看账户状态、持仓时间和跟单成本。\n\n一、列表页\n🔸 曲线：看 PnL 是否整体向上。非平滑上升、波动过大的排除\n🔸 回撤：勾选 Drawdown，历史最大回撤 > 50% 排除\n🔸 风险：Recovery Factor 建议 < 1000，Calmar 作辅助，过滤异常钱包\n\n二、详情页\n活跃周期最好 > 2 个月，持仓时间分布 > 1h 以上。\n\n符合以下任一条即淘汰：\n🔸 缺少实时状态，或近 30 天无交易\n🔸 账户资金 < $10K\n🔸 平均持仓 < 3 分钟\n🔸 杠杆 > 25x（同步看 Historical Leverage Avg，避免只看当前空仓）\n🔸 保证金使用率 > 90%\n🔸 近 30 天标签带 big loser、losing trader、high risk\n🔸 跟单手续费占比 > 70%\n\n三、通过筛选后再跟单\n进 Copy Trading，生成跟单钱包、转入本金，先把杠杆和单票比例调低，按开平跟踪即可对齐节奏。\n\n⚠️ 小账户同步加减仓时，注意保证金因频繁调仓而磨损。这是筛选框架，不是稳赚公式。",
+   "category": "FILTER",
+   "usefulness_1_to_5": 5,
+   "addresses": [],
+   "tools_mentioned": [
+    "HyperX"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "历史最大回撤 > 50% 排除",
+     "metric": "max drawdown",
+     "operator": ">",
+     "value": "50",
+     "unit": "percent",
+     "window": "historical"
+    },
+    {
+     "rule_text": "Recovery Factor 建议 < 1000，Calmar 作辅助，过滤异常钱包",
+     "metric": "Recovery Factor",
+     "operator": "<",
+     "value": "1000",
+     "unit": "ratio",
+     "window": "suggested"
+    },
+    {
+     "rule_text": "杠杆 > 25x（同步看 Historical Leverage Avg）",
+     "metric": "leverage",
+     "operator": ">",
+     "value": "25",
+     "unit": "x",
+     "window": "historical avg as well as current"
+    },
+    {
+     "rule_text": "跟单手续费占比 > 70%",
+     "metric": "copy fee share",
+     "operator": ">",
+     "value": "70",
+     "unit": "percent",
+     "window": ""
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "max drawdown exclude",
+     "value": ">50%",
+     "unit": "percent",
+     "window": "historical max",
+     "context": "勾选 Drawdown，历史最大回撤 > 50% 排除"
+    },
+    {
+     "metric": "Recovery Factor",
+     "value": "<1000",
+     "unit": "ratio",
+     "window": "suggested anomaly filter",
+     "context": "建议 < 1000，Calmar 作辅助，过滤异常钱包"
+    },
+    {
+     "metric": "preferred active period",
+     "value": ">2",
+     "unit": "months",
+     "window": "account life",
+     "context": "最好 > 2 个月, not a hard veto"
+    },
+    {
+     "metric": "hold distribution prefer",
+     "value": ">1h",
+     "unit": "hours",
+     "window": "hold-time distribution",
+     "context": "持仓时间分布 > 1h 以上"
+    },
+    {
+     "metric": "inactivity veto",
+     "value": "30",
+     "unit": "days",
+     "window": "last 30 days",
+     "context": "缺少实时状态，或近 30 天无交易"
+    },
+    {
+     "metric": "equity veto",
+     "value": "<10000",
+     "unit": "USD",
+     "window": "account",
+     "context": "账户资金 < $10K"
+    },
+    {
+     "metric": "avg hold veto",
+     "value": "<3",
+     "unit": "minutes",
+     "window": "average hold",
+     "context": ""
+    },
+    {
+     "metric": "leverage veto",
+     "value": ">25x",
+     "unit": "x",
+     "window": "also check Historical Leverage Avg",
+     "context": ""
+    },
+    {
+     "metric": "margin used veto",
+     "value": ">90%",
+     "unit": "percent",
+     "window": "current",
+     "context": ""
+    },
+    {
+     "metric": "copy-fee share veto",
+     "value": ">70%",
+     "unit": "percent",
+     "window": "copy fees / profit",
+     "context": "跟单手续费占比 > 70%"
+    }
+   ],
+   "links_expanded": [
+    "https://hyperx.trade/hyperliquid/wallet-discover?ref=HYPER"
+   ],
+   "claim_check_corrections": "All numbers match. Recovery Factor is 建议 < 1000 (suggested), with Calmar as auxiliary, to filter anomalous wallets. Active >2 months and hold distribution >1h are preferences (最好), not vetoes. Tag veto is 近 30 天标签带 big loser、losing trader、high risk. Also veto if 缺少实时状态. Author and date match."
+  },
+  {
+   "id": "B15",
+   "batch": "B",
+   "url": "https://x.com/hypeRankio/status/2103800999164960955",
+   "fetch_status": "ok",
+   "author": "hypeRankio",
+   "posted_at_utc": "2026-09-26T10:56:59Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "CONFIRMED. 46,867 wallets on the leaderboard 'right now' -> top 7,400 fill-audited (they hold $5.76B combined, image) -> 2,720 still standing. Method URL in the reply: hyperank.io/how-scoring-works.",
+   "text_verbatim": "There are 46,867 wallets on the #Hyperliquid leaderboard right now.\n\nWe take the top 7,400 and go through their trades one by one. 2,720 are still standing at the end.\n\nThe rest look fine from the outside. It's the fills that give them away.\n\nI'll post what we find in there every day this week. What's the first thing you check before copying someone?",
+   "category": "FILTER",
+   "usefulness_1_to_5": 4,
+   "addresses": [],
+   "tools_mentioned": [
+    "Hyperank",
+    "hyperank.io",
+    "Hyperliquid leaderboard"
+   ],
+   "thresholds_or_rules": [],
+   "numbers": [
+    {
+     "metric": "leaderboard wallets",
+     "value": "46867",
+     "unit": "wallets",
+     "window": "right now / 2026-09-26",
+     "context": "Hyperliquid leaderboard"
+    },
+    {
+     "metric": "fills inspected",
+     "value": "7400",
+     "unit": "wallets",
+     "window": "top of board",
+     "context": "go through their trades one by one"
+    },
+    {
+     "metric": "kept",
+     "value": "2720",
+     "unit": "wallets",
+     "window": "after fill screen",
+     "context": "still standing at the end"
+    },
+    {
+     "metric": "combined value of analyzed set",
+     "value": "5760000000",
+     "unit": "USD",
+     "window": "top 7,400",
+     "context": "image only: The 7,400 analyzed wallets hold $5.76B combined"
+    }
+   ],
+   "links_expanded": [
+    "https://hyperank.io/how-scoring-works"
+   ],
+   "claim_check_corrections": "Wording is '46,867 wallets on the Hyperliquid leaderboard right now', not explicitly 'official board rows'. Image adds $5.76B combined for the 7,400 and 'Live data from hyperank, as of Sep 26, 2026'. Author and date match."
+  },
+  {
+   "id": "B16",
+   "batch": "B",
+   "url": "https://x.com/hypeRankio/status/2103806591732531551",
+   "fetch_status": "ok",
+   "author": "hypeRankio",
+   "posted_at_utc": "2026-09-26T11:19:12Z",
+   "post_type": "reply",
+   "verdict": "confirmed",
+   "finding": "CONFIRMED. Of 4,680 failures (overlap allowed): 534 leverage too high, 490 margin near max / near liquidation, 639 30d drawdown too deep, 18 near-perfect win rate that does not add up. No numeric cutoffs. 'Win rate is usually the last number that tells you anything.'",
+   "text_verbatim": "Good call, sizing is a big one. a wallet can fail for more than one reason so these overlap, but out of the 4,680:\n\n534 were running leverage too high to copy safely\n490 had margin near max or were sitting close to liquidation\n639 had a 30 day drawdown too deep to ignore\n\nand 18 had an almost perfect win rate where winners vs losers just didn't add up. win rate is usually the last number that tells you anything.",
+   "category": "FILTER",
+   "usefulness_1_to_5": 4,
+   "addresses": [],
+   "tools_mentioned": [
+    "Hyperank"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "win rate is usually the last number that tells you anything.",
+     "metric": "win rate",
+     "operator": "qualitative",
+     "value": "",
+     "unit": "",
+     "window": ""
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "wallets that failed the screen",
+     "value": "4680",
+     "unit": "wallets",
+     "window": "copy screen of top 7,400",
+     "context": "denominator; reasons overlap"
+    },
+    {
+     "metric": "leverage too high",
+     "value": "534",
+     "unit": "wallets",
+     "window": "fail reasons, overlap allowed",
+     "context": "running leverage too high to copy safely"
+    },
+    {
+     "metric": "margin near max or near liquidation",
+     "value": "490",
+     "unit": "wallets",
+     "window": "fail reasons, overlap allowed",
+     "context": "margin near max or sitting close to liquidation"
+    },
+    {
+     "metric": "30 day drawdown too deep",
+     "value": "639",
+     "unit": "wallets",
+     "window": "30 day",
+     "context": "30 day drawdown too deep to ignore"
+    },
+    {
+     "metric": "almost perfect win rate that did not add up",
+     "value": "18",
+     "unit": "wallets",
+     "window": "fail reasons",
+     "context": "winners vs losers just didn't add up"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "Counts and the win-rate sentence match. Post says reasons overlap and the denominator is 4,680. No numeric cutoff for 'too high', 'near max', or 'too deep'. Author and date match. This is a reply to @cagri_oncel, not a standalone thread root."
+  },
+  {
+   "id": "B17",
+   "batch": "B",
+   "url": "https://x.com/hypeRankio/status/2103902033635852518",
+   "fetch_status": "ok",
+   "author": "hypeRankio",
+   "posted_at_utc": "2026-09-26T17:38:28Z",
+   "post_type": "tweet",
+   "verdict": "confirmed",
+   "finding": "CONFIRMED. 1,935 wallets in Hyperank's pool are green on the official 30d board but flat/negative on the account's own 30d PnL; disagreeing wallets are dropped. (Pool, not the full board.)",
+   "text_verbatim": "1,935 #Hyperliquid wallets in our pool show a profitable month on the leaderboard.\n\nPull the 30 day PnL from their own perp account and it's flat or negative.\n\nSame wallet, same month, two different answers. We go with the one that comes from the account itself, and when they disagree the wallet doesn't make the list.",
+   "category": "FILTER",
+   "usefulness_1_to_5": 5,
+   "addresses": [],
+   "tools_mentioned": [
+    "Hyperank",
+    "Hyperliquid leaderboard"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "We go with the one that comes from the account itself, and when they disagree the wallet doesn't make the list.",
+     "metric": "leaderboard 30d PnL vs perp-account 30d PnL",
+     "operator": "drop on disagreement",
+     "value": "",
+     "unit": "",
+     "window": "30 day"
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "wallets profitable on leaderboard but flat or negative on perp account",
+     "value": "1935",
+     "unit": "wallets",
+     "window": "30 day / same month",
+     "context": "in our pool; dropped when the two disagree"
+    }
+   ],
+   "links_expanded": [],
+   "claim_check_corrections": "1,935 and the drop rule match. Wording is 'a profitable month on the leaderboard' and '30 day PnL from their own perp account' flat or negative, not the phrase 'official 30d'. Image says leaderboard last 30 days 'In profit' vs perp account PnL 'Flat or red'. Likes were 7 at fetch. Author and date match."
+  },
+  {
+   "id": "B18",
+   "batch": "B",
+   "url": "https://x.com/hypeRankio/status/2104257085567324282",
+   "fetch_status": "ok",
+   "author": "hypeRankio",
+   "posted_at_utc": "2026-09-27T17:09:19Z",
+   "post_type": "thread_root",
+   "verdict": "partly_confirmed",
+   "finding": "PARTLY (starter numbers confirmed). Part 3 of a 7-post setup thread: The Starter $100-$500 (Fixed $15/order, min order $10, 3 open positions, stop 20% of wallet, pick traders who enter in 1-2 orders); The Mirror $1K-$5K (Proportional, 1-2 traders, stop 25%, daily loss limit 10%); The Basket $5K+ (3-4 traders, stop watches whole-account open PnL); The Amplifier (manual ratio e.g. 0.05, per-trade cap). Run paper mode first. The board-vs-account drop rule is in B17, not here.",
+   "text_verbatim": "3/ The Starter: $100 to $500, Hyperliquid\n\nMode: Fixed $, $15 per order.\n\nWhy: every Hyperliquid order must be worth $10. \n\nProportional on a small wallet shrinks many of a \ntrader's orders below that, and they never get placed.\n\nFixed $ makes every copied order a real one.\n\nLimits: 3 open positions, stop loss at 20% of the wallet.\n\nPick traders who enter in one or two orders. Ten scale-in orders means 10 × $15 on the same coin.",
+   "category": "GUIDE",
+   "usefulness_1_to_5": 4,
+   "addresses": [],
+   "tools_mentioned": [
+    "Hyperank",
+    "Hyperliquid",
+    "Lighter Robinhood"
+   ],
+   "thresholds_or_rules": [
+    {
+     "rule_text": "every Hyperliquid order must be worth $10.",
+     "metric": "order notional",
+     "operator": ">=",
+     "value": "10",
+     "unit": "USD",
+     "window": "per order"
+    },
+    {
+     "rule_text": "Limits: 3 open positions, stop loss at 20% of the wallet.",
+     "metric": "open positions / wallet stop",
+     "operator": "<= / at",
+     "value": "3 / 20",
+     "unit": "positions / percent",
+     "window": "starter"
+    },
+    {
+     "rule_text": "Pick traders who enter in one or two orders.",
+     "metric": "entry orders",
+     "operator": "prefer",
+     "value": "1-2",
+     "unit": "orders",
+     "window": "per entry"
+    }
+   ],
+   "numbers": [
+    {
+     "metric": "starter wallet size",
+     "value": "100 to 500",
+     "unit": "USD",
+     "window": "The Starter",
+     "context": "Hyperliquid"
+    },
+    {
+     "metric": "fixed order size",
+     "value": "15",
+     "unit": "USD",
+     "window": "per copied order",
+     "context": "Fixed $"
+    },
+    {
+     "metric": "open positions cap",
+     "value": "3",
+     "unit": "positions",
+     "window": "starter limits",
+     "context": ""
+    },
+    {
+     "metric": "wallet stop loss",
+     "value": "20",
+     "unit": "percent of wallet",
+     "window": "starter limits",
+     "context": "stop loss at 20% of the wallet"
+    },
+    {
+     "metric": "HL minimum order",
+     "value": "10",
+     "unit": "USD",
+     "window": "per order",
+     "context": "every Hyperliquid order must be worth $10"
+    },
+    {
+     "metric": "scale-in example",
+     "value": "10 x 15",
+     "unit": "USD",
+     "window": "same coin",
+     "context": "Ten scale-in orders means 10 × $15 on the same coin"
+    }
+   ],
+   "links_expanded": [
+    "https://hyperank.io"
+   ],
+   "claim_check_corrections": "Starter settings and the $10 minimum are in this post (thread part 3 of 7). The drop-if-board-30d-green-but-account-30d-flat/red rule is not in this post or its thread; that rule is the separate 2026-09-26 post 2103902033635852518. Image on part 1 matches the starter card. Author and date match."
+  }
+ ]
+}
