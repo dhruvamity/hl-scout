@@ -24,7 +24,7 @@ function spark(v,max){const w=300,h=60,n=v.length;const pts=v.map((y,i)=>`${i*w/
 async function tick(){
  try{const d=await (await fetch('/progress.json')).json();
  const L=d.queue.light||{},D=d.queue.deep||{};
- const lp=pct(L.done||0,L.total||0), dp=pct(D.done||0,D.total||0);
+ const lp=pct(L.done||0,L.total||0), dp=pct(D.counted||0,D.target||0);
  const f=d.funnel, qual=(f.qualified||0), nqa=(f.needs_qa||0), ref=(f.reformed||0);
  const fun=Object.entries(f).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="row"><span>${k}</span><b>${v}</b></div>`).join('');
  const lanes=Object.entries(d.api.by_lane_5min).map(([k,v])=>`<div class="row mut"><span>${k}</span><span>${Math.round(v/5)}/min</span></div>`).join('');
@@ -36,8 +36,10 @@ async function tick(){
   <div class="row"><span class="mut">rate (15 min)</span><span>${d.light_rate_per_min}/min</span></div>
   <div class="row"><span class="mut">ETA</span><span>${d.eta_hours==null?'—':d.eta_hours+' h'}</span></div>
   <div class="row"><span class="mut">worker</span><span>${dot(alive)}${alive?'working':'idle/stalled'} · last ${dur(d.last_progress_age_s)} ago</span></div></div>
- <div class="card"><h2>Deep vets (full history)</h2><div class="big">${D.done||0} <span class="mut">/ ${D.total||0}</span></div>
+ <div class="card"><h2>Deep vets (full history, capped shortlist)</h2><div class="big">${D.counted||0} <span class="mut">/ ${D.target||0}</span></div>
   <div class="bar"><i style="width:${dp}%"></i></div>
+  <div class="row"><span class="mut">rate (15 min) · ETA</span><span>${d.deep_rate_per_min}/min · ${d.deep_eta_hours==null?'—':d.deep_eta_hours+' h'}</span></div>
+  <div class="row"><span class="mut">eligible waiting beyond cap</span><span>${Math.max(0,(D.total||0)-(D.target||0))}</span></div>
   <div class="row"><span class="mut">wallets with raw data</span><b>${d.wallets_hydrated}</b></div>
   <div class="row"><span class="mut">qualified / needs QA / reformed</span><b>${qual} / ${nqa} / ${ref}</b></div></div>
  <div class="card"><h2>API budget (official, weight/min)</h2><div class="big">${d.api.avg_last_5min} <span class="mut">/ ${d.api.budget_per_min}</span></div>

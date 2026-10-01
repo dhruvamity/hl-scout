@@ -76,3 +76,15 @@ def test_progress_snapshot_and_usage(tmp_path):
     s = snapshot(tmp_path, con)
     assert s["queue"]["light"]["total"] == 2 and s["queue"]["light"]["done"] == 1
     assert s["api"]["by_lane_5min"]["light_hydrate"] == 44
+
+
+def test_progress_deep_target_is_the_cap(tmp_path):
+    from hlscout.monitor.progress import snapshot
+    from hlscout.storage import connect_state
+
+    con = connect_state(tmp_path)
+    for i in range(10):
+        con.execute("INSERT INTO queue(address, kind, lane, state) VALUES (?, 'deep', 'd', ?)",
+                    (f"0x{i}", "done" if i < 3 else "pending"))
+    d = snapshot(tmp_path, con, deep_cap=5)["queue"]["deep"]
+    assert d["target"] == 5 and d["counted"] == 3 and d["total"] == 10

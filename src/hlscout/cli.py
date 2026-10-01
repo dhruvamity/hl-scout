@@ -224,7 +224,7 @@ def monitor(config: str = "config/config.yaml", port: int = 8765) -> None:
     cfg = load_config(config)
     root = Path(cfg.data_dir)
     con = connect_state(root)
-    srv = serve(root, lambda: connect_state(root), port)
+    srv = serve(root, lambda: connect_state(root), port, load_config(config).screen.deep_cap)
     threading.Thread(target=srv.serve_forever, daemon=True).start()
     typer.echo(f"dashboard http://127.0.0.1:{port}  health http://127.0.0.1:{port}/health")
 
@@ -295,7 +295,7 @@ def tracker(config: str = "config/config.yaml", port: int = 8765) -> None:
     from hlscout.monitor.dashboard import serve
 
     root = Path(load_config(config).data_dir)
-    srv = serve(root, lambda: connect_state(root), port)
+    srv = serve(root, lambda: connect_state(root), port, load_config(config).screen.deep_cap)
     typer.echo(f"tracker http://127.0.0.1:{port}")
     srv.serve_forever()
 

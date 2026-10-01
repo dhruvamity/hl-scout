@@ -18,7 +18,8 @@ def _age(path: Path, now: float) -> float | None:
         return None
 
 
-def snapshot(root: Path, con: sqlite3.Connection, now: float | None = None) -> dict[str, Any]:
+def snapshot(root: Path, con: sqlite3.Connection, now: float | None = None,
+             deep_cap: int | None = None) -> dict[str, Any]:
     now = now or time.time()
     root = Path(root)
     q: dict[str, dict[str, int]] = {}
@@ -26,12 +27,21 @@ def snapshot(root: Path, con: sqlite3.Connection, now: float | None = None) -> d
         q.setdefault(kind, {})[state] = n
     for k in q.values():
         k["total"] = sum(k.values())
+    deep = q.get("deep", {})
+    # the worker stops deep vets at deep_cap (non-urgent ones done or running), so that is the real target
+    counted = con.execute("SELECT COUNT(*) FROM queue WHERE kind='deep' AND state IN ('done','running') "
+                          "AND priority < 1000000000").fetchone()[0]
+    deep["target"] = min(deep_cap, deep.get("total", 0)) if deep_cap else deep.get("total", 0)
+    deep["counted"] = counted
     cutoff = datetime.fromtimestamp(now - 900, UTC).isoformat()
     done15 = dict(con.execute("SELECT kind, COUNT(*) FROM queue WHERE state='done' AND updated_at > ? "
                               "GROUP BY 1", (cutoff,)).fetchall())
     light = q.get("light", {})
     light_rate = done15.get("light", 0) / 15
     eta_h = (light.get("pending", 0) / light_rate / 60) if light_rate else None
+    deep_rate = done15.get("deep", 0) / 15
+    deep_left = max(0, deep["target"] - counted)
+    deep_eta_h = (deep_left / deep_rate / 60) if deep_rate and deep_left else (0.0 if not deep_left else None)
     last = con.execute("SELECT MAX(updated_at) FROM queue WHERE state='done'").fetchone()[0]
     last_age = (now - datetime.fromisoformat(last).replace(tzinfo=UTC).timestamp()) if last else None
 
@@ -59,7 +69,8 @@ def snapshot(root: Path, con: sqlite3.Connection, now: float | None = None) -> d
     gaps = con.execute("SELECT COUNT(*) FROM tape_gaps WHERE end_ts > ?", (int((now - 86400) * 1000),)).fetchone()[0]
     return {
         "updated": int(now),
-        "queue": q, "light_rate_per_min": round(light_rate, 2), "eta_hours": round(eta_h, 1) if eta_h else None,
+        "queue": q, "light_rate_per_min": round(light_rate, 2), "deep_rate_per_min": round(deep_rate, 2),
+        "deep_eta_hours": round(deep_eta_h, 1) if deep_eta_h is not None else None, "eta_hours": round(eta_h, 1) if eta_h else None,
         "last_progress_age_s": round(last_age) if last_age is not None else None,
         "funnel": funnel,
         "wallets_hydrated": len(list((root / "raw" / "fills").glob("*.parquet"))),

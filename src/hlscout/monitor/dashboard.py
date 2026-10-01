@@ -37,7 +37,7 @@ def page(root: Path, con: sqlite3.Connection) -> str:
 TRACKER_HTML = open(__file__.replace('dashboard.py', 'tracker.html')).read()
 
 
-def serve(root: Path, con_factory, port: int = 8765) -> ThreadingHTTPServer:
+def serve(root: Path, con_factory, port: int = 8765, deep_cap: int | None = None) -> ThreadingHTTPServer:
     class H(BaseHTTPRequestHandler):
         def do_GET(self) -> None:
             con = con_factory()
@@ -46,7 +46,7 @@ def serve(root: Path, con_factory, port: int = 8765) -> ThreadingHTTPServer:
             elif self.path == "/progress.json":
                 from hlscout.monitor.progress import snapshot
 
-                body, ctype = json.dumps(snapshot(root, con)), "application/json"
+                body, ctype = json.dumps(snapshot(root, con, deep_cap=deep_cap)), "application/json"
             elif self.path == "/events":
                 body, ctype = page(root, con), "text/html"
             else:
