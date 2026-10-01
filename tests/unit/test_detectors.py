@@ -121,3 +121,40 @@ def test_manual_vs_algo_classifier():
     human = clean_wallet(n_trips=200)
     assert A.classify_algo(bot.ctx())["p_algo"] > 0.7
     assert A.classify_algo(human.ctx())["p_algo"] < 0.3
+
+
+def test_margin_topups_while_underwater_veto():
+    from tests.helpers import DAY, HOUR, Wallet
+
+    w = Wallet()
+    w.deposit(w.t0 - HOUR, 10_000)
+    w.equity(w.t0 - HOUR, 10_000, 0)
+    w.fill(w.t0, "BTC", "B", 100.0, 100.0)  # long 100 @ 100; the price then drops to 70
+    w.fill(w.t0 + 2 * HOUR, "BTC", "B", 0.001, 70.0)  # tiny add sets the last BTC px to 70
+    w.equity(w.t0 + HOUR, 9_000, -1000)
+    ctx = w.ctx()
+    ctx.asset_names = ["BTC", "ETH"]
+    base = w.t0 + 4 * HOUR
+    ctx.actions = [{"time": base + i * DAY, "hash": f"x{i}",
+                    "action": {"type": "updateIsolatedMargin", "asset": 0, "isBuy": True, "ntli": 5_000_000_000}}
+                   for i in range(2)]
+    from hlscout.detectors.flows import d_m3_m4_margin_actions
+
+    f = d_m3_m4_margin_actions(ctx)
+    assert f is not None and f.severity in ("FLAG", "VETO")
+
+
+def test_event_concentration_and_clean_not_flagged():
+    from hlscout.detectors.optics import d_c8_event_concentration
+    from tests.helpers import DAY, HOUR, Wallet, clean_wallet
+
+    assert d_c8_event_concentration(clean_wallet().ctx()) is None
+    w = Wallet()
+    w.deposit(w.t0 - HOUR, 10_000)
+    w.equity(w.t0 - HOUR, 10_000, 0)
+    for k in range(40):  # tiny noise across 200 days
+        w.trip(w.t0 + k * 5 * DAY, "BTC", "B", 1.0, 100.0, 100.1 if k % 2 else 99.95)
+    for k in range(10):  # one huge 2-day burst
+        w.trip(w.t0 + 100 * DAY + k * HOUR, "BTC", "B", 10.0, 100.0, 120.0)
+    f = d_c8_event_concentration(w.ctx())
+    assert f is not None and f.code == "D-C8"

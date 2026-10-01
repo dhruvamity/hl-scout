@@ -48,6 +48,8 @@ class Ctx:
     marks: Callable[[str, int], float | None] | None = None
     rate_limit: dict | None = None
     coarse_ok: bool = False
+    actions: list | None = None
+    asset_names: list | None = None
     extra_agents: list | None = None
     _eq_t: list[int] = field(default_factory=list)
     _eq_v: list[float] = field(default_factory=list)

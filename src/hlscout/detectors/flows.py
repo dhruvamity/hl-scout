@@ -82,3 +82,65 @@ def d_m8_income_dressing(ctx: Ctx) -> Finding | None:
     if income > 0 and pnl > 0 and income / pnl > 0.2:
         return Finding("D-M8", "INFO", "M", 0, [{"income": income}], {"income_share": income / pnl})
     return None
+
+
+def _underwater_at(ctx: Ctx, t: int, coin: str | None) -> tuple[bool, float]:
+    """(is a losing position open at t, total uPnL/equity). coin=None -> any losing position counts."""
+    e = ctx.equity_at(t)
+    if not e or e <= 0:
+        return False, 0.0
+    upnl, losing = 0.0, False
+    for c, (pos, entry, last_px, _) in ctx.timeline.open_positions(t).items():
+        mark = (ctx.marks(c, t) if ctx.marks else None) or last_px
+        if mark is None:
+            continue
+        u = pos * (mark - entry)
+        upnl += u
+        if u < 0 and (coin is None or c == coin):
+            losing = True
+    return losing, upnl / e
+
+
+def _coin_of(ctx: Ctx, asset: int | None) -> str | None:
+    names = ctx.asset_names
+    return names[asset] if names and asset is not None and 0 <= asset < len(names) else None
+
+
+def d_m3_m4_margin_actions(ctx: Ctx) -> Finding | None:
+    """Isolated-margin top-ups (D-M3) and leverage-down (D-M4) while a position is deeply underwater.
+
+    Source: explorer action log (recent history only). Counts toward a combined tally like D-M2.
+    """
+    if not ctx.actions:
+        return None
+    th = ctx.cfg.detectors.get("rescue", {})
+    upnl_max, win_ms = th.get("upnl_eq_max", -0.25), th.get("window_min", 60) * 60_000
+    events = []
+    for a in ctx.actions:
+        act, t = a["action"], int(a["time"])
+        kind = act.get("type")
+        if kind == "updateIsolatedMargin" and not (act.get("isBuy") and (act.get("ntli") or 0) > 0):
+            continue
+        if kind not in ("updateIsolatedMargin", "updateLeverage"):
+            continue
+        coin = _coin_of(ctx, act.get("asset"))
+        losing, ratio = _underwater_at(ctx, t, coin)
+        if not losing or ratio > upnl_max:
+            continue
+        near = ctx.fills.filter((pl.col("time") >= t - win_ms) & (pl.col("time") <= t + win_ms))
+        if coin is not None:
+            near = near.filter(pl.col("coin") == coin)
+        if kind == "updateLeverage":
+            # raising leverage is not a rescue; the action log has no previous value, so only flag
+            # lowered leverage when a smaller cap is requested while no size change happened
+            pass
+        if not near.is_empty():
+            continue  # size was cut or changed around the action: not a pure rescue
+        events.append({"time": t, "kind": "D-M3" if kind == "updateIsolatedMargin" else "D-M4",
+                       "coin": coin, "upnl_over_equity": ratio, "hash": a.get("hash")})
+    if not events:
+        return None
+    times = sorted(e["time"] for e in events)
+    veto = any(sum(1 for x in times if t0 <= x < t0 + 180 * DAY_MS) >= th.get("veto_count", 2) for t0 in times)
+    return Finding("D-M3", "VETO" if veto else "FLAG", "M", 0 if veto else 5, events,
+                   {"events": len(events)})

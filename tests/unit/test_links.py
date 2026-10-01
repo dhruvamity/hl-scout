@@ -108,3 +108,19 @@ def test_lottery_and_rotation():
     fresh = wallet_fills([(t + 10 * DAY, "B", HOUR, 100, 105)])
     cc2 = ClusterCtx("c", [A, B], {B: loser, A: fresh})
     assert d_m7_rotation(ctx, cc2).severity == "VETO"
+
+
+def test_copier_flagged():
+    from hlscout.detectors.multiwallet import d_b4_copier
+
+    ctx = clean_wallet().ctx()
+    me, lead = ctx.address, "0x" + "7" * 40
+    rows, tid = [], 0
+    for k in range(25):
+        t = k * 10 * 60_000
+        tid += 1
+        rows.append((t, "SOL", 50.0, 10.0, "B", tid, "h", lead, "0x" + "e" * 40))
+        tid += 1
+        rows.append((t + 30_000, "SOL", 50.1, 9.0, "B", tid, "h", me, "0x" + "f" * 40))
+    f = d_b4_copier(ctx, tape(rows))
+    assert f is not None and f.evidence[0]["leader"] == lead

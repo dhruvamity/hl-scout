@@ -288,6 +288,9 @@ def worker(config: str = "config/config.yaml", enqueue_s1: bool = True, limit: i
     async def main() -> None:
         info = InfoClient(RateLimiter(cfg.api.weight_per_min, cfg.api.headroom, cfg.api.lanes),
                           cfg.api.info_url)
+        from hlscout.ingest.assets import ensure_asset_names
+
+        await ensure_asset_names(info, root)
         await w.run_worker(info, con, root, cfg, asyncio.Event())
 
     asyncio.run(main())

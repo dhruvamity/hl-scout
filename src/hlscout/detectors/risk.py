@@ -143,3 +143,65 @@ def d_r6_size_inconsistency(ctx: Ctx) -> Finding | None:
     if tilt > 1.5:
         return Finding("D-R6", "FLAG", "R", 5, [m], m)
     return Finding("D-R6", "INFO", "R", 0, [], m)
+
+
+def d_r7_window_edge_loss_hiding(ctx: Ctx) -> Finding | None:
+    """Losses almost never realized in the last 3 days of a month while the book carries open
+    unrealized losses at month-end (avoiding leaderboard-roll optics). Needs >= 4 months."""
+    t = ctx.trips
+    if t.is_empty():
+        return None
+    from hlscout.scoring.consistency import month_of
+
+    t = t.with_columns((pl.col("pnl") - pl.col("fees") + pl.col("funding")).alias("net"))
+    losers = t.filter(pl.col("net") < 0)
+    if losers.height < 20:
+        return None
+    last3 = losers.filter(
+        pl.col("close_ts").map_elements(lambda x: _day_of_month(x) >= _days_in_month(x) - 2,
+                                        return_dtype=pl.Boolean))
+    share = last3.height / losers.height
+    months = sorted({month_of(int(x)) for x in t["close_ts"].to_list()})
+    if len(months) < 4:
+        return None
+    bad = 0
+    for m in months:
+        end = _month_end_ms(m)
+        if end > ctx.now_ms:
+            continue
+        eq = ctx.equity_at(end)
+        if not eq:
+            continue
+        upnl = 0.0
+        for c, (pos, entry, last_px, _) in ctx.timeline.open_positions(end).items():
+            mk = (ctx.marks(c, end) if ctx.marks else None) or last_px
+            if mk:
+                upnl += pos * (mk - entry)
+        if upnl / eq < -0.05:
+            bad += 1
+    m = {"last3_loss_share": share, "months_with_open_loss": bad, "months": len(months)}
+    if share < 0.03 and bad >= max(2, len(months) // 2):  # expected share ~0.10
+        return Finding("D-R7", "FLAG", "R", 5, [m], m)
+    return None
+
+
+def _day_of_month(ms: int) -> int:
+    from datetime import UTC, datetime
+
+    return datetime.fromtimestamp(ms / 1000, UTC).day
+
+
+def _days_in_month(ms: int) -> int:
+    import calendar
+    from datetime import UTC, datetime
+
+    d = datetime.fromtimestamp(ms / 1000, UTC)
+    return calendar.monthrange(d.year, d.month)[1]
+
+
+def _month_end_ms(m: str) -> int:
+    import calendar
+    from datetime import UTC, datetime
+
+    y, mo = int(m[:4]), int(m[5:])
+    return int(datetime(y, mo, calendar.monthrange(y, mo)[1], 23, 59, tzinfo=UTC).timestamp() * 1000)

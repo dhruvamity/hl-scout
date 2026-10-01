@@ -27,6 +27,9 @@ def load_raw(root: Path, address: str) -> dict[str, Any]:
         "portfolio": json.loads(raw_path(r, "portfolio", address).with_suffix(".json").read_text()),
         "meta": json.loads(raw_path(r, "meta", address).with_suffix(".json").read_text())
         if raw_path(r, "meta", address).with_suffix(".json").exists() else {},
+        "actions": json.loads(raw_path(r, "actions", address).with_suffix(".json").read_text())
+        if raw_path(r, "actions", address).with_suffix(".json").exists() else None,
+        "asset_names": __import__("hlscout.ingest.assets", fromlist=["x"]).load_asset_names(r),
         "states": json.loads(raw_path(r, "state", address).with_suffix(".json").read_text())
         if raw_path(r, "state", address).with_suffix(".json").exists() else [],
     }
@@ -54,7 +57,7 @@ def audit(address: str, raw: dict[str, Any]) -> dict[str, Any]:
     meta = raw.get("meta", {})
     ctx = build_ctx(address, fills, funding, ledger, pf, states=raw.get("states", []),
                     role=meta.get("role"), rate_limit=meta.get("rate_limit"),
-                    extra_agents=meta.get("extra_agents"), lb=raw.get("lb"), marks=raw.get("marks"),
+                    extra_agents=meta.get("extra_agents"), actions=raw.get("actions"), asset_names=raw.get("asset_names"), lb=raw.get("lb"), marks=raw.get("marks"),
                     now_ms=raw.get("now_ms"))
     findings = run_all(ctx)
     return {
@@ -88,7 +91,8 @@ def assess_cached(root: Path, address: str, cfg: Any = None, n_trials: int = 500
     fills = raw["fills"]
     ctx = build_ctx(address, fills, raw["funding"], raw["ledger"], raw["portfolio"], cfg=cfg,
                     states=raw.get("states", []), role=meta.get("role"),
-                    rate_limit=meta.get("rate_limit"), extra_agents=meta.get("extra_agents"))
+                    rate_limit=meta.get("rate_limit"), extra_agents=meta.get("extra_agents"),
+                    actions=raw.get("actions"), asset_names=raw.get("asset_names"))
     ctx.coarse_ok = bool(meta.get("archive", {}).get("done"))
     a = audit(address, raw)
     return assess(ctx, recon_ok=a["reconcile_ok"], history_truncated=a["history_truncated"]

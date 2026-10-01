@@ -26,6 +26,8 @@ ROW_SURCHARGE_TYPES = {
 }
 ROWS_PER_WEIGHT = 20
 ALLOWED_HOSTS = {"api.hyperliquid.xyz"}
+EXPLORER_URL = "https://rpc.hyperliquid.xyz/explorer"
+EXPLORER_WEIGHT = 40
 
 
 class InfoClient:
@@ -61,6 +63,19 @@ class InfoClient:
                 self.limiter.debit(len(data) // ROWS_PER_WEIGHT)
             return data
         raise RuntimeError(f"gave up on {rtype} after repeated 429s")
+
+    async def explorer_user_details(self, address: str, lane: str = "deep_vet") -> list[dict[str, Any]]:
+        """Recent L1 action log for a user (updateIsolatedMargin, updateLeverage, orders...). Read-only."""
+        for _ in range(self.max_retries):
+            await self.limiter.acquire(EXPLORER_WEIGHT, lane)
+            resp = await self._client.post(EXPLORER_URL, json={"type": "userDetails", "user": address})
+            if resp.status_code == 429:
+                self.limiter.on_429()
+                continue
+            resp.raise_for_status()
+            self.limiter.on_success()
+            return resp.json().get("txs", [])
+        raise RuntimeError("gave up on explorer userDetails after repeated 429s")
 
     async def aclose(self) -> None:
         await self._client.aclose()

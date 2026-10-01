@@ -168,6 +168,35 @@ def d_h5_unlinked_twin(ctx: Ctx, tape: pl.DataFrame | None, window_ms: int = 60_
     return None
 
 
+def d_b4_copier(ctx: Ctx, tape: pl.DataFrame | None, lo_ms: int = 5_000, hi_ms: int = 120_000,
+                min_share: float = 0.7, min_trades: int = 20) -> Finding | None:
+    """>= 70% of the wallet's trades follow one specific address's same-side trade by 5-120 s."""
+    if tape is None or tape.is_empty():
+        return None
+    me = ctx.address
+    p = _party_rows(tape)
+    mine = p.filter(pl.col("addr") == me).unique(subset=["tid"])
+    if mine.height < min_trades:
+        return None
+    oth = p.filter((pl.col("addr") != me) & (pl.col("addr") != "")).select(
+        pl.col("time").alias("t2"), "coin", pl.col("addr").alias("leader"), pl.col("sgn").alias("s2"),
+        pl.col("tid").alias("tid2"))
+    m = mine.with_columns((pl.col("time") // hi_ms).alias("b"))
+    o = oth.with_columns((pl.col("t2") // hi_ms).alias("b"))
+    parts = [m.join(o.with_columns((pl.col("b") - sh).alias("b")), on=["coin", "b"]) for sh in (-1, 0, 1)]
+    j = pl.concat(parts).filter(
+        (pl.col("sgn") == pl.col("s2")) & ((pl.col("time") - pl.col("t2")) >= lo_ms)
+        & ((pl.col("time") - pl.col("t2")) <= hi_ms) & (pl.col("leader") != pl.col("cp")))
+    if j.is_empty():
+        return None
+    top = j.group_by("leader").agg(pl.col("tid").n_unique().alias("n")).sort("n", descending=True).row(0, named=True)
+    share = top["n"] / mine.height
+    if share >= min_share:
+        return Finding("D-B4", "FLAG", "B", 10, [{"leader": top["leader"], "followed": top["n"]}],
+                       {"follow_share": share})
+    return None
+
+
 def d_h6_offvenue(ctx: Ctx) -> Finding | None:
     """Proxy for an invisible CEX hedge: funding-dominated PnL with near-constant notional."""
     t, f = ctx.trips, ctx.funding
@@ -233,5 +262,5 @@ def d_m7_rotation(ctx: Ctx, cc: ClusterCtx | None, gap_days: int = 14) -> Findin
 def run_cluster_detectors(ctx: Ctx, cc: ClusterCtx | None, tape: pl.DataFrame | None) -> list[Finding]:
     out = [d_h1_cross_hedge(ctx, cc), d_h2_pair_hedge(ctx),
            d_h3_wash(ctx, tape, cc.members if cc else None), d_h4_lottery(ctx, cc),
-           d_h5_unlinked_twin(ctx, tape), d_h6_offvenue(ctx), d_m7_rotation(ctx, cc)]
+           d_h5_unlinked_twin(ctx, tape), d_b4_copier(ctx, tape), d_h6_offvenue(ctx), d_m7_rotation(ctx, cc)]
     return [f for f in out if f is not None]

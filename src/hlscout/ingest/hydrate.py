@@ -169,6 +169,14 @@ async def hydrate_deep(info: Poster, address: str, root: Path, lane: str = "deep
     mp = raw_path(root, "meta", address).with_suffix(".json")
     mp.parent.mkdir(parents=True, exist_ok=True)
     mp.write_text(json.dumps(meta))
+    explorer = getattr(info, "explorer_user_details", None)
+    if explorer is not None:  # only the margin/leverage actions matter; orders are bulky
+        txs = await explorer(address, lane=lane)
+        keep = [{"time": t["time"], "hash": t.get("hash"), "action": t["action"]} for t in txs
+                if t.get("action", {}).get("type") in ("updateIsolatedMargin", "updateLeverage")]
+        ap = raw_path(root, "actions", address).with_suffix(".json")
+        ap.parent.mkdir(parents=True, exist_ok=True)
+        ap.write_text(json.dumps(keep))
     p = raw_path(root, "portfolio", address)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.with_suffix(".json").write_text(json.dumps(light["portfolio"]))
