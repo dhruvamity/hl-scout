@@ -62,3 +62,17 @@ async def test_poll_trips_revet_and_alerts(tmp_path):
     assert con.execute("SELECT stage FROM addresses WHERE address='0x1'").fetchone()[0] == "revet"
     assert con.execute("SELECT state FROM queue WHERE address='0x1'").fetchone()[0] == "pending"
     request_revet(con, "0x1")  # idempotent
+
+
+def test_progress_snapshot_and_usage(tmp_path):
+    from hlscout.monitor.progress import snapshot
+    from hlscout.storage import connect_state, usage_recorder
+
+    con = connect_state(tmp_path)
+    rec = usage_recorder(tmp_path)
+    rec("light_hydrate", 22)
+    rec("light_hydrate", 22)
+    con.execute("INSERT INTO queue(address, kind, lane, state) VALUES ('a','light','l','done'),('b','light','l','pending')")
+    s = snapshot(tmp_path, con)
+    assert s["queue"]["light"]["total"] == 2 and s["queue"]["light"]["done"] == 1
+    assert s["api"]["by_lane_5min"]["light_hydrate"] == 44

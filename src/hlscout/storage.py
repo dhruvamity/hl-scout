@@ -41,6 +41,9 @@ CREATE TABLE IF NOT EXISTS forward_lists (
   snap_ts INTEGER, address TEXT, category TEXT, score REAL, stage TEXT, baseline_json TEXT,
   PRIMARY KEY (snap_ts, address)
 );
+CREATE TABLE IF NOT EXISTS api_usage (
+  minute INTEGER, lane TEXT, weight REAL, calls INTEGER, PRIMARY KEY (minute, lane)
+);
 CREATE TABLE IF NOT EXISTS runs (run_id TEXT PRIMARY KEY, kind TEXT, started_at TEXT, finished_at TEXT, notes TEXT);
 """
 
@@ -58,3 +61,20 @@ def connect_state(data_dir: str | Path) -> sqlite3.Connection:
 def analytics(data_dir: str | Path) -> duckdb.DuckDBPyConnection:
     """In-memory DuckDB for ad-hoc queries over Parquet under data_dir (read_parquet globs)."""
     return duckdb.connect(":memory:")
+
+
+def usage_recorder(data_dir: str | Path):
+    """Callable (lane, weight) that tallies API weight per minute per lane, shared across processes."""
+    import time
+
+    con = connect_state(data_dir)
+
+    def rec(lane: str, weight: float) -> None:
+        m = int(time.time() // 60)
+        try:
+            con.execute("INSERT INTO api_usage VALUES (?,?,?,1) ON CONFLICT(minute, lane) DO UPDATE "
+                        "SET weight=weight+?, calls=calls+1", (m, lane, weight, weight))
+        except sqlite3.Error:
+            pass  # stats must never break ingestion
+
+    return rec

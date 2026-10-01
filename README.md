@@ -22,6 +22,7 @@ uv run hlscout worker &            # S2 -> deep vet queue (rate limited)
 uv run hlscout score               # reports/latest.md
 uv run hlscout links               # clusters; queues unhydrated members
 uv run hlscout backfill            # archive pass for truncated wallets
+uv run hlscout tracker             # live progress page, http://127.0.0.1:8765
 uv run hlscout monitor             # watchlist + dashboard on 127.0.0.1:8765
 uv run hlscout freeze              # then, weeks later: hlscout forward
 uv run hlscout health

@@ -38,6 +38,7 @@ class InfoClient:
         url: str = "https://api.hyperliquid.xyz/info",
         client: httpx.AsyncClient | None = None,
         max_retries: int = 6,
+        usage: Any = None,
     ) -> None:
         host = httpx.URL(url).host
         if host not in ALLOWED_HOSTS and host not in ("localhost", "127.0.0.1"):
@@ -46,12 +47,15 @@ class InfoClient:
         self.limiter = limiter
         self._client = client or httpx.AsyncClient(timeout=30)
         self.max_retries = max_retries
+        self.usage = usage  # optional (lane, weight) callback for the live tracker
 
     async def post(self, payload: dict[str, Any], lane: str = "deep_vet") -> Any:
         rtype = payload["type"]
         weight = BASE_WEIGHT.get(rtype, DEFAULT_WEIGHT)
         for _ in range(self.max_retries):
             await self.limiter.acquire(weight, lane)
+            if self.usage:
+                self.usage(lane, weight)
             resp = await self._client.post(self.url, json=payload)
             if resp.status_code == 429:
                 pause = self.limiter.on_429()
@@ -61,7 +65,10 @@ class InfoClient:
             self.limiter.on_success()
             data = resp.json()
             if rtype in ROW_SURCHARGE_TYPES and isinstance(data, list):
-                self.limiter.debit(len(data) // ROWS_PER_WEIGHT_BY_TYPE.get(rtype, ROWS_PER_WEIGHT))
+                extra = len(data) // ROWS_PER_WEIGHT_BY_TYPE.get(rtype, ROWS_PER_WEIGHT)
+                self.limiter.debit(extra)
+                if self.usage and extra:
+                    self.usage(lane, extra)
             return data
         raise RuntimeError(f"gave up on {rtype} after repeated 429s")
 
@@ -69,6 +76,8 @@ class InfoClient:
         """Recent L1 action log for a user (updateIsolatedMargin, updateLeverage, orders...). Read-only."""
         for _ in range(self.max_retries):
             await self.limiter.acquire(EXPLORER_WEIGHT, lane)
+            if self.usage:
+                self.usage(lane, EXPLORER_WEIGHT)
             resp = await self._client.post(EXPLORER_URL, json={"type": "userDetails", "user": address})
             if resp.status_code == 429:
                 self.limiter.on_429()

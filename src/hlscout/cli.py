@@ -4,7 +4,7 @@ import typer
 
 from hlscout.config import load_config
 from hlscout.logging_setup import setup_logging
-from hlscout.storage import connect_state
+from hlscout.storage import connect_state, usage_recorder
 
 app = typer.Typer(help="HL-Scout: read-only Hyperliquid trader scanner")
 
@@ -38,7 +38,7 @@ def tape(config: str = "config/config.yaml", duration_s: int = 0) -> None:
     root = Path(cfg.data_dir)
     state = connect_state(root)
     limiter = RateLimiter(cfg.api.weight_per_min, cfg.api.headroom, cfg.api.lanes)
-    info = InfoClient(limiter, cfg.api.info_url)
+    info = InfoClient(limiter, cfg.api.info_url, usage=usage_recorder(root))
 
     async def main() -> None:
         async def post(p: dict) -> object:
@@ -219,7 +219,7 @@ def monitor(config: str = "config/config.yaml", port: int = 8765) -> None:
 
     async def main() -> None:
         info = InfoClient(RateLimiter(cfg.api.weight_per_min, cfg.api.headroom, cfg.api.lanes),
-                          cfg.api.info_url)
+                          cfg.api.info_url, usage=usage_recorder(root))
         await run_monitor(info, con, root, asyncio.Event())
 
     asyncio.run(main())
@@ -277,6 +277,19 @@ def forward(config: str = "config/config.yaml", snap_ts: int = 0) -> None:
 
 
 @app.command()
+def tracker(config: str = "config/config.yaml", port: int = 8765) -> None:
+    """Live progress page on http://127.0.0.1:<port> (no polling of the API; reads local state)."""
+    from pathlib import Path
+
+    from hlscout.monitor.dashboard import serve
+
+    root = Path(load_config(config).data_dir)
+    srv = serve(root, lambda: connect_state(root), port)
+    typer.echo(f"tracker http://127.0.0.1:{port}")
+    srv.serve_forever()
+
+
+@app.command()
 def worker(config: str = "config/config.yaml", enqueue_s1: bool = True, limit: int = 0) -> None:
     """Queue consumer: S2 light screen -> deep hydrate -> assess, within the rate limit."""
     import asyncio
@@ -296,7 +309,7 @@ def worker(config: str = "config/config.yaml", enqueue_s1: bool = True, limit: i
 
     async def main() -> None:
         info = InfoClient(RateLimiter(cfg.api.weight_per_min, cfg.api.headroom, cfg.api.lanes),
-                          cfg.api.info_url)
+                          cfg.api.info_url, usage=usage_recorder(root))
         from hlscout.ingest.assets import ensure_asset_names
 
         await ensure_asset_names(info, root)
@@ -331,7 +344,7 @@ def vet(address: str, config: str = "config/config.yaml") -> None:
 
     async def main() -> dict:
         info = InfoClient(RateLimiter(cfg.api.weight_per_min, cfg.api.headroom, cfg.api.lanes),
-                          cfg.api.info_url)
+                          cfg.api.info_url, usage=usage_recorder(root))
         try:
             return await vet_address(info, address.lower(), Path(cfg.data_dir))
         finally:

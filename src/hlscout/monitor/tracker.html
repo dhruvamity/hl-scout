@@ -1,0 +1,58 @@
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HL-Scout live tracker</title>
+<style>
+:root{--bg:#0f1218;--card:#181d27;--fg:#e6e9ef;--mut:#8b93a5;--ok:#3ecf8e;--warn:#f5b84b;--bad:#ef5b5b;--bar:#2a3142;--acc:#5b9cf5}
+@media(prefers-color-scheme:light){:root{--bg:#f4f5f8;--card:#fff;--fg:#1b2030;--mut:#6a7286;--bar:#e3e6ee}}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 system-ui,sans-serif;padding:16px}
+h1{font-size:18px;margin:0 0 4px}.sub{color:var(--mut);margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px}
+.card{background:var(--card);border-radius:10px;padding:14px}.card h2{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--mut);margin:0 0 10px}
+.big{font-size:26px;font-weight:600}.row{display:flex;justify-content:space-between;margin:4px 0}.mut{color:var(--mut)}
+.bar{height:10px;background:var(--bar);border-radius:5px;overflow:hidden;margin:6px 0}.bar>i{display:block;height:100%;background:var(--acc)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+svg{width:100%;height:60px}
+</style></head><body>
+<h1>HL-Scout live tracker</h1><div class="sub" id="upd">loading…</div>
+<div class="grid" id="g"></div>
+<script>
+const $=id=>document.getElementById(id);
+const pct=(a,b)=>b?Math.round(100*a/b):0;
+const dot=ok=>`<span class="dot" style="background:var(${ok===null?'--mut':ok?'--ok':'--bad'})"></span>`;
+const dur=s=>s==null?'—':s<90?Math.round(s)+'s':s<5400?Math.round(s/60)+'m':(s/3600).toFixed(1)+'h';
+function spark(v,max){const w=300,h=60,n=v.length;const pts=v.map((y,i)=>`${i*w/(n-1)},${h-Math.min(1,y/max)*(h-2)}`).join(' ');
+ return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><line x1="0" x2="${w}" y1="2" y2="2" stroke="var(--warn)" stroke-dasharray="3"/><polyline fill="none" stroke="var(--acc)" stroke-width="2" points="${pts}"/></svg>`}
+async function tick(){
+ try{const d=await (await fetch('/progress.json')).json();
+ const L=d.queue.light||{},D=d.queue.deep||{};
+ const lp=pct(L.done||0,L.total||0), dp=pct(D.done||0,D.total||0);
+ const f=d.funnel, qual=(f.qualified||0), nqa=(f.needs_qa||0), ref=(f.reformed||0);
+ const fun=Object.entries(f).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div class="row"><span>${k}</span><b>${v}</b></div>`).join('');
+ const lanes=Object.entries(d.api.by_lane_5min).map(([k,v])=>`<div class="row mut"><span>${k}</span><span>${Math.round(v/5)}/min</span></div>`).join('');
+ const t=d.tape, cr=d.hypedexer_credits;
+ const alive=d.last_progress_age_s!=null&&d.last_progress_age_s<900;
+ $('g').innerHTML=`
+ <div class="card"><h2>Wallets screened (stage 2)</h2><div class="big">${L.done||0} <span class="mut">/ ${L.total||0}</span></div>
+  <div class="bar"><i style="width:${lp}%"></i></div>
+  <div class="row"><span class="mut">rate (15 min)</span><span>${d.light_rate_per_min}/min</span></div>
+  <div class="row"><span class="mut">ETA</span><span>${d.eta_hours==null?'—':d.eta_hours+' h'}</span></div>
+  <div class="row"><span class="mut">worker</span><span>${dot(alive)}${alive?'working':'idle/stalled'} · last ${dur(d.last_progress_age_s)} ago</span></div></div>
+ <div class="card"><h2>Deep vets (full history)</h2><div class="big">${D.done||0} <span class="mut">/ ${D.total||0}</span></div>
+  <div class="bar"><i style="width:${dp}%"></i></div>
+  <div class="row"><span class="mut">wallets with raw data</span><b>${d.wallets_hydrated}</b></div>
+  <div class="row"><span class="mut">qualified / needs QA / reformed</span><b>${qual} / ${nqa} / ${ref}</b></div></div>
+ <div class="card"><h2>API budget (official, weight/min)</h2><div class="big">${d.api.avg_last_5min} <span class="mut">/ ${d.api.budget_per_min}</span></div>
+  <div class="bar"><i style="width:${pct(d.api.avg_last_5min,d.api.budget_per_min)}%"></i></div>
+  ${spark(d.api.series_60min,d.api.budget_per_min)}<div class="mut" style="font-size:12px">last 60 min · dashed = cap</div>${lanes}</div>
+ <div class="card"><h2>Hypedexer credits (month)</h2><div class="big">${cr.used} <span class="mut">/ ${cr.cap}</span></div>
+  <div class="bar"><i style="width:${pct(cr.used,cr.cap)}%"></i></div><div class="mut">only for truncated finalists</div></div>
+ <div class="card"><h2>Tape recorder</h2>
+  <div class="row"><span>${dot(t.heartbeat_age_s!=null&&t.heartbeat_age_s<120)}live feed</span><span>${dur(t.heartbeat_age_s)} ago</span></div>
+  <div class="row"><span class="mut">files today</span><span>${t.files_today} (${t.mb_today} MB)</span></div>
+  <div class="row"><span class="mut">gaps (24h)</span><span>${t.gaps_24h}</span></div>
+  <div class="row"><span>${dot(d.monitor_age_s!=null&&d.monitor_age_s<300)}watchlist monitor</span><span>${d.monitor_age_s==null||d.monitor_age_s>600?'not running (starts when a wallet qualifies)':dur(d.monitor_age_s)+' ago'}</span></div></div>
+ <div class="card"><h2>Funnel (all wallets by stage)</h2>${fun||'<span class="mut">empty</span>'}</div>`;
+ $('upd').textContent='updated '+new Date(d.updated*1000).toLocaleTimeString()+' · refreshes every 3s · /events for recent watch events';
+ }catch(e){$('upd').textContent='connection lost: '+e}
+}
+tick();setInterval(tick,3000);
+</script></body></html>

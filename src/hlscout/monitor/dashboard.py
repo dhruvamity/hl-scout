@@ -6,7 +6,7 @@ import html
 import json
 import sqlite3
 import time
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 
@@ -34,17 +34,29 @@ def page(root: Path, con: sqlite3.Connection) -> str:
             + "".join(f"<tr>{td(r)}</tr>" for r in rows) + "</table></body></html>")
 
 
-def serve(root: Path, con_factory, port: int = 8765) -> HTTPServer:
+TRACKER_HTML = open(__file__.replace('dashboard.py', 'tracker.html')).read()
+
+
+def serve(root: Path, con_factory, port: int = 8765) -> ThreadingHTTPServer:
     class H(BaseHTTPRequestHandler):
         def do_GET(self) -> None:
             con = con_factory()
-            body = json.dumps(health(root, con)) if self.path == "/health" else page(root, con)
+            if self.path == "/health":
+                body, ctype = json.dumps(health(root, con)), "application/json"
+            elif self.path == "/progress.json":
+                from hlscout.monitor.progress import snapshot
+
+                body, ctype = json.dumps(snapshot(root, con)), "application/json"
+            elif self.path == "/events":
+                body, ctype = page(root, con), "text/html"
+            else:
+                body, ctype = TRACKER_HTML, "text/html"
             self.send_response(200)
-            self.send_header("Content-Type", "application/json" if self.path == "/health" else "text/html")
+            self.send_header("Content-Type", ctype)
             self.end_headers()
             self.wfile.write(body.encode())
 
         def log_message(self, *a) -> None:
             pass
 
-    return HTTPServer(("127.0.0.1", port), H)
+    return ThreadingHTTPServer(("127.0.0.1", port), H)
