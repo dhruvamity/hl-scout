@@ -147,6 +147,15 @@ async def hydrate_deep(info: Poster, address: str, root: Path, lane: str = "deep
         raw_path(root, "ledger", address),
         pl.DataFrame([norm_ledger(r) for r in led_raw], schema=LEDGER_SCHEMA),
         ["hash", "type", "time"])
+    dexes = [""] + sorted({c.split(":")[0] for c in fills["coin"].unique().to_list() if ":" in c})
+    states = []
+    for d in dexes:  # per-dex state: the default call misses HIP-3 books (G8)
+        st = light["state"] if d == "" else await info.post(
+            {"type": "clearinghouseState", "user": address, "dex": d}, lane=lane)
+        states.append({"dex": d, "state": st})
+    sp = raw_path(root, "state", address).with_suffix(".json")
+    sp.parent.mkdir(parents=True, exist_ok=True)
+    sp.write_text(json.dumps(states))
     subs = await info.post({"type": "subAccounts", "user": address}, lane=lane)
     p = raw_path(root, "portfolio", address)
     p.parent.mkdir(parents=True, exist_ok=True)

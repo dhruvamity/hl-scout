@@ -22,6 +22,8 @@ def load_raw(root: Path, address: str) -> dict[str, Any]:
         "funding": pl.read_parquet(raw_path(r, "funding", address)),
         "ledger": pl.read_parquet(raw_path(r, "ledger", address)),
         "portfolio": json.loads(raw_path(r, "portfolio", address).with_suffix(".json").read_text()),
+        "states": json.loads(raw_path(r, "state", address).with_suffix(".json").read_text())
+        if raw_path(r, "state", address).with_suffix(".json").exists() else [],
     }
 
 
@@ -33,7 +35,9 @@ def audit(address: str, raw: dict[str, Any]) -> dict[str, Any]:
     curve = eq.twr_curve(equity, flows)
     daily = eq.daily_returns(curve)
     inflow = flows.filter(pl.col("flow") > 0)["flow"].sum() if not flows.is_empty() else 0.0
-    rec = eq.reconcile(fills, funding, pf, capital=inflow)
+    upnl = sum(float(p["position"]["unrealizedPnl"]) for s in raw.get("states", [])
+               for p in s["state"]["assetPositions"])
+    rec = eq.reconcile(fills, funding, pf, capital=inflow, unrealized=upnl)
     first_fill = int(fills["time"].min()) if not fills.is_empty() else None
     first_ledger = int(ledger["time"].min()) if not ledger.is_empty() else None
     # history looks truncated if fills start long after the account's first ledger activity

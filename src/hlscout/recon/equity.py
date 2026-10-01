@@ -126,8 +126,9 @@ def sharpe(daily: pl.DataFrame, periods: int = 365) -> float:
 
 def reconcile(fills: pl.DataFrame, funding: pl.DataFrame, portfolio: dict,
               start_ms: int | None = None, key: str = "perpAllTime",
-              capital: float = 0.0) -> dict:
+              capital: float = 0.0, unrealized: float = 0.0) -> dict:
     """Compare our net trading PnL with the platform's pnlHistory delta over the same window.
+    pnlHistory is mark-to-market, so open positions' unrealized PnL (all dexes) is added to ours.
 
     Residual / max(peak equity, gross inflows) must be < 2% or the wallet is `reconcile_fail` (plan §5.4).
     """
@@ -140,7 +141,7 @@ def reconcile(fills: pl.DataFrame, funding: pl.DataFrame, portfolio: dict,
     pnl_at = lambda t: float(eq.filter(pl.col("time") <= t)["cum_pnl"].last() or 0.0)
     platform = pnl_at(end) - pnl_at(start)
     w = (pl.col("time") > start) & (pl.col("time") <= end)
-    ours = (fills.filter(w)["closed_pnl"].sum() - fills.filter(w)["fee"].sum()
+    ours = unrealized + (fills.filter(w)["closed_pnl"].sum() - fills.filter(w)["fee"].sum()
             + (funding.filter(w)["usdc"].sum() if not funding.is_empty() else 0.0))
     scale = max(float(eq["equity"].max()), capital, 1.0)  # capital = gross inflows
     resid = (ours - platform) / scale
