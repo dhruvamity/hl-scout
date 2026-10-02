@@ -23,6 +23,7 @@ DEFAULT_WEIGHT = 20
 ROW_SURCHARGE_TYPES = {
     "userFills", "userFillsByTime", "userFunding", "userNonFundingLedgerUpdates",
     "historicalOrders", "fundingHistory", "recentTrades", "candleSnapshot",
+    "userTwapSliceFillsByTime", "userTwapSliceFills", "twapHistory",
 }
 ROWS_PER_WEIGHT = 20
 ROWS_PER_WEIGHT_BY_TYPE = {"candleSnapshot": 60}  # rate-limit docs: +1 weight per 60 candles

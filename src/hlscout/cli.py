@@ -359,6 +359,52 @@ def twap(config: str = "config/config.yaml", concurrency: int = 4) -> None:
 
 
 @app.command()
+def marks(config: str = "config/config.yaml", concurrency: int = 4) -> None:
+    """Fetch daily candle closes (full history, 1 call per coin) for every coin any hydrated wallet traded."""
+    import asyncio
+    import time
+    from pathlib import Path
+
+    import polars as pl
+
+    from hlscout.clients.info import InfoClient
+    from hlscout.clients.ratelimit import make_limiter
+    from hlscout.recon.marks import fetch_daily_marks
+    from hlscout.recon.roundtrips import perp_only
+
+    cfg = load_config(config)
+    root = Path(cfg.data_dir)
+    files = list((root / "raw" / "fills").glob("*.parquet"))
+    coins = sorted(perp_only(pl.scan_parquet([str(f) for f in files]).select("coin").unique().collect())["coin"])
+    typer.echo(f"{len(coins)} coins across {len(files)} wallets")
+
+    async def main() -> None:
+        info = InfoClient(make_limiter(cfg, root), cfg.api.info_url, usage=usage_recorder(root))
+        q: asyncio.Queue[str] = asyncio.Queue()
+        for c in coins:
+            q.put_nowait(c)
+        stats = {"done": 0, "empty": 0}
+        now = int(time.time() * 1000)
+
+        async def loop() -> None:
+            while not q.empty():
+                c = q.get_nowait()
+                try:
+                    n = await fetch_daily_marks(info, root, c, now, lane="deep_vet")
+                    stats["empty"] += n == 0
+                except Exception as e:  # noqa: BLE001
+                    typer.echo(f"skip {c}: {type(e).__name__}")
+                stats["done"] += 1
+                if stats["done"] % 50 == 0:
+                    typer.echo(f"{stats['done']}/{len(coins)} coins ({stats['empty']} with no candles)")
+
+        await asyncio.gather(*(loop() for _ in range(concurrency)))
+        typer.echo(f"done: {stats['done']} coins, {stats['empty']} without candles (delisted/unknown)")
+
+    asyncio.run(main())
+
+
+@app.command()
 def worker(config: str = "config/config.yaml", enqueue_s1: bool = True, limit: int = 0) -> None:
     """Queue consumer: S2 light screen -> deep hydrate -> assess, within the rate limit."""
     import asyncio

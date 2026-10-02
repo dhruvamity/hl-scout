@@ -11,6 +11,7 @@ import polars as pl
 
 from hlscout.config import Config
 from hlscout.recon import equity as eq
+from hlscout.recon.daily import build_daily
 from hlscout.recon.positions import Timeline, build_timeline
 from hlscout.recon.roundtrips import build_round_trips
 
@@ -49,6 +50,8 @@ class Ctx:
     rate_limit: dict | None = None
     coarse_ok: bool = False
     actions: list | None = None
+    daily: pl.DataFrame | None = None
+    marks_eod: Callable[[str, int], float | None] | None = None
     asset_names: list | None = None
     extra_agents: list | None = None
     _eq_t: list[int] = field(default_factory=list)
@@ -72,11 +75,19 @@ def build_ctx(address: str, fills: pl.DataFrame, funding: pl.DataFrame, ledger: 
     trips, broken = build_round_trips(fills, funding, address)
     flows = eq.flow_events(ledger, address)
     equity = eq.equity_series(portfolio)
+    timeline = build_timeline(fills)
+    now = now_ms or int(_t.time() * 1000)
+    # audit C1: a DAILY curve rebuilt from fills + marks replaces the 1-2-week platform sampling
+    daily = build_daily(fills, funding, flows, portfolio, timeline, kw.get("marks_eod"), now)
+    curve = daily if not daily.is_empty() else eq.twr_curve(equity, flows)
     ctx = Ctx(
-        address=address.lower(), cfg=cfg, now_ms=now_ms or int(_t.time() * 1000), fills=fills,
+        address=address.lower(), cfg=cfg, now_ms=now, fills=fills,
         funding=funding, ledger=ledger, portfolio=portfolio, trips=trips, broken_coins=broken,
-        flows=flows, equity=equity, curve=eq.twr_curve(equity, flows),
-        timeline=build_timeline(fills), states=states or [], **kw)
-    ctx._eq_t = equity["time"].to_list()
-    ctx._eq_v = equity["equity"].to_list()
+        flows=flows, equity=equity, curve=curve, daily=daily,
+        timeline=timeline, states=states or [], **kw)
+    # equity_at(): platform points before the first fill day, our daily equity from then on
+    first_day = int(daily["time"][0]) - DAY_MS + 1 if not daily.is_empty() else None
+    pre = equity.filter(pl.col("time") < first_day) if first_day is not None else equity
+    ctx._eq_t = pre["time"].to_list() + (daily["time"].to_list() if first_day is not None else [])
+    ctx._eq_v = pre["equity"].to_list() + (daily["equity"].to_list() if first_day is not None else [])
     return ctx

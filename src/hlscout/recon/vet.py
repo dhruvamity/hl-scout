@@ -20,7 +20,12 @@ DAY_MS = 86_400_000
 
 def load_raw(root: Path, address: str) -> dict[str, Any]:
     r = Path(root)
+    from hlscout.recon.marks import daily_mark_provider
+
+    prov = daily_mark_provider(r)
     return {
+        "marks_eod": prov,
+        "marks": lambda c, t: prov(c, t - DAY_MS),  # strictly-known mark (previous day's close): no look-ahead
         "fills": perp_only(pl.read_parquet(raw_path(r, "fills", address))),
         "funding": pl.read_parquet(raw_path(r, "funding", address)),
         "ledger": pl.read_parquet(raw_path(r, "ledger", address)),
@@ -35,12 +40,20 @@ def load_raw(root: Path, address: str) -> dict[str, Any]:
     }
 
 
-def audit(address: str, raw: dict[str, Any]) -> dict[str, Any]:
+def make_ctx(address: str, raw: dict[str, Any], cfg: Any = None):
+    """One shared analysis context per wallet (round trips, daily curve, timeline are built once)."""
+    meta = raw.get("meta", {})
+    return build_ctx(address, raw["fills"], raw["funding"], raw["ledger"], raw["portfolio"], cfg=cfg,
+                     states=raw.get("states", []), role=meta.get("role"), rate_limit=meta.get("rate_limit"),
+                     extra_agents=meta.get("extra_agents"), actions=raw.get("actions"),
+                     asset_names=raw.get("asset_names"), lb=raw.get("lb"), marks=raw.get("marks"),
+                     marks_eod=raw.get("marks_eod"), now_ms=raw.get("now_ms"))
+
+
+def audit(address: str, raw: dict[str, Any], ctx: Any = None, cfg: Any = None) -> dict[str, Any]:
     fills, funding, ledger, pf = raw["fills"], raw["funding"], raw["ledger"], raw["portfolio"]
-    trips, broken = build_round_trips(fills, funding, address)
-    flows = eq.flow_events(ledger, address)
-    equity = eq.equity_series(pf)
-    curve = eq.twr_curve(equity, flows)
+    ctx = ctx or make_ctx(address, raw, cfg)
+    trips, broken, flows, curve = ctx.trips, ctx.broken_coins, ctx.flows, ctx.curve
     daily = eq.daily_returns(curve)
     inflow = flows.filter(pl.col("flow") > 0)["flow"].sum() if not flows.is_empty() else 0.0
     upnl = sum(float(p["position"]["unrealizedPnl"]) for s in raw.get("states", [])
@@ -56,14 +69,10 @@ def audit(address: str, raw: dict[str, Any]) -> dict[str, Any]:
     partial = truncated and covered  # recent fills span >= 180 d: older months are graded coarse
     if partial:
         truncated = False
-    if raw.get("meta", {}).get("archive", {}).get("done"):
+    meta = raw.get("meta", {})
+    if meta.get("archive", {}).get("done"):
         truncated = False  # archive pass done: what remains before it is graded coarse
     holds = (trips["close_ts"] - trips["open_ts"]) / 1000 if not trips.is_empty() else None
-    meta = raw.get("meta", {})
-    ctx = build_ctx(address, fills, funding, ledger, pf, states=raw.get("states", []),
-                    role=meta.get("role"), rate_limit=meta.get("rate_limit"),
-                    extra_agents=meta.get("extra_agents"), actions=raw.get("actions"), asset_names=raw.get("asset_names"), lb=raw.get("lb"), marks=raw.get("marks"),
-                    now_ms=raw.get("now_ms"))
     findings = run_all(ctx)
     return {
         "findings": findings, "verdict": verdict(findings), "category": classify_algo(ctx),
@@ -93,12 +102,8 @@ def assess_cached(root: Path, address: str, cfg: Any = None, n_trials: int = 500
 
     raw = load_raw(root, address)
     meta = raw.get("meta", {})
-    fills = raw["fills"]
-    ctx = build_ctx(address, fills, raw["funding"], raw["ledger"], raw["portfolio"], cfg=cfg,
-                    states=raw.get("states", []), role=meta.get("role"),
-                    rate_limit=meta.get("rate_limit"), extra_agents=meta.get("extra_agents"),
-                    actions=raw.get("actions"), asset_names=raw.get("asset_names"))
-    a = audit(address, raw)
+    ctx = make_ctx(address, raw, cfg)
+    a = audit(address, raw, ctx)
     ctx.coarse_ok = bool(meta.get("archive", {}).get("done")) or a["partial_history"]
     return assess(ctx, recon_ok=a["reconcile_ok"], history_truncated=a["history_truncated"]
                   or meta.get("fills_capped", False), n_trials=n_trials, extra=extra)
