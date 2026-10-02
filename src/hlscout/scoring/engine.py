@@ -89,13 +89,13 @@ def evaluate_gates(ctx: Ctx, m: dict, findings: list, cat: dict) -> list[dict]:
 
 
 def assess(ctx: Ctx, recon_ok: bool = True, history_truncated: bool = False,
-           n_trials: int = 5000, extra: list | None = None) -> dict:
+           n_trials: int = 5000, extra: list | None = None, recon_soft: bool = False) -> dict:
     """Full verdict for one wallet: stage, category, gates, findings, metrics."""
     findings = run_all(ctx) + list(extra or [])
     v = verdict(findings)
     cat = classify_algo(ctx)
     base = {"address": ctx.address, "verdict": v, "category": cat, "findings": findings}
-    if not recon_ok:
+    if not recon_ok and not recon_soft:
         return {**base, "stage": "reconcile_fail", "gates": [], "metrics": {}, "reasons": ["reconcile"]}
     if history_truncated:
         return {**base, "stage": "history_truncated", "gates": [], "metrics": {},
@@ -116,6 +116,10 @@ def assess(ctx: Ctx, recon_ok: bool = True, history_truncated: bool = False,
                 and m.get("track_days", 0) >= ctx.cfg.gates.min_track_days)
     t = ctx.cfg.tiers
     soft = {"G11", "G6", "G7", "G2"}
+    # a soft reconcile (2-5%) can reach Provisional at most, never Qualified (audit H5)
+    if recon_soft and not failed and not vetoes and not v["needs_qa"]:
+        return {**base, "category": cat, "stage": "provisional", "gates": gates, "metrics": m,
+                "reasons": ["reconcile_soft"]}
     provisional = (
         t.provisional and not vetoes and failed and set(failed) <= soft
         and ("G7" not in failed or m.get("max_dd_twr", 1) <= g_.max_dd_twr + t.dd_slack)

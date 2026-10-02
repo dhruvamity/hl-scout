@@ -147,12 +147,12 @@ def reconcile(fills: pl.DataFrame, funding: pl.DataFrame, portfolio: dict,
     end = int(eq["time"].max())
     pnl_at = lambda t: float(eq.filter(pl.col("time") <= t)["cum_pnl"].last() or 0.0)
     platform = pnl_at(end) - pnl_at(start)
-    w = (pl.col("time") > start) & (pl.col("time") <= end)
+    w = (pl.col("time") >= start) & (pl.col("time") <= end)  # first fill belongs to the window
     ours = unrealized + (fills.filter(w)["closed_pnl"].sum() - fills.filter(w)["fee"].sum()
             + (funding.filter(w)["usdc"].sum() if not funding.is_empty() else 0.0))
     scale = max(float(eq["equity"].max()), capital, 1.0)  # capital = gross inflows
     resid = (ours - platform) / scale
-    return {"ok": abs(resid) < 0.02, "ours": ours, "platform": platform,
+    return {"ok": abs(resid) < 0.02, "soft": abs(resid) < 0.05, "ours": ours, "platform": platform,
             "residual_pct": resid * 100, "residual_of_pnl_pct":
             (ours - platform) / abs(platform) * 100 if abs(platform) > 1 else None,
             "window": (start, end)}

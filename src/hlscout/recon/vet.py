@@ -105,5 +105,6 @@ def assess_cached(root: Path, address: str, cfg: Any = None, n_trials: int = 500
     ctx = make_ctx(address, raw, cfg)
     a = audit(address, raw, ctx)
     ctx.coarse_ok = bool(meta.get("archive", {}).get("done")) or a["partial_history"]
-    return assess(ctx, recon_ok=a["reconcile_ok"], history_truncated=a["history_truncated"]
+    return assess(ctx, recon_ok=a["reconcile_ok"], recon_soft=a["reconcile"].get("soft", False)
+                  and not a["reconcile_ok"], history_truncated=a["history_truncated"]
                   or meta.get("fills_capped", False), n_trials=n_trials, extra=extra)

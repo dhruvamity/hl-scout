@@ -98,3 +98,10 @@ def test_robust_concentration_vetoes_a_lottery():
     ctx.cfg.gates.concentration_mode = "robust"
     f = d_c2_concentration(ctx)
     assert f is not None and f.severity == "VETO" and f.evidence[0]["breached"] == ["lottery"]
+
+
+def test_soft_reconcile_caps_at_provisional():
+    ctx = clean_wallet(n_trips=200, days=260).ctx()
+    r = assess(ctx, recon_ok=False, recon_soft=True)
+    assert r["stage"] == "provisional" and r["reasons"] == ["reconcile_soft"]
+    assert assess(clean_wallet(n_trips=200, days=260).ctx(), recon_ok=False)["stage"] == "reconcile_fail"
