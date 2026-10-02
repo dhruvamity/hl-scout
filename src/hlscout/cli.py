@@ -223,7 +223,7 @@ def backfill(config: str = "config/config.yaml", limit: int = 0, dry_run: bool =
     import asyncio
     from pathlib import Path
 
-    from hlscout.archive.backfill import backfill_address, truncated_wallets
+    from hlscout.archive.backfill import backfill_address, backfill_candidates
     from hlscout.archive.hypedexer import getter_from_env
 
     g = getter_from_env()
@@ -231,15 +231,18 @@ def backfill(config: str = "config/config.yaml", limit: int = 0, dry_run: bool =
         typer.echo("HYPEDEXER_API_KEY is not set; archive backfill needs it (free tier: 5k credits/month).")
         raise typer.Exit(1)
     root = Path(load_config(config).data_dir)
-    todo = truncated_wallets(root)
-    todo = todo[:limit] if limit else todo
+    cands = backfill_candidates(root)
+    cands = cands[:limit] if limit else cands
+    todo = [c["address"] for c in cands]
 
     from hlscout.archive.hypedexer import CreditBudget, OutOfCredits
 
     budget = CreditBudget(connect_state(root))
     typer.echo(f"credits remaining this month: {budget.remaining()}")
     if dry_run:
-        typer.echo("\n".join(todo) or "(none)")
+        for c in cands:
+            typer.echo(f"{c['address']}  est_credits={c['est_credits']}  days={c['days']:.0f}  net={c['net']:,.0f}")
+        typer.echo("(none)" if not cands else f"total est credits: {sum(c['est_credits'] for c in cands)}")
         return
 
     async def main() -> None:

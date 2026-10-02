@@ -159,3 +159,33 @@ async def test_hydrate_twap_merges_slices_and_is_incremental(tmp_path):
     assert last_twap_time(tmp_path, addr) == 2000
     await hydrate_twap(Info(), addr, tmp_path)
     assert calls[1] == 1999 and pl.read_parquet(p).height == 2  # resumes from the last slice, no duplicates
+
+
+def test_plan_backfill_targets_span_before_reliable_window(tmp_path):
+    import json
+
+    from hlscout.archive.backfill import plan_backfill
+    from hlscout.ingest.hydrate import LEDGER_SCHEMA, raw_path
+
+    addr = "0x" + "4" * 40
+    day = 86_400_000
+    t0 = 1_700_000_000_000
+    rows = []
+    for i, (t, side, sp) in enumerate([(t0, "B", 0.0), (t0 + day, "A", 10.0),          # old, clean
+                                       (t0 + 100 * day, "B", 50.0), (t0 + 101 * day, "A", 60.0)]):  # break at +100d
+        rows.append({"time": t, "coin": "BTC", "px": 100.0, "sz": 10.0, "side": side, "dir": "", "start_position": sp,
+                     "closed_pnl": 0.0, "fee": 0.0, "crossed": True, "oid": i, "tid": i, "twap_id": None,
+                     "fee_token": "USDC", "liquidation": None, "hash": "h"})
+    for kind, df in (("fills", pl.DataFrame(rows, schema=FILL_SCHEMA)),
+                     ("ledger", pl.DataFrame([{"time": t0 - 30 * day, "hash": "x", "type": "deposit", "usdc": 1.0,
+                                               "user": None, "destination": None, "token": None, "amount": None,
+                                               "to_perp": None, "fee": None, "raw_json": "{}"}], schema=LEDGER_SCHEMA))):
+        p = raw_path(tmp_path, kind, addr)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        df.write_parquet(p)
+    pp = raw_path(tmp_path, "portfolio", addr).with_suffix(".json")
+    pp.parent.mkdir(parents=True, exist_ok=True)
+    pp.write_text(json.dumps({"perpAllTime": {"accountValueHistory": [[t0 - 30 * day, "1000"]], "pnlHistory": [[t0 - 30 * day, "0"]]}}))
+    plan = plan_backfill(tmp_path, addr)
+    assert plan["start"] == t0 - 30 * day and plan["end"] == t0 + 100 * day + 1   # up to just after the last material break
+    assert plan["days"] > 129 and plan["est_credits"] > 0
