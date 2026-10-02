@@ -169,7 +169,7 @@ def test_plan_backfill_targets_span_before_reliable_window(tmp_path):
 
     addr = "0x" + "4" * 40
     day = 86_400_000
-    t0 = 1_700_000_000_000
+    t0 = 1_760_000_000_000  # Oct 2025: inside Hypedexer's measured coverage
     rows = []
     for i, (t, side, sp) in enumerate([(t0, "B", 0.0), (t0 + day, "A", 10.0),          # old, clean
                                        (t0 + 100 * day, "B", 50.0), (t0 + 101 * day, "A", 60.0)]):  # break at +100d
