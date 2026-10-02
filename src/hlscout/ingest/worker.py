@@ -53,12 +53,13 @@ def next_item(con: sqlite3.Connection, deep_cap: int | None = None) -> tuple[int
     cap_sql = ""
     args: tuple = ()
     if deep_cap is not None:
-        cap_sql = ("AND (kind='light' OR priority >= ? OR (SELECT COUNT(*) FROM queue q2 WHERE q2.kind='deep' "
+        cap_sql = ("AND (kind IN ('light','refresh') OR priority >= ? OR (SELECT COUNT(*) FROM queue q2 WHERE q2.kind='deep' "
                    "AND q2.state IN ('done','running') AND q2.priority < ?) < ?)")
         args = (URGENT, URGENT, deep_cap)
     row = con.execute(
         "SELECT id, address, kind FROM queue WHERE state='pending' AND attempts < 3 " + cap_sql +
-        " ORDER BY CASE WHEN priority >= 1000000000 THEN 0 WHEN kind='light' THEN 1 ELSE 2 END, "
+        " ORDER BY CASE WHEN priority >= 1000000000 THEN 0 WHEN kind='light' THEN 1 "
+        "WHEN kind='refresh' THEN 2 ELSE 3 END, "
         "priority DESC, id LIMIT 1", args).fetchone()
     if row:
         con.execute("UPDATE queue SET state='running', attempts=attempts+1, updated_at=? WHERE id=?",
@@ -109,6 +110,37 @@ def coarse_score(light: dict[str, Any]) -> float:
     return min(float(eq["cum_pnl"][-1]) / max(float(eq["equity"].median()), 1.0), 50.0)
 
 
+def enqueue_refresh(con: sqlite3.Connection, addresses: list[str], priority: float = 0.0) -> int:
+    """(Re)queue incremental refreshes; idempotent per address."""
+    con.execute("BEGIN")
+    n = 0
+    for a in addresses:
+        con.execute("INSERT OR IGNORE INTO queue(address, kind, lane, priority, updated_at) "
+                    "VALUES (?, 'refresh', 'deep_vet', ?, ?)", (a, priority, datetime.now(UTC).isoformat()))
+        cur = con.execute("UPDATE queue SET state='pending', attempts=0, priority=? WHERE address=? "
+                          "AND kind='refresh' AND state IN ('done','failed')", (priority, a))
+        n += cur.rowcount
+    con.execute("COMMIT")
+    return n
+
+
+async def refresh_wallet(info: Any, con: sqlite3.Connection, root: Path, cfg: Config, address: str) -> None:
+    from hlscout.recon.vet import assess_cached, audit, load_raw
+
+    await hydrate_deep(info, address, root, lane="deep_vet")
+    r = assess_cached(root, address, cfg)
+    a = audit(address, load_raw(root, address))
+    con.execute("INSERT INTO scores(entity, run_id, gates_json, metrics_json, score, stage, category, p_algo)"
+                " VALUES (?,?,?,?,?,?,?,?)",
+                (address, "refresh", json.dumps(r["gates"], default=str),
+                 json.dumps({k: v for k, v in r["metrics"].items() if k != "months"}, default=str),
+                 None, r["stage"], r["category"]["category"], r["category"]["p_algo"]))
+    con.execute("UPDATE addresses SET stage=?, reconcile_ok=?, history_truncated=?, last_hydrated=? WHERE address=?",
+                (r["stage"], int(a["reconcile_ok"]), int(a["history_truncated"]),
+                 datetime.now(UTC).isoformat(), address))
+    log.info("refresh %s -> %s %s", address[:10], r["stage"], r["reasons"][:6])
+
+
 async def hft_prescreen(info: Any, address: str, cfg: Config) -> dict[str, Any] | None:
     """One `userFills` call (~22 weight, newest <= 2000 fills) to skip HFT/MM books before a
     full pull that can cost thousands of weight. Returns the reason dict, or None to proceed."""
@@ -131,7 +163,9 @@ async def hft_prescreen(info: Any, address: str, cfg: Config) -> dict[str, Any] 
 async def process(info: Any, con: sqlite3.Connection, root: Path, cfg: Config,
                   item: tuple[int, str, str], now_ms: int) -> None:
     qid, address, kind = item
-    if kind == "light":
+    if kind == "refresh":  # incremental re-pull + re-assess of an already-vetted wallet (no prescreen, no cap)
+        await refresh_wallet(info, con, root, cfg, address)
+    elif kind == "light":
         light = await hydrate_light(info, address, lane="light_hydrate", with_role=False)
         ok, why = s2_screen(light, cfg, now_ms)
         con.execute("UPDATE addresses SET stage=?, role=?, last_hydrated=? WHERE address=?",

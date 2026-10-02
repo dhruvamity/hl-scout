@@ -82,3 +82,29 @@ async def test_hft_prescreen():
     makers = [{"time": NOW - i * 3_600_000, "crossed": False} for i in range(2000)]
     assert (await hft_prescreen(Info(makers), "0x1", cfg))["maker_share"] == 1.0
     assert await hft_prescreen(Info([{"time": NOW, "crossed": True}]), "0x1", cfg) is None
+
+
+def test_refresh_queue_runs_after_light_and_ignores_deep_cap(tmp_path):
+    from hlscout.ingest.worker import enqueue_refresh
+
+    con = connect_state(tmp_path)
+    enqueue(con, ["0xl"], "light", "light_hydrate")
+    enqueue(con, ["0xd"], "deep", "deep_vet", priority=3.0)
+    assert enqueue_refresh(con, ["0xr"]) == 0 and con.execute("SELECT COUNT(*) FROM queue WHERE kind='refresh'").fetchone()[0] == 1
+    order = [next_item(con, deep_cap=0)[1] for _ in range(2)]  # cap 0 blocks normal deep vets, not refresh
+    assert order == ["0xl", "0xr"] and next_item(con, deep_cap=0) is None
+    con.execute("UPDATE queue SET state='done' WHERE address='0xr'")
+    assert enqueue_refresh(con, ["0xr"]) == 1  # re-armed for the next cycle
+
+
+def test_tape_candidates(tmp_path):
+    import polars as pl
+
+    from hlscout.ingest.screen import tape_candidates
+
+    for d in range(40):
+        pl.DataFrame({"address": ["0xa", "0xmm", "0xnew"], "date": [f"2026-09-{d:02d}"] * 3,
+                      "trades": [20, 5000, 5], "notional": [5e4, 1e8, 200.0],
+                      "maker_share_proxy": [0.3, 0.95, 0.4]}).write_parquet(tmp_path / f"date=2026-09-{d:02d}.parquet")
+    r = tape_candidates(tmp_path, min_active_days=30).sort("address")
+    assert dict(zip(r["address"], r["keep"], strict=True)) == {"0xa": True, "0xmm": False, "0xnew": False}

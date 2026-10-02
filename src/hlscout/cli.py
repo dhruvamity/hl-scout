@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import polars as pl
 import typer
 
 from hlscout.config import load_config
@@ -405,6 +406,67 @@ def marks(config: str = "config/config.yaml", concurrency: int = 4) -> None:
         typer.echo(f"done: {stats['done']} coins, {stats['empty']} without candles (delisted/unknown)")
 
     asyncio.run(main())
+
+
+@app.command()
+def enqueue(config: str = "config/config.yaml") -> None:
+    """Queue every s1_pass address that has no queue item yet (new leaderboard / tape wallets)."""
+    from pathlib import Path
+
+    from hlscout.ingest import worker as w
+
+    cfg = load_config(config)
+    con = connect_state(Path(cfg.data_dir))
+    todo = [r[0] for r in con.execute(
+        "SELECT address FROM addresses WHERE stage='s1_pass' AND address NOT IN "
+        "(SELECT address FROM queue WHERE kind='light')")]
+    typer.echo(f"queued {w.enqueue(con, todo, 'light', 'light_hydrate')} new wallets")
+
+
+@app.command()
+def refresh(scope: str = "watch", config: str = "config/config.yaml") -> None:
+    """Queue incremental refreshes. scope=watch (qualified/provisional/needs_qa/reformed) or all (every vetted)."""
+    from pathlib import Path
+
+    from hlscout.ingest import worker as w
+    from hlscout.monitor.run import WATCH_STAGES
+
+    cfg = load_config(config)
+    con = connect_state(Path(cfg.data_dir))
+    if scope == "watch":
+        q = ",".join("?" * len(WATCH_STAGES))
+        rows = con.execute(f"SELECT address FROM addresses WHERE stage IN ({q})", WATCH_STAGES).fetchall()
+    else:
+        rows = con.execute("SELECT address FROM addresses WHERE last_hydrated IS NOT NULL AND stage NOT IN "
+                           "('screened_out','s1_pass','s2_pass','discovered')").fetchall()
+    typer.echo(f"queued {w.enqueue_refresh(con, [r[0] for r in rows])} refreshes ({scope})")
+
+
+@app.command()
+def discover(config: str = "config/config.yaml", min_active_days: int = 30) -> None:
+    """Tape-based discovery: register addresses seen on the tape and S1-screen them on tape statistics."""
+    from pathlib import Path
+
+    from hlscout.ingest import leaderboard as lb
+    from hlscout.ingest.screen import tape_candidates
+    from hlscout.ingest.tape import compact_day
+
+    cfg = load_config(config)
+    root = Path(cfg.data_dir)
+    con = connect_state(root)
+    out = root / "addr_day_stats"
+    for d in sorted(p.name.split("=")[1] for p in (root / "tape").glob("date=*")):
+        if not (out / f"date={d}.parquet").exists():
+            compact_day(root / "tape", out, d)
+    cand = tape_candidates(out, min_active_days=min_active_days)
+    new = lb.register(con, cand["address"].to_list(), "tape")
+    keep = cand.filter(pl.col("keep"))["address"].to_list() if "keep" in cand.columns else []
+    con.execute("BEGIN")
+    for a in keep:
+        con.execute("UPDATE addresses SET stage='s1_pass' WHERE address=? AND stage='discovered'", (a,))
+    con.execute("COMMIT")
+    typer.echo(f"tape addresses={cand.height} new_registry={new} s1_pass_from_tape={len(keep)} "
+               f"(min_active_days={min_active_days})")
 
 
 @app.command()

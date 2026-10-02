@@ -35,3 +35,27 @@ def screen_s1(df: pl.DataFrame, cfg: ScreenCfg, tape_days: int = 0,
 def hint_recent_green(df: pl.DataFrame) -> pl.DataFrame:
     """Minara/LabelYX hint: 30d and all-time both green (ranking hint, not a gate)."""
     return df.with_columns(((pl.col("pnl_month") > 0) & (pl.col("pnl_allTime") > 0)).alias("recent_green"))
+
+
+def tape_candidates(stats_dir, min_active_days: int = 30, max_trades_per_day: float = 300.0,
+                    max_maker_share: float = 0.8, min_notional_per_day: float = 1000.0) -> pl.DataFrame:
+    """Tape-derived screen (plan §3.2 S1): addresses seen trading often enough, not HFT/MM-like.
+
+    `stats_dir` holds `date=YYYY-MM-DD.parquet` files from compact_day. Returns one row per address with
+    active_days, trades_per_active_day, maker_share and `keep`."""
+    import glob
+
+    files = sorted(glob.glob(str(stats_dir) + "/date=*.parquet"))
+    if not files:
+        return pl.DataFrame(schema={"address": pl.Utf8, "active_days": pl.UInt32, "keep": pl.Boolean})
+    df = pl.concat([pl.read_parquet(f, columns=["address", "date", "trades", "notional", "maker_share_proxy"])
+                    for f in files])
+    agg = df.group_by("address").agg(
+        pl.col("date").n_unique().alias("active_days"), pl.col("trades").sum().alias("trades"),
+        pl.col("notional").sum().alias("notional"), pl.col("maker_share_proxy").mean().alias("maker_share"))
+    agg = agg.with_columns((pl.col("trades") / pl.col("active_days")).alias("trades_per_active_day"),
+                           (pl.col("notional") / pl.col("active_days")).alias("notional_per_day"))
+    keep = ((pl.col("active_days") >= min_active_days) & (pl.col("trades_per_active_day") <= max_trades_per_day)
+            & (pl.col("maker_share") <= max_maker_share) & (pl.col("notional_per_day") >= min_notional_per_day)
+            & ~pl.col("address").str.starts_with("0x4000000000000000000000000000000000000"))
+    return agg.with_columns(keep.alias("keep"))
