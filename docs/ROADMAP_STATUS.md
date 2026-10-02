@@ -14,3 +14,5 @@
 
 Now running: stage-2 screen of 6,897 wallets (~49/min), then capped deep vets (top 400 by coarse score),
 then `hlscout links`, `hlscout backfill` (finalists only), `hlscout score` -> reports/latest.md, `hlscout freeze`.
+
+Full audit (2026-10-02) and the forward plan: [AUDIT_AND_PLAN.md](AUDIT_AND_PLAN.md).
