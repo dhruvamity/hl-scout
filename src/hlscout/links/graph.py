@@ -16,6 +16,13 @@ import polars as pl
 
 TRANSFER_TYPES = ("internalTransfer", "send", "spotTransfer", "subAccountTransfer")
 SYSTEM_PREFIX = "0x2000000000000000000000000000000000"  # spot-deployer / system addresses
+KNOWN_HUBS = {  # never link wallets through these (bridge, burn/system addresses)
+    "0x2df1c51e09aecf9cacb7bc98cb1742757f163df7",  # Bridge2 (Arbitrum deposits/withdrawals)
+    "0x0000000000000000000000000000000000000000",
+    "0x000000000000000000000000000000000000dead",
+}
+HARD_KINDS = {"subaccount", "agent"}
+MIN_STRONG_USD = 1000.0
 
 
 @dataclass
@@ -85,12 +92,26 @@ def edges_from_meta(g: Graph, address: str, role: dict | None, subs: list | None
             g.add(address, ad, "agent", 0.0, t)
 
 
+def strong(e: Edge) -> bool:
+    """A link strong enough to merge books: hard link, repeated transfers, or a large single transfer."""
+    return e.kind in HARD_KINDS or e.n >= 2 or e.weight >= MIN_STRONG_USD
+
+
+def cluster_confidence(g: Graph, members: list[str]) -> float:
+    """Share of the cluster's internal edges that are hard links or repeated transfers (0..1)."""
+    ms = set(members)
+    es = [e for e in g.edges.values() if e.src in ms and e.dst in ms]
+    if not es:
+        return 0.0
+    return sum(1 for e in es if e.kind in HARD_KINDS or e.n >= 2) / len(es)
+
+
 def find_hubs(g: Graph, hub_degree: int = 20) -> set[str]:
     nbrs: dict[str, set[str]] = defaultdict(set)
     for e in g.edges.values():
         nbrs[e.src].add(e.dst)
         nbrs[e.dst].add(e.src)
-    return {n for n, s in nbrs.items() if len(s) > hub_degree or n.startswith(SYSTEM_PREFIX)}
+    return {n for n, s in nbrs.items() if len(s) > hub_degree or n.startswith(SYSTEM_PREFIX)} | KNOWN_HUBS
 
 
 def clusters(g: Graph, hub_degree: int = 20) -> dict[str, list[str]]:
@@ -106,7 +127,7 @@ def clusters(g: Graph, hub_degree: int = 20) -> dict[str, list[str]]:
         return x
 
     for e in g.edges.values():
-        if e.src in g.hubs or e.dst in g.hubs:
+        if e.src in g.hubs or e.dst in g.hubs or not strong(e):
             continue
         a, b = find(e.src), find(e.dst)
         if a != b:
@@ -125,7 +146,8 @@ def persist(con: Any, g: Graph, cl: dict[str, list[str]]) -> None:
         con.execute("INSERT INTO links VALUES (?,?,?,?,?,?,?)",
                     (e.src, e.dst, e.kind, e.weight, e.first_ts, e.last_ts, str(e.n)))
     for cid, members in cl.items():
-        con.execute("INSERT INTO clusters VALUES (?,?,?,?)", (cid, json.dumps(members), "transfer", 1.0))
+        con.execute("INSERT INTO clusters VALUES (?,?,?,?)",
+                    (cid, json.dumps(members), "transfer", cluster_confidence(g, members)))
         for m in members:
             con.execute("UPDATE addresses SET cluster_id=? WHERE address=?", (cid, m))
     con.execute("COMMIT")

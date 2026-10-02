@@ -162,11 +162,12 @@ def score(config: str = "config/config.yaml", out: str = "reports/latest.md", n_
         except Exception as e:  # noqa: BLE001 - one bad wallet must not sink the report
             typer.echo(f"skip {a[:10]}: {type(e).__name__}: {e}")
     # multi-wallet pass (plan §6.2): only finalists are worth the tape query
-    cl = clusters(build_graph(root))
+    graph = build_graph(root)
+    cl = clusters(graph)
     for i, r in enumerate(results):
         if r["stage"] in ("qualified", "provisional", "needs_qa", "reformed"):
             try:
-                extra = cluster_findings(root, root / "tape", r["address"], cl, cfg)
+                extra = cluster_findings(root, root / "tape", r["address"], cl, cfg, graph)
             except Exception as e:  # noqa: BLE001 - multi-wallet pass is best-effort per wallet
                 typer.echo(f"multi-wallet pass skipped for {r['address'][:10]}: {type(e).__name__}: {e}")
                 extra = []

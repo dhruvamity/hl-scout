@@ -135,3 +135,37 @@ def test_tape_slice_reads_real_parquet(tmp_path):
           (9_999_999, "ETH", 10.0, 1.0, "B", 3, "h", C, D)]).write_parquet(d / "p.parquet")
     out = tape_slice(tmp_path, A)
     assert out is not None and sorted(out["tid"].to_list()) == [1, 2]  # own trade + same-coin trades within 60 s
+
+
+def test_weak_single_transfers_do_not_cluster_but_repeated_or_large_do():
+    g = Graph()
+    g.add(A, B, "send", 300.0, 1)           # one small transfer: noise
+    g.add(A, C, "send", 300.0, 1)
+    g.add(A, C, "send", 300.0, 2)           # repeated: strong
+    g.add(A, D, "internalTransfer", 5000.0, 3)  # large: strong
+    cl = clusters(g)
+    members = next(iter(cl.values()))
+    assert sorted(members) == sorted([A, C, D]) and B not in members
+
+
+def test_bridge_is_a_hub_and_cannot_link_wallets():
+    g = Graph()
+    bridge = "0x2df1c51e09aecf9cacb7bc98cb1742757f163df7"
+    g.add(A, bridge, "send", 5000.0, 1)
+    g.add(bridge, B, "send", 5000.0, 2)
+    assert clusters(g) == {}
+
+
+def test_oversized_cluster_vetoes_are_demoted():
+    from hlscout.detectors.multiwallet import MAX_TRUSTED_CLUSTER, run_cluster_detectors
+
+    t = 1_700_000_000_000
+    long_ = wallet_fills([(t, "B", 10 * HOUR, 100, 101)])
+    short = wallet_fills([(t, "A", 10 * HOUR, 100, 99)])
+    members = [A, B] + [f"0x{i:040x}" for i in range(MAX_TRUSTED_CLUSTER)]
+    cc = ClusterCtx("big", members, {A: long_, B: short})
+    out = run_cluster_detectors(clean_wallet().ctx(), cc, None)
+    h1 = next(f for f in out if f.code == "D-H1")
+    assert h1.severity == "FLAG" and "demoted" in h1.evidence[-1]
+    cc_small = ClusterCtx("small", [A, B], {A: long_, B: short})
+    assert next(f for f in run_cluster_detectors(clean_wallet().ctx(), cc_small, None) if f.code == "D-H1").severity == "VETO"

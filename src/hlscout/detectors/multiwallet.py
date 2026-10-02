@@ -10,11 +10,16 @@ from hlscout.detectors.base import DAY_MS, Ctx, Finding
 from hlscout.recon.positions import Timeline, build_timeline
 
 
+MAX_TRUSTED_CLUSTER = 12   # larger clusters are probably over-merged: their vetoes are downgraded to FLAGs
+MIN_TRUSTED_CONFIDENCE = 0.4
+
+
 @dataclass
 class ClusterCtx:
     cluster_id: str
     members: list[str]
     fills: dict[str, pl.DataFrame]       # perp-only fills per hydrated member
+    confidence: float = 1.0              # share of internal edges that are hard / repeated links
     pnl: dict[str, float] = field(default_factory=dict)  # net trading pnl per member
     timelines: dict[str, Timeline] = field(default_factory=dict)
 
@@ -263,4 +268,12 @@ def run_cluster_detectors(ctx: Ctx, cc: ClusterCtx | None, tape: pl.DataFrame | 
     out = [d_h1_cross_hedge(ctx, cc), d_h2_pair_hedge(ctx),
            d_h3_wash(ctx, tape, cc.members if cc else None), d_h4_lottery(ctx, cc),
            d_h5_unlinked_twin(ctx, tape), d_b4_copier(ctx, tape), d_h6_offvenue(ctx), d_m7_rotation(ctx, cc)]
-    return [f for f in out if f is not None]
+    out = [f for f in out if f is not None]
+    if cc is not None and (len(cc.members) > MAX_TRUSTED_CLUSTER or cc.confidence < MIN_TRUSTED_CONFIDENCE):
+        # an over-merged or weakly-linked cluster must not veto a wallet: demote cluster-derived vetoes to
+        # FLAGs for human QA (tape-derived D-H3 is about the wallet's own counterparties and keeps its severity)
+        for f in out:
+            if f.code in ("D-H1", "D-H4", "D-M7") and f.severity == "VETO":
+                f.severity, f.penalty = "FLAG", 5
+                f.evidence.append({"demoted": f"cluster size {len(cc.members)}, confidence {cc.confidence:.2f}"})
+    return out

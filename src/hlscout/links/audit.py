@@ -48,7 +48,7 @@ def tape_slice(tape_root: Path, address: str, window_ms: int = 60_000) -> pl.Dat
 
 
 def cluster_findings(root: Path, tape_root: Path, address: str, cl: dict[str, list[str]],
-                     cfg: Any = None) -> list:
+                     cfg: Any = None, graph: Graph | None = None) -> list:
     root = Path(root)
     members = next((m for m in cl.values() if address in m), None)
     cid = next((k for k, m in cl.items() if address in m), None)
@@ -60,7 +60,10 @@ def cluster_findings(root: Path, tape_root: Path, address: str, cl: dict[str, li
         for m in members:
             if raw_path(root, "fills", m).exists():
                 fills[m] = perp_only(pl.read_parquet(raw_path(root, "fills", m)))
-        cc = ClusterCtx(cid or "", members, fills)
+        from hlscout.links.graph import cluster_confidence
+
+        cc = ClusterCtx(cid or "", members, fills,
+                        confidence=cluster_confidence(graph, members) if graph is not None else 1.0)
     return run_cluster_detectors(ctx, cc, tape_slice(tape_root, address))
 
 
