@@ -46,7 +46,7 @@ class InfoClient:
             raise ValueError(f"host not allowlisted: {host}")
         self.url = url
         self.limiter = limiter
-        self._client = client or httpx.AsyncClient(timeout=30)
+        self._client = client or httpx.AsyncClient(timeout=60)
         self.max_retries = max_retries
         self.usage = usage  # optional (lane, weight) callback for the live tracker
 

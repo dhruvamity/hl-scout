@@ -13,7 +13,7 @@ from hlscout.config import Config
 from hlscout.recon import equity as eq
 from hlscout.recon.daily import build_daily
 from hlscout.recon.positions import Timeline, build_timeline
-from hlscout.recon.roundtrips import build_round_trips
+from hlscout.recon.roundtrips import build_round_trips, reliable_since
 
 DAY_MS = 86_400_000
 
@@ -51,6 +51,8 @@ class Ctx:
     coarse_ok: bool = False
     actions: list | None = None
     daily: pl.DataFrame | None = None
+    reliable_since: int | None = None   # fills before this are unreliable (missing-fill breaks) and were cut
+    n_material_breaks: int = 0
     marks_eod: Callable[[str, int], float | None] | None = None
     asset_names: list | None = None
     extra_agents: list | None = None
@@ -72,9 +74,22 @@ def build_ctx(address: str, fills: pl.DataFrame, funding: pl.DataFrame, ledger: 
     import time as _t
 
     cfg = cfg or Config()
+    equity = eq.equity_series(portfolio)
+    # audit C2: the public API silently drops old fills; trust only the window after the last material
+    # position-continuity break and grade earlier months coarse (partial-history machinery).
+    rel, mat = None, []
+    if cfg.gates.cut_at_breaks and not fills.is_empty():
+        pe_t, pe_v = equity["time"].to_list(), equity["equity"].to_list()
+
+        def pf_equity_at(t: int) -> float | None:
+            i = bisect.bisect_right(pe_t, t) - 1
+            return pe_v[i] if i >= 0 else None
+
+        rel, mat = reliable_since(fills, pf_equity_at)
+        if rel is not None:
+            fills = fills.filter(pl.col("time") >= rel)
     trips, broken = build_round_trips(fills, funding, address)
     flows = eq.flow_events(ledger, address)
-    equity = eq.equity_series(portfolio)
     timeline = build_timeline(fills)
     now = now_ms or int(_t.time() * 1000)
     # audit C1: a DAILY curve rebuilt from fills + marks replaces the 1-2-week platform sampling
@@ -83,7 +98,8 @@ def build_ctx(address: str, fills: pl.DataFrame, funding: pl.DataFrame, ledger: 
     ctx = Ctx(
         address=address.lower(), cfg=cfg, now_ms=now, fills=fills,
         funding=funding, ledger=ledger, portfolio=portfolio, trips=trips, broken_coins=broken,
-        flows=flows, equity=equity, curve=curve, daily=daily,
+        flows=flows, equity=equity, curve=curve, daily=daily, reliable_since=rel,
+        n_material_breaks=len(mat),
         timeline=timeline, states=states or [], **kw)
     # equity_at(): platform points before the first fill day, our daily equity from then on
     first_day = int(daily["time"][0]) - DAY_MS + 1 if not daily.is_empty() else None

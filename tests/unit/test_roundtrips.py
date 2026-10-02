@@ -88,3 +88,21 @@ def test_partial_fills_of_opening_order_are_one_clip_not_adds():
     df, _ = build_round_trips(mk(rows))
     r = df.row(0, named=True)
     assert r["adds"] == 0 and abs(r["first_clip"] - 10.0) < 1e-9
+
+
+def test_continuity_breaks_and_reliable_window():
+    from hlscout.recon.roundtrips import continuity_breaks, reliable_since
+
+    f = mk([(1000, "BTC", "B", 10, 100, 0), (2000, "BTC", "A", 10, 101, 10),     # old, clean
+            (3000, "BTC", "B", 5, 100, 0), (4000, "BTC", "A", 5, 101, 5)])
+    # fills between 2000 and 3000 went missing: the next fill reports a position we never saw
+    f = f.with_columns(pl.when(pl.col("time") == 3000).then(7.0).when(pl.col("time") == 4000).then(12.0)
+                       .otherwise(pl.col("start_position")).alias("start_position"))
+    br = continuity_breaks(f)
+    assert len(br) == 1 and br[0]["time"] == 3000 and abs(br[0]["delta"] - 7.0) < 1e-9
+    rel, mat = reliable_since(f, lambda t: 1000.0)
+    assert rel == 3001 and len(mat) == 1
+    # a dust-sized break is not material
+    g = f.with_columns(pl.when(pl.col("time") == 3000).then(0.0001).when(pl.col("time") == 4000).then(5.0001)
+                       .otherwise(pl.col("start_position")).alias("start_position"))
+    assert reliable_since(g, lambda t: 1000.0)[0] is None

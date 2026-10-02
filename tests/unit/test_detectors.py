@@ -155,7 +155,7 @@ def test_event_concentration_and_clean_not_flagged():
     for k in range(40):  # tiny noise across 200 days
         w.trip(w.t0 + k * 5 * DAY, "BTC", "B", 1.0, 100.0, 100.1 if k % 2 else 99.95)
     for k in range(10):  # one huge 2-day burst
-        w.trip(w.t0 + 100 * DAY + k * HOUR, "BTC", "B", 10.0, 100.0, 120.0)
+        w.trip(w.t0 + 250 * DAY + k * 2 * HOUR, "BTC", "B", 10.0, 100.0, 120.0)
     f = d_c8_event_concentration(w.ctx())
     assert f is not None and f.code == "D-C8"
 

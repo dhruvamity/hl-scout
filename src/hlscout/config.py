@@ -69,6 +69,7 @@ class GatesCfg(_Cfg):
     tstat_min: float = 2.0
     dsr_prob_min: float = 0.90
     median_equity_min_usd: float = 5000
+    cut_at_breaks: bool = True       # trust fills only after the last material continuity break (audit C2)
     concentration_mode: str = "legacy"  # "legacy" = plan as written; "robust" = ex-top-5 / gross-profit shares (audit C3)
     top1_lottery_share: float = 0.5
 

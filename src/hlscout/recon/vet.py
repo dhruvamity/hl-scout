@@ -58,7 +58,14 @@ def audit(address: str, raw: dict[str, Any], ctx: Any = None, cfg: Any = None) -
     inflow = flows.filter(pl.col("flow") > 0)["flow"].sum() if not flows.is_empty() else 0.0
     upnl = sum(float(p["position"]["unrealizedPnl"]) for s in raw.get("states", [])
                for p in s["state"]["assetPositions"])
-    rec = eq.reconcile(fills, funding, pf, capital=inflow, unrealized=upnl)
+    # reconcile over the reliable window only (ctx.fills is already cut); start at the first platform point
+    # at/after the cut so the platform delta covers the same period
+    start = None
+    if ctx.reliable_since is not None:
+        pts = [t for t in eq.equity_series(pf)["time"].to_list() if t >= ctx.reliable_since]
+        start = pts[0] if pts else ctx.reliable_since
+    rec = eq.reconcile(ctx.fills, funding, pf, start_ms=start, capital=inflow, unrealized=upnl)
+    fills = ctx.fills
     first_fill = int(fills["time"].min()) if not fills.is_empty() else None
     first_ledger = int(ledger["time"].min()) if not ledger.is_empty() else None
     # history looks truncated if fills start long after the account's first ledger activity
@@ -66,6 +73,9 @@ def audit(address: str, raw: dict[str, Any], ctx: Any = None, cfg: Any = None) -
                      and fills.height >= 9500)
     now_ms = raw.get("now_ms") or int(__import__("time").time() * 1000)
     covered = bool(first_fill) and (now_ms - first_fill) / DAY_MS >= 180
+    cut = ctx.reliable_since is not None  # fills before the last material break were discarded
+    if cut:
+        truncated = True  # earlier history is missing even if the account's first ledger entry is recent
     partial = truncated and covered  # recent fills span >= 180 d: older months are graded coarse
     if partial:
         truncated = False
@@ -79,6 +89,7 @@ def audit(address: str, raw: dict[str, Any], ctx: Any = None, cfg: Any = None) -
         "fills_capped": meta.get("fills_capped", False),
         "address": address, "n_fills": fills.height, "n_round_trips": trips.height,
         "coins_with_gaps": sorted(broken), "history_truncated": truncated, "partial_history": partial,
+        "reliable_since": ctx.reliable_since, "material_breaks": ctx.n_material_breaks,
         "reconcile": rec, "reconcile_ok": rec["ok"],
         "net_trading_pnl": rec.get("ours"), "inflow_total": inflow,
         "twr": float(curve["twr_index"][-1] - 1) if not curve.is_empty() else None,

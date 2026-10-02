@@ -105,6 +105,44 @@ def _ordered_rows(g: pl.DataFrame) -> list[dict]:
     return out
 
 
+def continuity_breaks(fills: pl.DataFrame) -> list[dict]:
+    """Position-continuity breaks: a fill whose startPosition disagrees with the replayed position.
+
+    Each break means fills are MISSING before that point (the public API silently drops old fills even when it
+    returns some; Hypedexer showed 10-20x more fills for old months of a heavy wallet). Returns
+    {coin, time, delta (size), px}; the first fill per coin is not a break (unknown prior history)."""
+    out: list[dict] = []
+    if fills.is_empty():
+        return out
+    for key, g in fills.sort(["coin", "time", "tid"]).group_by("coin", maintain_order=True):
+        pos, seen = 0.0, False
+        for r in _ordered_rows(g):
+            sp = r["start_position"]
+            if sp is not None and abs(sp - pos) > max(1e-6, 1e-6 * abs(sp)):
+                if seen:
+                    out.append({"coin": key[0], "time": r["time"], "delta": sp - pos, "px": r["px"]})
+                pos = sp
+            seen = True
+            pos += r["sz"] if r["side"] == "B" else -r["sz"]
+    return out
+
+
+def reliable_since(fills: pl.DataFrame, equity_at, min_notional: float = 100.0, rel_equity: float = 0.005
+                   ) -> tuple[int | None, list[dict]]:
+    """Start of the trustworthy fill window: just after the last MATERIAL continuity break.
+
+    A break is material if the missing size is worth > max(min_notional, rel_equity x equity then).
+    Returns (reliable_since_ms or None if no material break, list of material breaks)."""
+    mat = []
+    for b in continuity_breaks(fills):
+        eq = equity_at(b["time"]) or 0.0
+        if abs(b["delta"]) * b["px"] > max(min_notional, rel_equity * eq):
+            mat.append(b)
+    if not mat:
+        return None, []
+    return max(b["time"] for b in mat) + 1, mat
+
+
 def build_round_trips(
     fills: pl.DataFrame, funding: pl.DataFrame | None = None, address: str | None = None
 ) -> tuple[pl.DataFrame, set[str]]:
