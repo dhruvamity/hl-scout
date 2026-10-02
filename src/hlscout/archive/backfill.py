@@ -12,6 +12,9 @@ from hlscout.archive.hypedexer import Getter, derive_closed_pnl, fetch_fills
 from hlscout.ingest.hydrate import FILL_SCHEMA, _merge_write, raw_path
 
 DAY_MS = 86_400_000
+# Measured 2026-10-02 on two wallets: Hypedexer returned 0 fills for Feb 2025 and full data from ~Apr 2025,
+# despite the advertised "since Nov 2024". Windows before this only cost credits for nothing.
+HYPEDEXER_COVERAGE_START_MS = 1_740_787_200_000  # 2025-03-01 UTC
 
 
 def plan_backfill(root: Path, address: str) -> dict:
@@ -45,9 +48,10 @@ def plan_backfill(root: Path, address: str) -> dict:
     start = min([int(led["time"].min())] if not led.is_empty() else [first_local - 365 * DAY_MS])
     if t:
         start = min(start, int(t[0]))
+    start = max(start, HYPEDEXER_COVERAGE_START_MS)
     recent = have.filter(pl.col("time") >= end)
     rate = recent.height / max(1.0, (int(have["time"].max()) - end) / DAY_MS) if recent.height else 50.0
-    days = max(0.0, (end - start) / DAY_MS)
+    days = max(0.0, (end - start) / DAY_MS)  # 0 when the whole gap predates the archive: nothing to buy
     rows = rate * days
     return {"start": start, "end": end, "days": days, "est_rows": rows,
             "est_credits": int(rows / 25) + int(rows / 1000) + 2}

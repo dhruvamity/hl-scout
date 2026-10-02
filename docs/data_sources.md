@@ -17,3 +17,11 @@ Decision needed from the owner: an AWS account for (1)-(3). Until then P7 is Hyp
 
 Notes: the "~10k fills" cap is a builder's observation, not documented; truncation is detected from data
 (fills start long after first ledger activity), not assumed.
+
+## Measured 2026-10-02 (supersedes advertised claims)
+* **Public Info API fill history is incomplete for older periods** even when it returns rows: for a heavy wallet Hypedexer counted
+  23,108 fills in April 2025 against 1,201 from `userFillsByTime`. Recent windows agree within 0.3%, and for ordinary wallets older windows
+  agree too (e.g. 761 vs 777 in May 2025). The bot detects the gap from position-continuity breaks (`reliable_since`), not from a fill count.
+* **Hypedexer coverage** starts around Mar–Apr 2025 for the wallets probed (0 fills for Feb 2025), not Nov 2024. `total_count` with `limit=1`
+  (about 2 credits) is a cheap completeness oracle for any window.
+* `userTwapSliceFillsByTime` is required for TWAP fills and costs +1 weight per 20 rows like the other fill endpoints.
