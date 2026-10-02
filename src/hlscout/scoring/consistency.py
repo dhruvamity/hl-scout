@@ -173,6 +173,22 @@ def compute_metrics(ctx: Ctx, n_trials: int = 5000) -> dict:
         out["best_month_share"] = (float(mm["net"].max()) / out["net_180d"]) if out["net_180d"] > 0 else None
         out["top5_share"] = (float(t180["net"].sort(descending=True).head(5).sum()) / out["net_180d"]
                              if out["net_180d"] > 0 else None)
+    # robust concentration (audit C3): would the record survive without its best 5 trades / best month?
+    def _conc(frame: pl.DataFrame, tag: str) -> None:
+        if frame.is_empty():
+            return
+        net = frame["net"].sort(descending=True)
+        tot = float(net.sum())
+        gross_win = float(net.filter(net > 0).sum())
+        out[f"ex_top5_net_{tag}"] = tot - float(net.head(5).sum())
+        out[f"top5_gross_share_{tag}"] = float(net.filter(net > 0).head(5).sum()) / gross_win if gross_win > 0 else None
+        out[f"top1_net_share_{tag}"] = float(net[0]) / tot if tot > 0 else None
+        mo = frame.group_by("month").agg(pl.col("net").sum())
+        pos = float(mo.filter(pl.col("net") > 0)["net"].sum())
+        out[f"best_month_pos_share_{tag}"] = float(mo["net"].max()) / pos if pos > 0 else None
+
+    _conc(tf, "all")
+    _conc(t180, "180d")
     # terciles (full history)
     if tf.height >= 30:
         s = tf.sort("close_ts")["net"].to_numpy()
@@ -204,6 +220,11 @@ def compute_metrics(ctx: Ctx, n_trials: int = 5000) -> dict:
     out["payoff"] = float(wins_.mean() / abs(losses_.mean())) if wins_.len() and losses_.len() else None
     out["win_rate"] = float((tf["net"] > 0).mean())
     out["expectancy_bps"] = float(((tf["net"] / (tf["open_notional"].clip(1e-9))) * 1e4).mean())
+    if ctx.daily is not None and not ctx.daily.is_empty():
+        dl = ctx.daily.filter(pl.col("lev") > 0)["lev"]
+        if dl.len() >= 20:  # account-level gross notional / equity per day (time-weighted proxy for G8)
+            out["lev_daily_p95"] = float(dl.quantile(0.95))
+            out["lev_daily_max"] = float(dl.max())
     lv = trip_leverage(ctx)
     out["lev_p95"] = float(lv["lev"].quantile(0.95)) if lv.height >= 5 else None
     out["median_equity"] = float(ctx.equity["equity"].median()) if not ctx.equity.is_empty() else 0.0

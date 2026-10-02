@@ -64,3 +64,37 @@ def test_report_lists_closest_misses():
 
     md = render([res("0xnear", ["G10", "G1b"], ["D-R1"], 5.0), res("0xfar", ["G2", "G3", "G6"], [], 1.0)])
     assert md.index("0xnear") < md.index("0xfar") and "Closest misses" in md
+
+
+def test_provisional_when_only_statistical_gate_fails():
+    ctx = clean_wallet(n_trips=200, days=260).ctx()
+    r = assess(ctx, n_trials=10**12)  # absurd multiple-testing correction: DSR can't pass, everything else does
+    assert r["stage"] == "provisional", (r["stage"], r["reasons"])
+    assert r["reasons"] == ["G11"]
+    ctx2 = clean_wallet(n_trips=200, days=260).ctx()
+    ctx2.cfg.tiers.provisional = False
+    assert assess(ctx2, n_trials=10**12)["stage"] == "vet_fail"
+
+
+def test_robust_concentration_does_not_veto_a_broad_edge():
+    ctx = clean_wallet(n_trips=200, days=260).ctx()
+    ctx.cfg.gates.concentration_mode = "robust"
+    r = assess(ctx)
+    assert r["stage"] == "qualified", (r["stage"], r["reasons"])
+    assert r["metrics"]["ex_top5_net_all"] > 0
+
+
+def test_robust_concentration_vetoes_a_lottery():
+    from hlscout.detectors.optics import d_c2_concentration
+    from tests.helpers import Wallet
+
+    w = Wallet()
+    w.deposit(w.t0 - HOUR, 10_000)
+    w.equity(w.t0 - HOUR, 10_000, 0)
+    for k in range(30):
+        w.trip(w.t0 + k * 5 * DAY, "BTC", "B", 1.0, 100.0, 99.9)        # steady tiny losers
+    w.trip(w.t0 + 200 * DAY, "BTC", "B", 100.0, 100.0, 140.0)             # one giant win is the whole record
+    ctx = w.ctx()
+    ctx.cfg.gates.concentration_mode = "robust"
+    f = d_c2_concentration(ctx)
+    assert f is not None and f.severity == "VETO" and f.evidence[0]["breached"] == ["lottery"]

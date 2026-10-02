@@ -46,7 +46,22 @@ def evaluate_gates(ctx: Ctx, m: dict, findings: list, cat: dict) -> list[dict]:
                     and m.get("net_all", 0) > 0 and m.get("net_180d", 0) > 0))
     best, top5 = m.get("best_month_share"), m.get("top5_share")
     tern = m.get("tercile_net")
-    gates.append(_g("G6 consistency",
+    if g.concentration_mode == "robust":
+        ex5 = m.get("ex_top5_net_180d")
+        bms, t5g = m.get("best_month_pos_share_180d"), m.get("top5_gross_share_all")
+        gates.append(_g("G6 consistency",
+                        f"pos_months={m.get('positive_months_last6')}, best_month_pos={bms}, top5_gross={t5g}, "
+                        f"ex_top5_180d={ex5}, terciles={tern}",
+                        f">={g.positive_months_min_of6}/6, <={g.best_month_share_max}, <={g.top5_trades_share_max}, "
+                        "ex-top5>0, terciles>0",
+                        (m.get("positive_months_last6") or 0) >= g.positive_months_min_of6
+                        and bms is not None and bms <= g.best_month_share_max
+                        and t5g is not None and t5g <= g.top5_trades_share_max
+                        and ex5 is not None and ex5 > 0
+                        and (not h.terciles_all_positive or (tern is not None and all(x > 0 for x in tern)))
+                        and (m.get("rolling90_positive") or 0) >= h.rolling90_positive_min))
+    else:
+        gates.append(_g("G6 consistency",
                     f"pos_months={m.get('positive_months_last6')}, best_month={best}, top5={top5}, terciles={tern}",
                     f">={g.positive_months_min_of6}/6, <={g.best_month_share_max}, <={g.top5_trades_share_max}, terciles>0",
                     (m.get("positive_months_last6") or 0) >= g.positive_months_min_of6
@@ -56,8 +71,8 @@ def evaluate_gates(ctx: Ctx, m: dict, findings: list, cat: dict) -> list[dict]:
                     and (m.get("rolling90_positive") or 0) >= h.rolling90_positive_min))
     gates.append(_g("G7 drawdown", f"{m.get('max_dd_twr', 0):.2f}", f"<={g.max_dd_twr}",
                     m.get("max_dd_twr", 1) <= g.max_dd_twr))
-    lp = m.get("lev_p95")
-    gates.append(_g("G8 leverage", lp, f"p95<={g.eff_leverage_tw_max}x (margin usage not evaluated)",
+    lp = m.get("lev_daily_p95") if m.get("lev_daily_p95") is not None else m.get("lev_p95")
+    gates.append(_g("G8 leverage", lp, f"p95<={g.eff_leverage_tw_max}x (account-level daily; margin usage not evaluated)",
                     NOT_EVALUATED if lp is None else lp <= g.eff_leverage_tw_max))
     liq = next((f for f in findings if f.code == "D-R4"), None)
     l180 = liq.metrics["liquidations_180d"] if liq else 0
@@ -89,6 +104,7 @@ def assess(ctx: Ctx, recon_ok: bool = True, history_truncated: bool = False,
     if not m.get("n_trips"):
         return {**base, "stage": "vet_fail", "gates": [], "metrics": m, "reasons": ["no_round_trips"]}
     gates = evaluate_gates(ctx, m, findings, cat)
+    g_ = ctx.cfg.gates
     failed = [x["gate"].split()[0] for x in gates if x["pass"] is False]
     vetoes = v["vetoes"]
     if "D-B1" in vetoes:
@@ -98,7 +114,17 @@ def assess(ctx: Ctx, recon_ok: bool = True, history_truncated: bool = False,
                 and fgi > ctx.cfg.history.genuine_start_max_month - 1
                 and m.get("genuine_months", 0) >= 3 and not vetoes
                 and m.get("track_days", 0) >= ctx.cfg.gates.min_track_days)
-    if failed or vetoes:
+    t = ctx.cfg.tiers
+    soft = {"G11", "G6", "G7", "G2"}
+    provisional = (
+        t.provisional and not vetoes and failed and set(failed) <= soft
+        and ("G7" not in failed or m.get("max_dd_twr", 1) <= g_.max_dd_twr + t.dd_slack)
+        and ("G2" not in failed or (m.get("weekly_coverage", 0) >= t.weekly_coverage_min
+                                    and (m.get("max_gap_days") or 999) <= t.max_gap_days))
+        and ("G6" not in failed or (m.get("ex_top5_net_180d") or 0) > 0))
+    if provisional:
+        stage = "provisional"
+    elif failed or vetoes:
         stage = "reformed" if reformed and set(failed) <= {"G1b"} else "vet_fail"
     elif v["needs_qa"]:
         stage = "needs_qa"
@@ -130,9 +156,9 @@ def rank_qualified(results: list[dict], weights: dict | None = None, flag_penalt
     w = weights or COMPONENTS
     import math
 
-    q = [r for r in results if r["stage"] == "qualified"]
-    for cat in {r["category"]["category"] for r in q}:
-        grp = [r for r in q if r["category"]["category"] == cat]
+    q = [r for r in results if r["stage"] in ("qualified", "provisional")]
+    for tier, cat in {(r["stage"], r["category"]["category"]) for r in q}:
+        grp = [r for r in q if r["stage"] == tier and r["category"]["category"] == cat]
         feats = {
             "tenure": [math.log1p(r["metrics"]["genuine_months"]) for r in grp],
             "edge": [(r["metrics"]["dsr_prob"] + min(r["metrics"]["tstat"], 6) / 6

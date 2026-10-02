@@ -121,7 +121,8 @@ def universe(config: str = "config/config.yaml", seeds: str = "", local_file: st
 
 
 @app.command()
-def score(config: str = "config/config.yaml", out: str = "reports/latest.md") -> None:
+def score(config: str = "config/config.yaml", out: str = "reports/latest.md", n_trials: int = 0,
+          concentration: str = "") -> None:
     """Assess every hydrated address from cached raw data, rank, write the report + scores table."""
     import json
     from pathlib import Path
@@ -141,7 +142,9 @@ def score(config: str = "config/config.yaml", out: str = "reports/latest.md") ->
                    for k in ("fills", "funding", "ledger", "meta", "portfolio"))
 
     addrs = sorted(p.stem for p in (root / "raw" / "fills").glob("*.parquet") if complete(p.stem))
-    n_trials = max(len(addrs), 5000)
+    if concentration:
+        cfg.gates.concentration_mode = concentration
+    n_trials = n_trials or max(len(addrs), 100)  # multiple-testing count = wallets actually deep-vetted
     results = []
     for a in addrs:
         try:
@@ -151,7 +154,7 @@ def score(config: str = "config/config.yaml", out: str = "reports/latest.md") ->
     # multi-wallet pass (plan §6.2): only finalists are worth the tape query
     cl = clusters(build_graph(root))
     for i, r in enumerate(results):
-        if r["stage"] in ("qualified", "needs_qa", "reformed"):
+        if r["stage"] in ("qualified", "provisional", "needs_qa", "reformed"):
             extra = cluster_findings(root, root / "tape", r["address"], cl, cfg)
             if extra:
                 results[i] = assess_cached(root, r["address"], cfg, n_trials=n_trials, extra=extra)

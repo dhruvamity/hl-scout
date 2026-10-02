@@ -13,7 +13,7 @@ from hlscout.ingest.hydrate import raw_path
 from hlscout.monitor.alerts import Notifier
 from hlscout.monitor.events import Envelope, Event, Snap, check_triggers, diff_state, flock
 
-WATCH_STAGES = ("qualified", "needs_qa", "reformed")
+WATCH_STAGES = ("qualified", "provisional", "needs_qa", "reformed")
 
 
 def watchlist(con: sqlite3.Connection) -> list[str]:

@@ -24,16 +24,22 @@ def render(results: list[dict], n_scanned: int | None = None) -> str:
            "Research tooling, not financial advice. Qualified wallets still need forward validation.", "",
            f"Wallets assessed: {n_scanned or len(results)} · stages: "
            + ", ".join(f"{k}={v}" for k, v in sorted(stages.items())), ""]
-    for cat, title in (("MDT", "Manual Disciplined Traders"), ("ADT", "Algorithmic Disciplined Traders"),
-                       ("UNSURE", "Unsure category (classifier confidence < 0.7)")):
-        rows = sorted((r for r in results if r["stage"] == "qualified" and r["category"]["category"] == cat),
-                      key=lambda r: r["rank"])
-        out += [f"## {title}", ""]
-        if not rows:
-            out += ["_none qualified_", ""]
-            continue
-        out += ["| # | Address | Score | Genuine months | TWR | Max DD | Sharpe | t / DSR | Links |",
-                "|---|---|---|---|---|---|---|---|---|"] + [_row(r) for r in rows] + [""]
+    for tier, tier_title, empty in (
+            ("qualified", "Qualified", "_none qualified_"),
+            ("provisional", "Provisional (integrity-clean, soft-gate misses: forward-tracked, not yet proven)",
+             "_none provisional_")):
+        for cat, title in (("MDT", "Manual Disciplined Traders"), ("ADT", "Algorithmic Disciplined Traders"),
+                           ("UNSURE", "Unsure category (classifier confidence < 0.7)")):
+            rows = sorted((r for r in results if r["stage"] == tier and r["category"]["category"] == cat),
+                          key=lambda r: r["rank"])
+            out += [f"## {tier_title.split(' (')[0]}: {title}", ""]
+            if tier == "provisional" and cat == "MDT":
+                out += [f"_{tier_title}_", ""]
+            if not rows:
+                out += [empty, ""]
+                continue
+            out += ["| # | Address | Score | Genuine months | TWR | Max DD | Sharpe | t / DSR | Links |",
+                    "|---|---|---|---|---|---|---|---|---|"] + [_row(r) for r in rows] + [""]
     qa = [r for r in results if r["stage"] == "needs_qa"]
     if qa:
         out += ["## Needs QA (3+ flag families)", ""] + [

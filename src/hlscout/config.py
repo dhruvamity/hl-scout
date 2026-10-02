@@ -69,6 +69,17 @@ class GatesCfg(_Cfg):
     tstat_min: float = 2.0
     dsr_prob_min: float = 0.90
     median_equity_min_usd: float = 5000
+    concentration_mode: str = "legacy"  # "legacy" = plan as written; "robust" = ex-top-5 / gross-profit shares (audit C3)
+    top1_lottery_share: float = 0.5
+
+
+class TiersCfg(_Cfg):
+    """Provisional tier (audit B): integrity-clean wallets that miss only soft statistical/shape gates."""
+
+    provisional: bool = True
+    dd_slack: float = 0.10          # G7 may be up to this much above max_dd_twr
+    weekly_coverage_min: float = 0.50
+    max_gap_days: int = 30
 
 
 class ScreenCfg(_Cfg):
@@ -95,6 +106,7 @@ class Config(_Cfg):
     tape: TapeCfg = TapeCfg()
     gates: GatesCfg = GatesCfg()
     screen: ScreenCfg = ScreenCfg()
+    tiers: TiersCfg = TiersCfg()
     detectors: dict[str, Any] = {}
     scoring: dict[str, Any] = {}
     forward_validation_days: int = 30

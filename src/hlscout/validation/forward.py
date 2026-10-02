@@ -20,7 +20,7 @@ def freeze(con: sqlite3.Connection, snap_ts: int | None = None) -> int:
     """Copy the current ranked list (qualified/needs_qa/reformed) into forward_lists."""
     ts = snap_ts or int(time.time() * 1000)
     rows = con.execute("SELECT entity, category, score, stage, metrics_json FROM scores WHERE stage IN "
-                       "('qualified','needs_qa','reformed')").fetchall()
+                       "('qualified','provisional','needs_qa','reformed')").fetchall()
     con.execute("BEGIN")
     for a, cat, sc, st, mj in rows:
         m = json.loads(mj or "{}")
@@ -65,7 +65,7 @@ def report(con: sqlite3.Connection, root: Path, snap_ts: int, now_ms: int | None
             nets.append(live["net"])
     dropped = [r[0] for r in con.execute(
         "SELECT f.address FROM forward_lists f JOIN scores s ON s.entity=f.address WHERE f.snap_ts=? "
-        "AND s.stage NOT IN ('qualified','needs_qa','reformed')", (snap_ts,))]
+        "AND s.stage NOT IN ('qualified','provisional','needs_qa','reformed')", (snap_ts,))]
     active = [r for r in out if r["n"]]
     corr = None
     if len(scores) >= 5:

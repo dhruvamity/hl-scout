@@ -47,6 +47,15 @@ def d_c2_concentration(ctx: Ctx) -> Finding | None:
     if not m or "top5_share" not in m:
         return None
     g = ctx.cfg.gates
+    if g.concentration_mode == "robust":
+        net = (ctx.trips["pnl"] - ctx.trips["fees"] + ctx.trips["funding"]).sort(descending=True)
+        total = float(net.sum())
+        ex5 = total - float(net.head(5).sum())
+        top1 = float(net[0]) / total if total > 0 else 0.0
+        m = {**m, "ex_top5_net": ex5}
+        if ex5 <= 0 and top1 > g.top1_lottery_share:  # one trade (or five) IS the record
+            return Finding("D-C2", "VETO", "C", 0, [{"breached": ["lottery"], "top1_share": top1}], m)
+        return Finding("D-C2", "INFO", "C", 0, [], m)
     ev = [k for k, lim in (("top5_share", g.top5_trades_share_max), ("best_month_share", g.best_month_share_max))
           if m[k] > lim]
     if ev:
