@@ -71,7 +71,8 @@ screen:
 
 detectors:
   rescue: {upnl_eq_max: -0.25, dist_to_liq_max: 0.10, inflow_eq_min: 0.15, window_min: 60, veto_count: 2}
-  martingale: {underwater_add_share: 0.5, size_multiple: 3, freq_veto: 0.10}
+  # AUDIT calibration (docs/CALIBRATION.md): backtest showed no outcome difference for flagged wallets
+  martingale: {underwater_add_share: 0.5, size_multiple: 3, freq_flag: 0.10, freq_veto: 0.50}
 
 forward_validation_days: 30
 alerts:

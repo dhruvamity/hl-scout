@@ -74,8 +74,8 @@ def grade_months(ctx: Ctx, tf: pl.DataFrame) -> pl.DataFrame:
         if not sub.is_empty():
             if sub["liquidated"].any() or m in liq_months:
                 reasons.append("liquidation")
-            if sub["martingale"].any() and sub["martingale"].mean() > 0.10:
-                reasons.append("martingale")
+            # martingale-heavy months are no longer a violation: backtest found no predictive value
+            # (docs/CALIBRATION.md); the D-R1 flag still reduces the score
             if (sub["lev"].fill_null(0) > 25).any():
                 reasons.append("leverage>25x")
             if not sub["complete"].all():

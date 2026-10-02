@@ -17,7 +17,10 @@ def d_r1_martingale(ctx: Ctx) -> Finding | None:
     if t.is_empty():
         return None
     th = ctx.cfg.detectors.get("martingale", {})
-    ush, mult, fveto = th.get("underwater_add_share", 0.5), th.get("size_multiple", 3), th.get("freq_veto", 0.10)
+    # Calibrated by backtest (docs/CALIBRATION.md): flagged wallets did not do worse afterwards, so this is a FLAG
+    # above 10% and a VETO only for extreme doubling-down books (> 50% of round trips).
+    ush, mult = th.get("underwater_add_share", 0.5), th.get("size_multiple", 3)
+    fveto, fflag = th.get("freq_veto", 0.50), th.get("freq_flag", 0.10)
     bad = t.filter((pl.col("adds") > 0) & (pl.col("underwater_add_share") > ush)
                    & (pl.col("first_clip") > 0) & (pl.col("max_size") / pl.col("first_clip") >= mult))
     freq = bad.height / t.height
@@ -26,7 +29,7 @@ def d_r1_martingale(ctx: Ctx) -> Finding | None:
     m = {"martingale_freq": freq, "n": bad.height}
     if freq > fveto:
         return Finding("D-R1", "VETO", "R", 0, ev, m)
-    if freq > 0.02:
+    if freq > fflag:
         return Finding("D-R1", "FLAG", "R", 5, ev, m)
     return None
 

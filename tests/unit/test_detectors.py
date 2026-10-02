@@ -27,7 +27,24 @@ def test_martingale_vetoed():
         w.fill(t + 3 * HOUR, "SOL", "A", 7, 95, pnl=5)
     w.equity(w.t0 + 11 * DAY, 100_100, 100)
     f = R.d_r1_martingale(w.ctx())
-    assert f.severity == "VETO" and f.metrics["martingale_freq"] == 1.0
+    assert f.severity == "VETO" and f.metrics["martingale_freq"] == 1.0   # every trip doubles down: extreme
+
+
+def test_moderate_martingale_is_only_a_flag():
+    w = Wallet()
+    w.equity(w.t0 - HOUR, 100_000, 0)
+    for k in range(10):                    # 2 of 10 trips scale into a loser 7x: 20% -> above the flag line, below veto
+        t = w.t0 + k * DAY
+        w.fill(t, "SOL", "B", 1, 100)
+        if k < 2:
+            w.fill(t + 60_000, "SOL", "B", 2, 90)
+            w.fill(t + 120_000, "SOL", "B", 4, 80)
+            w.fill(t + 3 * HOUR, "SOL", "A", 7, 95, pnl=5)
+        else:
+            w.fill(t + 3 * HOUR, "SOL", "A", 1, 101, pnl=1)
+    w.equity(w.t0 + 11 * DAY, 100_100, 100)
+    f = R.d_r1_martingale(w.ctx())
+    assert f.severity == "FLAG" and abs(f.metrics["martingale_freq"] - 0.2) < 1e-9
 
 
 def _rescue_wallet(n_events):
