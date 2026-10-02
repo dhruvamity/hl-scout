@@ -118,6 +118,58 @@ def last_time(root: Path, kind: str, address: str) -> int:
     return int(pl.read_parquet(p, columns=["time"])["time"].max()) if p.exists() else 0
 
 
+async def page_twap(info: Poster, address: str, start: int, lane: str,
+                    max_rows: int = 200_000) -> list[dict[str, Any]]:
+    """TWAP slice fills live only on `userTwapSliceFillsByTime` ([{fill, twapId}], <=2000/call, ascending);
+    `userFillsByTime` never returns them, which silently breaks position continuity."""
+    out: list[dict[str, Any]] = []
+    seen: set[Any] = set()
+    while True:
+        rows = await info.post({"type": "userTwapSliceFillsByTime", "user": address, "startTime": start},
+                               lane=lane)
+        if not rows:
+            break
+        fresh = 0
+        for r in rows:
+            f = {**r["fill"], "twapId": r.get("twapId")}
+            if f["tid"] not in seen:
+                seen.add(f["tid"])
+                out.append(f)
+                fresh += 1
+        last = int(rows[-1]["fill"]["time"])
+        if len(rows) < FILLS_PAGE or len(out) >= max_rows or not fresh:
+            break
+        start = last
+    return out
+
+
+def last_twap_time(root: Path, address: str) -> int:
+    p = raw_path(root, "fills", address)
+    if not p.exists():
+        return 0
+    t = pl.read_parquet(p, columns=["time", "twap_id"]).filter(pl.col("twap_id").is_not_null())
+    return int(t["time"].max()) if not t.is_empty() else 0
+
+
+async def hydrate_twap(info: Poster, address: str, root: Path, lane: str = "deep_vet") -> int:
+    """Merge TWAP slice fills into the wallet's fills file. Incremental; returns rows fetched."""
+    root = Path(root)
+    p = raw_path(root, "fills", address)
+    start = max(0, last_twap_time(root, address) - 1)
+    if start == 0 and p.exists():  # first pull: from the wallet's first known fill (or ledger) onward
+        led = raw_path(root, "ledger", address)
+        firsts = [int(pl.read_parquet(p, columns=["time"])["time"].min())]
+        if led.exists():
+            lt = pl.read_parquet(led, columns=["time"])
+            if not lt.is_empty():
+                firsts.append(int(lt["time"].min()))
+        start = min(firsts)
+    rows = await page_twap(info, address, start, lane)
+    if rows:
+        _merge_write(p, pl.DataFrame([norm_fill(r) for r in rows], schema=FILL_SCHEMA), ["coin", "tid"])
+    return len(rows)
+
+
 async def hydrate_light(info: Poster, address: str, lane: str = "light_hydrate",
                         with_role: bool = True) -> dict[str, Any]:
     """userRole costs weight 60 vs ~20 for portfolio: the S2 pass skips it (deep vet checks it)."""
@@ -137,6 +189,8 @@ async def hydrate_deep(info: Poster, address: str, root: Path, lane: str = "deep
     fills = _merge_write(
         raw_path(root, "fills", address),
         pl.DataFrame([norm_fill(r) for r in fills_raw], schema=FILL_SCHEMA), ["coin", "tid"])
+    await hydrate_twap(info, address, root, lane)
+    fills = pl.read_parquet(raw_path(root, "fills", address))
     fund_raw = await page_forward(
         info, {"type": "userFunding", "user": address}, last_time(root, "funding", address),
         FUNDING_PAGE, lane, "__nokey__")

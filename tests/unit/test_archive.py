@@ -130,3 +130,32 @@ def test_naive_iso_time_is_utc_and_spot_dropped():
                            "tid": 1, "isLiquidation": 1, "liquidatedUser": "0xother", "user": "0xme"})
     assert r["time"] == 1770884691273  # 2026-02-12 08:24:51.273 UTC
     assert r["liquidation"] is None    # we were the liquidator's counterparty, not the victim
+
+
+async def test_hydrate_twap_merges_slices_and_is_incremental(tmp_path):
+    from hlscout.ingest.hydrate import hydrate_twap, last_twap_time, raw_path
+
+    addr = "0x" + "3" * 40
+    base = pl.DataFrame([{"time": 1000, "coin": "ETH", "px": 100.0, "sz": 1.0, "side": "B", "dir": "",
+                          "start_position": 0.0, "closed_pnl": 0.0, "fee": 0.0, "crossed": True, "oid": 1,
+                          "tid": 1, "twap_id": None, "fee_token": "USDC", "liquidation": None,
+                          "hash": "h"}], schema=FILL_SCHEMA)
+    p = raw_path(tmp_path, "fills", addr)
+    p.parent.mkdir(parents=True)
+    base.write_parquet(p)
+    calls = []
+
+    class Info:
+        async def post(self, payload, lane=None):
+            calls.append(payload["startTime"])
+            return [{"twapId": 7, "fill": {"coin": "ETH", "px": "101", "sz": "2", "side": "B", "time": 2000,
+                                           "startPosition": "1.0", "dir": "Open Long", "closedPnl": "0.0",
+                                           "hash": "0x0", "oid": 5, "crossed": True, "fee": "0.1", "tid": 99,
+                                           "feeToken": "USDC", "twapId": None}}]
+
+    assert await hydrate_twap(Info(), addr, tmp_path) == 1
+    df = pl.read_parquet(p)
+    assert df.height == 2 and df.filter(pl.col("tid") == 99)["twap_id"][0] == 7
+    assert last_twap_time(tmp_path, addr) == 2000
+    await hydrate_twap(Info(), addr, tmp_path)
+    assert calls[1] == 1999 and pl.read_parquet(p).height == 2  # resumes from the last slice, no duplicates

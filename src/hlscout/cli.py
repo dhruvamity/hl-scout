@@ -47,13 +47,13 @@ def tape(config: str = "config/config.yaml", duration_s: int = 0) -> None:
     import websockets
 
     from hlscout.clients.info import InfoClient
-    from hlscout.clients.ratelimit import RateLimiter
+    from hlscout.clients.ratelimit import make_limiter
     from hlscout.ingest.tape import TapeRecorder, TradeBuffer, fetch_coins, nightly_maintenance
 
     cfg = load_config(config)
     root = Path(cfg.data_dir)
     state = connect_state(root)
-    limiter = RateLimiter(cfg.api.weight_per_min, cfg.api.headroom, cfg.api.lanes)
+    limiter = make_limiter(cfg, root)
     info = InfoClient(limiter, cfg.api.info_url, usage=usage_recorder(root))
 
     async def main() -> None:
@@ -237,7 +237,7 @@ def monitor(config: str = "config/config.yaml", port: int = 8765) -> None:
     from pathlib import Path
 
     from hlscout.clients.info import InfoClient
-    from hlscout.clients.ratelimit import RateLimiter
+    from hlscout.clients.ratelimit import make_limiter
     from hlscout.monitor.dashboard import serve
     from hlscout.monitor.run import run_monitor
 
@@ -249,8 +249,7 @@ def monitor(config: str = "config/config.yaml", port: int = 8765) -> None:
     typer.echo(f"dashboard http://127.0.0.1:{port}  health http://127.0.0.1:{port}/health")
 
     async def main() -> None:
-        info = InfoClient(RateLimiter(cfg.api.weight_per_min, cfg.api.headroom, cfg.api.lanes),
-                          cfg.api.info_url, usage=usage_recorder(root))
+        info = InfoClient(make_limiter(cfg, root), cfg.api.info_url, usage=usage_recorder(root))
         await run_monitor(info, con, root, asyncio.Event())
 
     asyncio.run(main())
@@ -321,13 +320,52 @@ def tracker(config: str = "config/config.yaml", port: int = 8765) -> None:
 
 
 @app.command()
+def twap(config: str = "config/config.yaml", concurrency: int = 4) -> None:
+    """Pull TWAP slice fills (userTwapSliceFillsByTime) for every already-hydrated wallet."""
+    import asyncio
+    from pathlib import Path
+
+    from hlscout.clients.info import InfoClient
+    from hlscout.clients.ratelimit import make_limiter
+    from hlscout.ingest.hydrate import hydrate_twap
+
+    cfg = load_config(config)
+    root = Path(cfg.data_dir)
+    addrs = sorted(p.stem for p in (root / "raw" / "fills").glob("*.parquet"))
+    typer.echo(f"{len(addrs)} wallets")
+
+    async def main() -> None:
+        info = InfoClient(make_limiter(cfg, root), cfg.api.info_url, usage=usage_recorder(root))
+        q: asyncio.Queue[str] = asyncio.Queue()
+        for a in addrs:
+            q.put_nowait(a)
+        done = [0, 0]
+
+        async def loop() -> None:
+            while not q.empty():
+                a = q.get_nowait()
+                try:
+                    done[1] += await hydrate_twap(info, a, root, lane="deep_vet")
+                except Exception as e:  # noqa: BLE001
+                    typer.echo(f"skip {a[:10]}: {type(e).__name__}")
+                done[0] += 1
+                if done[0] % 25 == 0:
+                    typer.echo(f"{done[0]}/{len(addrs)} wallets, {done[1]} twap fills")
+
+        await asyncio.gather(*(loop() for _ in range(concurrency)))
+        typer.echo(f"done: {done[1]} twap fills added")
+
+    asyncio.run(main())
+
+
+@app.command()
 def worker(config: str = "config/config.yaml", enqueue_s1: bool = True, limit: int = 0) -> None:
     """Queue consumer: S2 light screen -> deep hydrate -> assess, within the rate limit."""
     import asyncio
     from pathlib import Path
 
     from hlscout.clients.info import InfoClient
-    from hlscout.clients.ratelimit import RateLimiter
+    from hlscout.clients.ratelimit import make_limiter
     from hlscout.ingest import worker as w
 
     cfg = load_config(config)
@@ -339,8 +377,7 @@ def worker(config: str = "config/config.yaml", enqueue_s1: bool = True, limit: i
         typer.echo(f"enqueued {w.enqueue(con, cands, 'light', 'light_hydrate')} new (of {len(cands)})")
 
     async def main() -> None:
-        info = InfoClient(RateLimiter(cfg.api.weight_per_min, cfg.api.headroom, cfg.api.lanes),
-                          cfg.api.info_url, usage=usage_recorder(root))
+        info = InfoClient(make_limiter(cfg, root), cfg.api.info_url, usage=usage_recorder(root))
         from hlscout.ingest.assets import ensure_asset_names
 
         await ensure_asset_names(info, root)
@@ -368,15 +405,14 @@ def vet(address: str, config: str = "config/config.yaml") -> None:
     from pathlib import Path
 
     from hlscout.clients.info import InfoClient
-    from hlscout.clients.ratelimit import RateLimiter
+    from hlscout.clients.ratelimit import make_limiter
     from hlscout.recon.vet import vet_address
 
     cfg = load_config(config)
     root = Path(cfg.data_dir)
 
     async def main() -> dict:
-        info = InfoClient(RateLimiter(cfg.api.weight_per_min, cfg.api.headroom, cfg.api.lanes),
-                          cfg.api.info_url, usage=usage_recorder(root))
+        info = InfoClient(make_limiter(cfg, root), cfg.api.info_url, usage=usage_recorder(root))
         try:
             return await vet_address(info, address.lower(), Path(cfg.data_dir))
         finally:

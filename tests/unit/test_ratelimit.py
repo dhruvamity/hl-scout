@@ -64,3 +64,39 @@ async def test_surcharge_debit_delays_next_call():
     t0 = ft.t
     await rl.acquire(20, "monitor")
     assert ft.t > t0
+
+
+async def test_shared_limiter_two_processes_share_one_budget(tmp_path):
+    from hlscout.clients.ratelimit import SharedRateLimiter
+
+    t = [1000.0]
+
+    async def sleep(s):
+        t[0] += s
+
+    mk = lambda: SharedRateLimiter(str(tmp_path / "rl.sqlite"), 1200, 0.9, clock=lambda: t[0], sleep=sleep)  # noqa: E731
+    a, b = mk(), mk()  # two "processes"
+    start = t[0]
+    spent = 0
+    for i in range(120):  # 120 x 20 = 2400 weight alternating between the two
+        await (a if i % 2 else b).acquire(20, "deep_vet")
+        spent += 20
+    elapsed = t[0] - start
+    # one budget: capacity 1080 up front, then 18/s -> 2400 weight needs >= (2400-1080)/18 s of waiting
+    assert elapsed >= (spent - 1080) / 18 - 1
+
+
+async def test_shared_limiter_429_pauses_every_process(tmp_path):
+    from hlscout.clients.ratelimit import SharedRateLimiter
+
+    t = [0.0]
+
+    async def sleep(s):
+        t[0] += s
+
+    mk = lambda: SharedRateLimiter(str(tmp_path / "rl2.sqlite"), 1200, 0.9, clock=lambda: t[0], sleep=sleep)  # noqa: E731
+    a, b = mk(), mk()
+    p = a.on_429()
+    t0 = t[0]
+    await b.acquire(20, "monitor")
+    assert t[0] - t0 >= p - 1e-6
