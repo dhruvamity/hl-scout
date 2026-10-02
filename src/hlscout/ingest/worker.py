@@ -115,8 +115,8 @@ def enqueue_refresh(con: sqlite3.Connection, addresses: list[str], priority: flo
     con.execute("BEGIN")
     n = 0
     for a in addresses:
-        con.execute("INSERT OR IGNORE INTO queue(address, kind, lane, priority, updated_at) "
-                    "VALUES (?, 'refresh', 'deep_vet', ?, ?)", (a, priority, datetime.now(UTC).isoformat()))
+        n += con.execute("INSERT OR IGNORE INTO queue(address, kind, lane, priority, updated_at) "
+                         "VALUES (?, 'refresh', 'deep_vet', ?, ?)", (a, priority, datetime.now(UTC).isoformat())).rowcount
         cur = con.execute("UPDATE queue SET state='pending', attempts=0, priority=? WHERE address=? "
                           "AND kind='refresh' AND state IN ('done','failed')", (priority, a))
         n += cur.rowcount
