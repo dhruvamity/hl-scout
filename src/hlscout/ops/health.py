@@ -48,7 +48,7 @@ def on_battery_low(threshold: int = 30) -> bool:
 
     try:
         o = subprocess.run(["pmset", "-g", "batt"], capture_output=True, text=True, timeout=5, check=False).stdout
-    except Exception:  # noqa: BLE001
+    except Exception:
         return False
     m = re.search(r"(\d+)%", o)
     return "Battery Power" in o and bool(m) and int(m.group(1)) < threshold

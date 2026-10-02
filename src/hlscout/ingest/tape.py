@@ -182,7 +182,7 @@ class TapeRecorder:
                     row = parse_trade(t)
                     if row:
                         self.buffer.add(row)
-            except Exception as e:  # noqa: BLE001 - a failed coin must not stop the rest
+            except Exception as e:
                 log.warning("gap fill %s failed: %s", c, type(e).__name__)
 
     async def _ping(self, ws: Any) -> None:
@@ -219,7 +219,7 @@ class TapeRecorder:
             try:
                 await self._session()
                 backoff = 1.0
-            except Exception as e:  # noqa: BLE001 - reconnect on anything
+            except Exception as e:
                 log.warning("ws session failed: %s; retry in %.0fs", e, backoff)
             await asyncio.sleep(backoff)
             backoff = min(60.0, backoff * 2)

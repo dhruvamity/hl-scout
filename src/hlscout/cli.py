@@ -159,7 +159,7 @@ def score(config: str = "config/config.yaml", out: str = "reports/latest.md", n_
     for a in addrs:
         try:
             results.append(assess_cached(root, a, cfg, n_trials=n_trials))
-        except Exception as e:  # noqa: BLE001 - one bad wallet must not sink the report
+        except Exception as e:
             typer.echo(f"skip {a[:10]}: {type(e).__name__}: {e}")
     # multi-wallet pass (plan §6.2): only finalists are worth the tape query
     graph = build_graph(root)
@@ -168,7 +168,7 @@ def score(config: str = "config/config.yaml", out: str = "reports/latest.md", n_
         if r["stage"] in ("qualified", "provisional", "needs_qa", "reformed"):
             try:
                 extra = cluster_findings(root, root / "tape", r["address"], cl, cfg, graph)
-            except Exception as e:  # noqa: BLE001 - multi-wallet pass is best-effort per wallet
+            except Exception as e:
                 typer.echo(f"multi-wallet pass skipped for {r['address'][:10]}: {type(e).__name__}: {e}")
                 extra = []
             if extra:
@@ -374,7 +374,7 @@ def twap(config: str = "config/config.yaml", concurrency: int = 4) -> None:
                 a = q.get_nowait()
                 try:
                     done[1] += await hydrate_twap(info, a, root, lane="deep_vet")
-                except Exception as e:  # noqa: BLE001
+                except Exception as e:
                     typer.echo(f"skip {a[:10]}: {type(e).__name__}")
                 done[0] += 1
                 if done[0] % 25 == 0:
@@ -421,7 +421,7 @@ def marks(config: str = "config/config.yaml", concurrency: int = 4) -> None:
                 try:
                     n = await fetch_daily_marks(info, root, c, now, lane="deep_vet")
                     stats["empty"] += n == 0
-                except Exception as e:  # noqa: BLE001
+                except Exception as e:
                     typer.echo(f"skip {c}: {type(e).__name__}")
                 stats["done"] += 1
                 if stats["done"] % 50 == 0:
@@ -536,7 +536,7 @@ def dossier(config: str = "config/config.yaml", stages: str = "qualified,provisi
             members = next((m for m in cl.values() if a in m), None)
             (outp / f"{a}.html").write_text(render(r, ctx, copy_card(ctx, r["metrics"]) if r["metrics"] else None, members))
             n += 1
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             typer.echo(f"skip {a[:10]}: {type(e).__name__}: {e}")
     typer.echo(f"wrote {n} dossiers to {outp}")
 

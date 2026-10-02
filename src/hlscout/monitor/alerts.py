@@ -35,5 +35,5 @@ class Notifier:
             f.write(json.dumps({"ts": int(time.time() * 1000), "kind": kind, "text": text, **extra}) + "\n")
         try:
             await self.sender(f"[{kind}] {text}")
-        except Exception as e:  # noqa: BLE001 - alert failure must never kill the monitor
+        except Exception as e:
             log.warning("alert delivery failed: %s", type(e).__name__)

@@ -247,7 +247,7 @@ async def _loop(info: Any, con: sqlite3.Connection, root: Path, cfg: Config, sto
             continue
         try:
             await process(info, con, root, cfg, item, int(time.time() * 1000))
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             log.warning("queue item %s failed: %r", item, e)
             con.execute("UPDATE queue SET state=? WHERE id=?",
                         ("failed" if con.execute("SELECT attempts FROM queue WHERE id=?",

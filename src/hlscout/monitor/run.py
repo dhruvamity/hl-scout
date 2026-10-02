@@ -86,7 +86,7 @@ async def run_monitor(info: Any, con: sqlite3.Connection, root: Path, stop: asyn
                                                   dexes, cursors.get(a, int(now * 1000)))
                 snaps[a] = cur
                 nxt[a] = now + interval_for(cur, base_s, fast_s)
-            except Exception as ex:  # noqa: BLE001 - one bad wallet must not stop the loop
+            except Exception as ex:
                 nxt[a] = now + base_s
                 await notifier.send("health", f"poll failed for {a[:10]}: {type(ex).__name__}")
         recent = con.execute("SELECT address, ts, event, coin, notional FROM watch_events WHERE ts > ?",

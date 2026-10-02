@@ -31,7 +31,7 @@ async def main():
             continue
         try:
             r = await vet_address(info, a, Path("data"))
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             print(f"{name}: ERROR {e!r}"[:200], flush=True)
             continue
         v = r["verdict"]

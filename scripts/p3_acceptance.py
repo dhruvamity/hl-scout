@@ -26,7 +26,7 @@ async def main():
     for a in sample:
         try:
             r = await vet_address(info, a, root)
-        except Exception as e:  # noqa: BLE001
+        except Exception as e:
             print(a, "ERROR", repr(e)[:120], flush=True)
             continue
         rec = r["reconcile"]
