@@ -141,6 +141,7 @@ def score(config: str = "config/config.yaml", out: str = "reports/latest.md") ->
                 results[i] = assess_cached(root, r["address"], cfg, n_trials=n_trials, extra=extra)
     rank_qualified(results)
     con.execute("BEGIN")
+    con.execute("DELETE FROM scores WHERE run_id='latest'")  # one current row per wallet
     for r in results:
         con.execute("INSERT INTO scores(entity, run_id, gates_json, metrics_json, score, stage, category, p_algo)"
                     " VALUES (?,?,?,?,?,?,?,?)",
@@ -352,6 +353,7 @@ def vet(address: str, config: str = "config/config.yaml") -> None:
     from hlscout.recon.vet import vet_address
 
     cfg = load_config(config)
+    root = Path(cfg.data_dir)
 
     async def main() -> dict:
         info = InfoClient(RateLimiter(cfg.api.weight_per_min, cfg.api.headroom, cfg.api.lanes),
