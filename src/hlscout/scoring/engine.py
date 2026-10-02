@@ -88,6 +88,31 @@ def evaluate_gates(ctx: Ctx, m: dict, findings: list, cat: dict) -> list[dict]:
     return gates
 
 
+def decide_stage(cfg: Any, m: dict, failed: list[str], vetoes: list[str], needs_qa: bool,
+                 recon_soft: bool = False) -> str:
+    """The stage rule, shared by `assess` and the sensitivity report so they can never disagree."""
+    g, h, t = cfg.gates, cfg.history, cfg.tiers
+    fgi = m.get("first_genuine_idx")
+    reformed = (m.get("genuine_coverage", 0) > 0 and fgi is not None
+                and fgi > h.genuine_start_max_month - 1 and m.get("genuine_months", 0) >= 3
+                and not vetoes and m.get("track_days", 0) >= g.min_track_days)
+    soft = {"G11", "G6", "G7", "G2"}
+    # a soft reconcile (2-5%) can reach Provisional at most, never Qualified (audit H5)
+    if recon_soft and not failed and not vetoes and not needs_qa:
+        return "provisional"
+    provisional = (
+        t.provisional and not vetoes and failed and set(failed) <= soft
+        and ("G7" not in failed or m.get("max_dd_twr", 1) <= g.max_dd_twr + t.dd_slack)
+        and ("G2" not in failed or (m.get("weekly_coverage", 0) >= t.weekly_coverage_min
+                                    and (m.get("max_gap_days") or 999) <= t.max_gap_days))
+        and ("G6" not in failed or (m.get("ex_top5_net_180d") or 0) > 0))
+    if provisional:
+        return "provisional"
+    if failed or vetoes:
+        return "reformed" if reformed and set(failed) <= {"G1b"} else "vet_fail"
+    return "needs_qa" if needs_qa else "qualified"
+
+
 def assess(ctx: Ctx, recon_ok: bool = True, history_truncated: bool = False,
            n_trials: int = 5000, extra: list | None = None, recon_soft: bool = False) -> dict:
     """Full verdict for one wallet: stage, category, gates, findings, metrics."""
@@ -104,38 +129,13 @@ def assess(ctx: Ctx, recon_ok: bool = True, history_truncated: bool = False,
     if not m.get("n_trips"):
         return {**base, "stage": "vet_fail", "gates": [], "metrics": m, "reasons": ["no_round_trips"]}
     gates = evaluate_gates(ctx, m, findings, cat)
-    g_ = ctx.cfg.gates
     failed = [x["gate"].split()[0] for x in gates if x["pass"] is False]
     vetoes = v["vetoes"]
     if "D-B1" in vetoes:
         cat = {**cat, "category": "MM_HFT"}
-    fgi = m.get("first_genuine_idx")
-    reformed = (m.get("genuine_coverage", 0) > 0 and fgi is not None
-                and fgi > ctx.cfg.history.genuine_start_max_month - 1
-                and m.get("genuine_months", 0) >= 3 and not vetoes
-                and m.get("track_days", 0) >= ctx.cfg.gates.min_track_days)
-    t = ctx.cfg.tiers
-    soft = {"G11", "G6", "G7", "G2"}
-    # a soft reconcile (2-5%) can reach Provisional at most, never Qualified (audit H5)
-    if recon_soft and not failed and not vetoes and not v["needs_qa"]:
-        return {**base, "category": cat, "stage": "provisional", "gates": gates, "metrics": m,
-                "reasons": ["reconcile_soft"]}
-    provisional = (
-        t.provisional and not vetoes and failed and set(failed) <= soft
-        and ("G7" not in failed or m.get("max_dd_twr", 1) <= g_.max_dd_twr + t.dd_slack)
-        and ("G2" not in failed or (m.get("weekly_coverage", 0) >= t.weekly_coverage_min
-                                    and (m.get("max_gap_days") or 999) <= t.max_gap_days))
-        and ("G6" not in failed or (m.get("ex_top5_net_180d") or 0) > 0))
-    if provisional:
-        stage = "provisional"
-    elif failed or vetoes:
-        stage = "reformed" if reformed and set(failed) <= {"G1b"} else "vet_fail"
-    elif v["needs_qa"]:
-        stage = "needs_qa"
-    else:
-        stage = "qualified"
-    return {**base, "category": cat, "stage": stage, "gates": gates, "metrics": m,
-            "reasons": sorted(set(failed + vetoes))}
+    stage = decide_stage(ctx.cfg, m, failed, vetoes, v["needs_qa"], recon_soft)
+    reasons = sorted(set(failed + vetoes)) or (["reconcile_soft"] if recon_soft else [])
+    return {**base, "category": cat, "stage": stage, "gates": gates, "metrics": m, "reasons": reasons}
 
 
 COMPONENTS = {"tenure": 20, "edge": 20, "consistency": 20, "discipline": 15,

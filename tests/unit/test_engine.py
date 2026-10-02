@@ -105,3 +105,25 @@ def test_soft_reconcile_caps_at_provisional():
     r = assess(ctx, recon_ok=False, recon_soft=True)
     assert r["stage"] == "provisional" and r["reasons"] == ["reconcile_soft"]
     assert assess(clean_wallet(n_trips=200, days=260).ctx(), recon_ok=False)["stage"] == "reconcile_fail"
+
+
+def test_sensitivity_counterfactuals_match_the_live_stage_rule(tmp_path):
+    import json
+
+    from hlscout.config import Config
+    from hlscout.scoring import sensitivity as S
+    from hlscout.scoring.engine import assess
+    from hlscout.storage import connect_state
+
+    ctx = clean_wallet(n_trips=200, days=260).ctx()
+    r = assess(ctx, n_trials=10**12)                       # provisional: only G11 fails
+    con = connect_state(tmp_path)
+    con.execute("INSERT INTO scores(entity, run_id, gates_json, metrics_json, score, stage, category, p_algo) "
+                "VALUES ('0x1','latest',?,?,NULL,?, 'MDT', 0.1)",
+                (json.dumps(r["gates"], default=str), json.dumps({k: v for k, v in r["metrics"].items() if k != "months"},
+                                                                  default=str), r["stage"]))
+    ws = S.load(con)
+    cfg = Config()
+    assert S._stage(cfg, ws[0]) == r["stage"] == "provisional"      # same rule as the live decision
+    assert S._stage(cfg, ws[0], ignore="G11") == "qualified"       # counterfactual: ignore the failing gate
+    assert "G11" in S.report(con, cfg)

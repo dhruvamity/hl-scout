@@ -542,6 +542,20 @@ def dossier(config: str = "config/config.yaml", stages: str = "qualified,provisi
 
 
 @app.command()
+def sensitivity(config: str = "config/config.yaml", out: str = "reports/sensitivity.md") -> None:
+    """Which gates remove how many wallets, and which verdicts flip under +/-10% threshold moves."""
+    from pathlib import Path
+
+    from hlscout.scoring.sensitivity import report
+
+    cfg = load_config(config)
+    con = connect_state(Path(cfg.data_dir))
+    Path(out).parent.mkdir(parents=True, exist_ok=True)
+    Path(out).write_text(report(con, cfg))
+    typer.echo(f"wrote {out}")
+
+
+@app.command()
 def worker(config: str = "config/config.yaml", enqueue_s1: bool = True, limit: int = 0) -> None:
     """Queue consumer: S2 light screen -> deep hydrate -> assess, within the rate limit."""
     import asyncio

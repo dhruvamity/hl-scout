@@ -134,6 +134,12 @@ def compute_metrics(ctx: Ctx, n_trials: int = 5000) -> dict:
         return out
     months = grade_months(ctx, tf)
     out["months"] = months
+    mr: dict[str, int] = {}
+    for rs in months["reasons"].to_list() if "reasons" in months.columns else []:
+        for x in (rs or "").split(","):
+            if x:
+                mr[x] = mr.get(x, 0) + 1
+    out["month_reasons"] = mr   # why months were not genuine: feeds the sensitivity report
     first_fill = int(ctx.fills["time"].min())
     out["track_days"] = (now - first_fill) / DAY_MS
     cur = month_of(now)  # the current (partial) month is excluded: last 6 *complete* months
