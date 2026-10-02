@@ -11,7 +11,6 @@ import polars as pl
 from hlscout.archive.hypedexer import Getter, derive_closed_pnl, fetch_fills
 from hlscout.ingest.hydrate import FILL_SCHEMA, _merge_write, raw_path
 
-
 DAY_MS = 86_400_000
 
 

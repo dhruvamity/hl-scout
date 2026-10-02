@@ -13,7 +13,7 @@ from hlscout.detectors.automation import classify_algo
 from hlscout.detectors.base import build_ctx
 from hlscout.ingest.hydrate import hydrate_deep, raw_path
 from hlscout.recon import equity as eq
-from hlscout.recon.roundtrips import build_round_trips, perp_only
+from hlscout.recon.roundtrips import perp_only
 
 DAY_MS = 86_400_000
 

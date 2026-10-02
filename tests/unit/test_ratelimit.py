@@ -74,7 +74,7 @@ async def test_shared_limiter_two_processes_share_one_budget(tmp_path):
     async def sleep(s):
         t[0] += s
 
-    mk = lambda: SharedRateLimiter(str(tmp_path / "rl.sqlite"), 1200, 0.9, clock=lambda: t[0], sleep=sleep)  # noqa: E731
+    mk = lambda: SharedRateLimiter(str(tmp_path / "rl.sqlite"), 1200, 0.9, clock=lambda: t[0], sleep=sleep)
     a, b = mk(), mk()  # two "processes"
     start = t[0]
     spent = 0
@@ -94,7 +94,7 @@ async def test_shared_limiter_429_pauses_every_process(tmp_path):
     async def sleep(s):
         t[0] += s
 
-    mk = lambda: SharedRateLimiter(str(tmp_path / "rl2.sqlite"), 1200, 0.9, clock=lambda: t[0], sleep=sleep)  # noqa: E731
+    mk = lambda: SharedRateLimiter(str(tmp_path / "rl2.sqlite"), 1200, 0.9, clock=lambda: t[0], sleep=sleep)
     a, b = mk(), mk()
     p = a.on_429()
     t0 = t[0]

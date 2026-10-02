@@ -19,7 +19,6 @@ def d_m1_deposit_inflation(ctx: Ctx) -> Finding | None:
     denom = (e1 - e0) + outflow
     share = inflow / denom if denom > 0 else None
     twr = float(ctx.curve["twr_index"][-1] - 1)
-    net = float(eqs["cum_pnl"][-1])
     naive_roi = (e1 - e0) / max(e0, 1000.0)  # what a viewer of the account-value curve sees
     m = {"flow_share": share, "twr": twr, "naive_roi": naive_roi, "inflow": inflow}
     if naive_roi > 0 and twr <= 0:

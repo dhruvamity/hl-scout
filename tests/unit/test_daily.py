@@ -35,7 +35,7 @@ def test_unrealised_drawdown_visible_at_daily_resolution():
     # long 10 BTC @100; price path 100 -> 90 -> 100: the dip is a real 10% DD the sparse portfolio hides
     f = fills([(T0 + 1000, "B", 10, 100, 0.0)])
     px = {0: 100.0, 1: 90.0, 2: 100.0, 3: 100.0}
-    mark = lambda coin, t: px.get((t - T0) // DAY_MS)  # noqa: E731
+    mark = lambda coin, t: px.get((t - T0) // DAY_MS)
     pf = {"perpAllTime": {"accountValueHistory": [[T0, "1000"]], "pnlHistory": [[T0, "0"]]}}
     d = build_daily(f, empty_funding(), pl.DataFrame(schema=FLOW_SCHEMA), pf, build_timeline(f), mark,
                     T0 + 3 * DAY_MS + 10)

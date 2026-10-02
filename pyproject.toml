@@ -37,4 +37,4 @@ pythonpath = ["src", "."]
 line-length = 100
 
 [tool.ruff.lint]
-ignore = ["FURB192"]
+ignore = ["FURB192", "RUF007", "FURB162", "S112", "BLE001"]

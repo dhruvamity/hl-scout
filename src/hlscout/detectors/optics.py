@@ -105,7 +105,7 @@ def d_c7_beta_not_skill(ctx: Ctx) -> Finding | None:
     if float(np.std(x)) < 1e-9:  # no BTC variation over the sample (stale/missing marks): cannot regress
         return None
     X = np.column_stack([np.ones_like(x), x])
-    coef, res, *_ = np.linalg.lstsq(X, y, rcond=None)
+    coef, *_ = np.linalg.lstsq(X, y, rcond=None)
     resid = y - X @ coef
     s2 = resid @ resid / (len(y) - 2)
     cov = s2 * np.linalg.pinv(X.T @ X)

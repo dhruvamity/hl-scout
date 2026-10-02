@@ -34,7 +34,7 @@ def page(root: Path, con: sqlite3.Connection) -> str:
             + "".join(f"<tr>{td(r)}</tr>" for r in rows) + "</table></body></html>")
 
 
-TRACKER_HTML = open(__file__.replace('dashboard.py', 'tracker.html')).read()
+TRACKER_HTML = Path(__file__).with_name('tracker.html').read_text()
 
 
 def serve(root: Path, con_factory, port: int = 8765, deep_cap: int | None = None) -> ThreadingHTTPServer:

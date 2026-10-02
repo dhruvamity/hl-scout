@@ -128,7 +128,6 @@ def _coarse_months(ctx: Ctx, first_fill_month: str) -> list[dict]:
 
 def compute_metrics(ctx: Ctx, n_trials: int = 5000) -> dict:
     tf = _trip_frame(ctx)
-    g = ctx.cfg.gates
     now = ctx.now_ms
     out: dict = {"n_trips": tf.height}
     if tf.is_empty():

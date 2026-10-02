@@ -58,7 +58,7 @@ def build_daily(fills: pl.DataFrame, funding: pl.DataFrame, flows: pl.DataFrame,
         return pl.DataFrame(schema=DAILY_SCHEMA)
     d0 = int(fills["time"].min()) // DAY_MS
     d1 = now_ms // DAY_MS
-    by_day = lambda df, col: dict(  # noqa: E731
+    by_day = lambda df, col: dict(
         df.group_by((pl.col("time") // DAY_MS).alias("d")).agg(pl.col(col).sum()).iter_rows()
     ) if not df.is_empty() else {}
     realised = by_day(fills.with_columns((pl.col("closed_pnl") - pl.col("fee")).alias("x")), "x")

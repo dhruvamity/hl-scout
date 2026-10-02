@@ -9,7 +9,6 @@ import polars as pl
 from hlscout.detectors.base import DAY_MS, Ctx, Finding
 from hlscout.recon.positions import Timeline, build_timeline
 
-
 MAX_TRUSTED_CLUSTER = 12   # larger clusters are probably over-merged: their vetoes are downgraded to FLAGs
 MIN_TRUSTED_CONFIDENCE = 0.4
 
