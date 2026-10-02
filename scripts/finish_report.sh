@@ -1,15 +1,15 @@
 #!/bin/sh
-# Wait for the capped deep-vet shortlist to finish, then cluster + score + write reports/latest.md.
+# Wait for the vetting queue to drain, then cluster + score + sensitivity + dossiers + backfill plan.
 cd "$(dirname "$0")/.." || exit 1
-CAP=${1:-400}
 while :; do
-  done_n=$(sqlite3 data/state.sqlite "select count(*) from queue where kind='deep' and state='done' and priority<1000000000")
-  left=$(sqlite3 data/state.sqlite "select count(*) from queue where kind='deep' and state in ('pending','running') and priority<1000000000")
-  [ "$done_n" -ge "$CAP" ] && break
+  left=$(sqlite3 data/state.sqlite "select count(*) from queue where state in ('pending','running') and attempts < 3")
   [ "$left" -eq 0 ] && break
-  sleep 60
+  sleep 120
 done
 rm -f data/final.done
 uv run hlscout links --no-enqueue-members > data/final_links.log 2>&1
-uv run hlscout score > data/final_score.log 2>&1
+uv run hlscout score --out reports/latest.md > data/final_score.log 2>&1
+uv run hlscout sensitivity > data/final_sens.log 2>&1
+uv run hlscout dossier --near-misses 25 > data/final_dossier.log 2>&1
+uv run hlscout backfill --dry-run > data/final_backfill.log 2>&1
 echo finished > data/final.done
