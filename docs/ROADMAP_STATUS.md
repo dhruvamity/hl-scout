@@ -43,3 +43,17 @@ launchd plists (5 services), systemd units, Dockerfile, `docs/DEPLOY.md`. Instal
 
 ## Phase G — forward validation: NOT STARTED (needs a frozen list; 30–60 days)
 `hlscout freeze` / `hlscout forward` exist.
+
+## Deep audit findings (2026-10-02, second pass)
+| # | Finding | Status |
+|---|---|---|
+| 1 | Daily PnL matches the platform's daily PnL closely (e.g. 305 vs 338, 428 vs 416, 1,606 vs 1,585 on one wallet), so the PnL reconstruction is sound | verified |
+| 2 | Platform account value is NOT explained by PnL + ledger flows for many wallets (one wallet: equity −$17k over 16 days with +$5.8k PnL and no ledger transfers). The capital base is unreliable there | new `equity_noise` metric; above 25% the wallet is capped at Provisional (`equity_noisy`) |
+| 3 | Daily engine adopted mid-day platform points as end-of-day equity, injecting intraday moves | fixed: hard anchor only within 3 h of day end; otherwise only if the gap is too large for timing to explain |
+| 4 | 3,839 material position breaks; 2,343 of 2,348 in same-millisecond groups have a unique chain start, so they are real missing fills, not ordering artefacts | verified; reliable-window cut stands |
+| 5 | Quick pre-vet checked on the provisional wallet and the 24 closest misses: it rejects only wallets that fail anyway (hold band, martingale, own liquidations) | verified |
+| 6 | One worker slot idles on a light item starved by the lane floors while deep vets run (priority design, not a hang) | known, harmless |
+| 7 | Tape: continuous only since 2026-10-02 04:30 UTC (100% of minutes); 2026-09-28..30 are partial test captures (1–8%), 10-01 is 74%. Tape-based discovery counts a day as active if it has any trade, so ignore `active_days` until ≥ 30 days of real coverage | known |
+| 8 | Tape discovery works: 69,818 addresses seen, 62,743 not on the leaderboard | verified |
+| 9 | Scheduler job commands, monitor polling (live, real wallet), JSON API, dossiers all exercised end to end; secrets not in git | verified |
+| 10 | `refresh` under-reported queued items; my own test wrote fake events into the production DB (cleaned up) | fixed |
