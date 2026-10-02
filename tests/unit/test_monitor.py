@@ -88,3 +88,20 @@ def test_progress_deep_target_is_the_cap(tmp_path):
                     (f"0x{i}", "done" if i < 3 else "pending"))
     d = snapshot(tmp_path, con, deep_cap=5)["queue"]["deep"]
     assert d["target"] == 5 and d["counted"] == 3 and d["total"] == 10
+
+
+def test_api_feed_shapes(tmp_path):
+    from hlscout.monitor import api
+    from hlscout.storage import connect_state
+
+    con = connect_state(tmp_path)
+    con.execute("INSERT INTO scores(entity, run_id, gates_json, metrics_json, score, stage, category, p_algo) "
+                "VALUES ('0xabc','latest','[{\"gate\":\"G1\",\"pass\":true}]','{\"tstat\":3.1,\"junk\":1}',80,'qualified','MDT',0.1)")
+    con.execute("INSERT INTO detector_results VALUES ('0xabc','latest','D-R1','FLAG',5,'{\"metrics\":{}}')")
+    con.execute("INSERT INTO watch_events VALUES ('0xabc', 100, 'open', 'BTC', 5.0, 'poll')")
+    w = api.watchlist(con)
+    assert w["schema_version"] == 1 and w["count"] == 1 and w["wallets"][0]["metrics"] == {"tstat": 3.1}
+    d = api.wallet(con, "0xABC")
+    assert d["tier"] == "qualified" and d["findings"][0]["code"] == "D-R1" and api.wallet(con, "0xnope") is None
+    e = api.events(con, since=50)
+    assert e["count"] == 1 and e["next_since"] == 100 and api.events(con, since=100)["count"] == 0

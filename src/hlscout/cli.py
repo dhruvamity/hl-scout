@@ -176,6 +176,13 @@ def score(config: str = "config/config.yaml", out: str = "reports/latest.md", n_
     rank_qualified(results)
     con.execute("BEGIN")
     con.execute("DELETE FROM scores WHERE run_id='latest'")  # one current row per wallet
+    con.execute("DELETE FROM detector_results WHERE run_id='latest'")
+    for r in results:
+        for f in r.get("findings", []):
+            if f.severity != "INFO":
+                con.execute("INSERT INTO detector_results VALUES (?,?,?,?,?,?)",
+                            (r["address"], "latest", f.code, f.severity, f.penalty,
+                             json.dumps({"metrics": f.metrics, "evidence": f.evidence[:20]}, default=str)))
     for r in results:
         con.execute("INSERT INTO scores(entity, run_id, gates_json, metrics_json, score, stage, category, p_algo)"
                     " VALUES (?,?,?,?,?,?,?,?)",
@@ -482,6 +489,53 @@ def discover(config: str = "config/config.yaml", min_active_days: int = 30) -> N
     con.execute("COMMIT")
     typer.echo(f"tape addresses={cand.height} new_registry={new} s1_pass_from_tape={len(keep)} "
                f"(min_active_days={min_active_days})")
+
+
+@app.command()
+def dossier(config: str = "config/config.yaml", stages: str = "qualified,provisional", near_misses: int = 20,
+            out_dir: str = "reports/dossiers", address: str = "") -> None:
+    """Write per-wallet HTML dossiers for the listed stages (+ the closest misses), or one --address."""
+    import json
+    from pathlib import Path
+
+    from hlscout.links.audit import build_graph, clusters
+    from hlscout.recon.vet import assess_cached, load_raw, make_ctx
+    from hlscout.reports.dossier import render
+    from hlscout.scoring.copy import copy_card
+
+    cfg = load_config(config)
+    root = Path(cfg.data_dir)
+    con = connect_state(root)
+    if address:
+        addrs = [address.lower()]
+    else:
+        want = [x for x in stages.split(",") if x]
+        q = ",".join("?" * len(want))
+        addrs = [r[0] for r in con.execute(f"SELECT entity FROM scores WHERE run_id='latest' AND stage IN ({q})", want)]
+        if near_misses:
+            from hlscout.reports.daily import DERIVED
+
+            rows = con.execute("SELECT entity, gates_json, metrics_json FROM scores WHERE run_id='latest' "
+                               "AND stage='vet_fail' AND gates_json != '[]'").fetchall()
+            ranked = []
+            for a, g, m in rows:
+                failed = {x["gate"].split()[0] for x in json.loads(g) if x["pass"] is False} - DERIVED
+                ranked.append((len(failed), -(json.loads(m).get("tstat") or 0), a))
+            addrs += [a for *_, a in sorted(ranked)[:near_misses]]
+    cl = clusters(build_graph(root))
+    outp = Path(out_dir)
+    outp.mkdir(parents=True, exist_ok=True)
+    n = 0
+    for a in dict.fromkeys(addrs):
+        try:
+            r = assess_cached(root, a, cfg)
+            ctx = make_ctx(a, load_raw(root, a), cfg)
+            members = next((m for m in cl.values() if a in m), None)
+            (outp / f"{a}.html").write_text(render(r, ctx, copy_card(ctx, r["metrics"]) if r["metrics"] else None, members))
+            n += 1
+        except Exception as e:  # noqa: BLE001
+            typer.echo(f"skip {a[:10]}: {type(e).__name__}: {e}")
+    typer.echo(f"wrote {n} dossiers to {outp}")
 
 
 @app.command()

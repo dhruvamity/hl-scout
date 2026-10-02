@@ -47,6 +47,22 @@ def serve(root: Path, con_factory, port: int = 8765, deep_cap: int | None = None
                 from hlscout.monitor.progress import snapshot
 
                 body, ctype = json.dumps(snapshot(root, con, deep_cap=deep_cap)), "application/json"
+            elif self.path.startswith("/api/"):
+                from urllib.parse import parse_qs, urlparse
+
+                from hlscout.monitor import api
+
+                u = urlparse(self.path)
+                qs = parse_qs(u.query)
+                if u.path == "/api/watchlist":
+                    obj = api.watchlist(con)
+                elif u.path.startswith("/api/wallet/"):
+                    obj = api.wallet(con, u.path.rsplit("/", 1)[1])
+                elif u.path == "/api/events":
+                    obj = api.events(con, int(qs.get("since", ["0"])[0]), int(qs.get("limit", ["500"])[0]))
+                else:
+                    obj = None
+                body, ctype = json.dumps(obj if obj is not None else {"error": "not found"}), "application/json"
             elif self.path == "/events":
                 body, ctype = page(root, con), "text/html"
             else:

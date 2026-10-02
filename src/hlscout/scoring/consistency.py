@@ -116,9 +116,13 @@ def _coarse_months(ctx: Ctx, first_fill_month: str) -> list[dict]:
             if not fl.is_empty() else 0.0
         peak = sub["equity"].cum_max()
         dd = float((1 - sub["equity"] / peak).max())
-        bad = inflow > 0.25 * max(e0, 1000.0) or dd > ctx.cfg.gates.max_dd_twr + 0.2
+        net_flow = float(fl.filter(pl.col("m") == m)["flow"].sum()) if not fl.is_empty() else 0.0
+        month_pnl = float(sub["equity"][-1]) - e0 - net_flow      # equity change not explained by flows
+        # capital added is normal growth UNLESS it arrives while losing (the coarse-resolution rescue signature)
+        rescue_like = inflow > 0.25 * max(e0, 1000.0) and (month_pnl <= 0 or dd > 0.15)
+        bad = rescue_like or dd > ctx.cfg.gates.max_dd_twr + 0.2
         rows.append({"month": m, "grade": "violation" if bad else "coarse",
-                     "reasons": "coarse_flows" if bad else ""})
+                     "reasons": ("coarse_rescue" if rescue_like else "coarse_dd") if bad else ""})
     return rows
 
 
@@ -219,7 +223,8 @@ def compute_metrics(ctx: Ctx, n_trials: int = 5000) -> dict:
     out["profit_factor"] = float(wins_.sum() / abs(losses_.sum())) if losses_.sum() != 0 else None
     out["payoff"] = float(wins_.mean() / abs(losses_.mean())) if wins_.len() and losses_.len() else None
     out["win_rate"] = float((tf["net"] > 0).mean())
-    out["expectancy_bps"] = float(((tf["net"] / (tf["open_notional"].clip(1e-9))) * 1e4).mean())
+    ent = tf.filter(pl.col("open_notional") > 0)  # notional-weighted: sum(net) / sum(entered notional)
+    out["expectancy_bps"] = float(ent["net"].sum() / ent["open_notional"].sum() * 1e4) if ent.height else None
     if ctx.daily is not None and not ctx.daily.is_empty():
         dl = ctx.daily.filter(pl.col("lev") > 0)["lev"]
         if dl.len() >= 20:  # account-level gross notional / equity per day (time-weighted proxy for G8)

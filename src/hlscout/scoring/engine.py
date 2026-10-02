@@ -171,7 +171,7 @@ def rank_qualified(results: list[dict], weights: dict | None = None, flag_penalt
                             - (r["metrics"].get("best_month_share") or 1)
                             + (r["metrics"].get("rolling90_positive") or 0) for r in grp],
             "discipline": [-(r["metrics"]["max_dd_twr"]) - (r["metrics"].get("lev_p95") or 0) / 10 for r in grp],
-            "efficiency": [(r["metrics"].get("profit_factor") or 0) + r["metrics"].get("expectancy_bps", 0) / 100
+            "efficiency": [(r["metrics"].get("profit_factor") or 0) + (r["metrics"].get("expectancy_bps") or 0) / 100
                            for r in grp],
             "regularity": [r["metrics"]["weekly_coverage"] for r in grp],
             "alpha": [r["metrics"].get("sharpe", 0) for r in grp],
