@@ -123,3 +123,10 @@ def test_partial_history_with_180d_cover_is_not_truncated():
     assert a["partial_history"] and not a["history_truncated"]
     raw["now_ms"] = w.t0 + 250 * DAY             # only 50 days of fills: still truncated
     assert audit("0x" + "a" * 40, raw)["history_truncated"]
+
+
+def test_naive_iso_time_is_utc_and_spot_dropped():
+    r = norm_archive_fill({"coin": "BTC", "px": 1, "sz": 1, "side": "B", "time": "2026-02-12T08:24:51.273000",
+                           "tid": 1, "isLiquidation": 1, "liquidatedUser": "0xother", "user": "0xme"})
+    assert r["time"] == 1770884691273  # 2026-02-12 08:24:51.273 UTC
+    assert r["liquidation"] is None    # we were the liquidator's counterparty, not the victim

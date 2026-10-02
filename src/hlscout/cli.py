@@ -9,8 +9,24 @@ from hlscout.storage import connect_state, usage_recorder
 app = typer.Typer(help="HL-Scout: read-only Hyperliquid trader scanner")
 
 
+def _load_dotenv(path: str = ".env") -> None:
+    """Minimal .env loader (KEY=VALUE lines); existing environment variables win. Values are never printed."""
+    import os
+    from pathlib import Path
+
+    p = Path(path)
+    if not p.exists():
+        return
+    for line in p.read_text().splitlines():
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
 @app.callback()
 def _main() -> None:
+    _load_dotenv()
     setup_logging()
 
 
@@ -177,7 +193,7 @@ def links(config: str = "config/config.yaml", enqueue_members: bool = True) -> N
 
 
 @app.command()
-def backfill(config: str = "config/config.yaml", limit: int = 0) -> None:
+def backfill(config: str = "config/config.yaml", limit: int = 0, dry_run: bool = False) -> None:
     """Archive pass for history_truncated wallets (needs HYPEDEXER_API_KEY in the environment)."""
     import asyncio
     from pathlib import Path
@@ -197,6 +213,9 @@ def backfill(config: str = "config/config.yaml", limit: int = 0) -> None:
 
     budget = CreditBudget(connect_state(root))
     typer.echo(f"credits remaining this month: {budget.remaining()}")
+    if dry_run:
+        typer.echo("\n".join(todo) or "(none)")
+        return
 
     async def main() -> None:
         for a in todo:

@@ -29,8 +29,20 @@ class HttpGetter:
         self.base = base
         self.client = httpx.AsyncClient(headers={"X-API-Key": key}, timeout=30)
 
-    async def get(self, url: str, params: dict[str, Any]) -> dict[str, Any]:
-        r = await self.client.get(self.base + url, params=params)
+    async def get(self, url: str, params: dict[str, Any], retries: int = 6) -> dict[str, Any]:
+        """GET with backoff on 429/5xx (Hypedexer rate-limits per key; errors cost no credits)."""
+        import asyncio
+
+        delay = 2.0
+        for _ in range(retries):
+            r = await self.client.get(self.base + url, params=params)
+            if r.status_code == 429 or r.status_code >= 500:
+                ra = r.headers.get("Retry-After")
+                await asyncio.sleep(float(ra) if ra and ra.replace(".", "", 1).isdigit() else delay)
+                delay = min(delay * 2, 60.0)
+                continue
+            r.raise_for_status()
+            return r.json()
         r.raise_for_status()
         return r.json()
 
@@ -47,9 +59,13 @@ def _iso(ms: int) -> str:
 def norm_archive_fill(r: dict[str, Any]) -> dict[str, Any]:
     t = r["time"]
     if isinstance(t, str):
-        t = int(datetime.fromisoformat(t.replace("Z", "+00:00")).timestamp() * 1000)
+        d = datetime.fromisoformat(t.replace("Z", "+00:00"))
+        if d.tzinfo is None:  # Hypedexer returns naive ISO strings in UTC
+            d = d.replace(tzinfo=UTC)
+        t = int(d.timestamp() * 1000)
     side = "B" if str(r["side"]).upper() in ("B", "BUY") else "A"
-    liq = r.get("isLiquidation")
+    victim = r.get("liquidatedUser")
+    liq = bool(r.get("isLiquidation")) and (not victim or victim.lower() == str(r.get("user", "")).lower())
     return {
         "time": int(t), "coin": r["coin"], "px": float(r["px"]), "sz": float(r["sz"]), "side": side,
         "dir": r.get("dir", "") or "", "start_position": _opt(r.get("startPosition")),
@@ -106,7 +122,8 @@ async def fetch_fills(g: Getter, address: str, start_ms: int, end_ms: int, limit
         if cursor:
             params["cursor"] = cursor
         page = await g.get(f"/fills/user/{address}", params)
-        out.extend(norm_archive_fill(r) for r in page.get("data", []))
+        out.extend(norm_archive_fill(r) for r in page.get("data", [])
+                   if r.get("typeTrade", "perp") == "perp")  # spot fills are out of scope
         if budget is not None:
             budget.spend(call_credits(len(page.get("data", []))))
         cursor = page.get("next_cursor")

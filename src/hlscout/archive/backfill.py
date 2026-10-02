@@ -47,7 +47,10 @@ def truncated_wallets(root: Path) -> list[str]:
 
     out: list = []
     for p in sorted((Path(root) / "raw" / "fills").glob("*.parquet")):
-        raw = load_raw(root, p.stem)
+        try:
+            raw = load_raw(root, p.stem)
+        except FileNotFoundError:  # hydrate still in progress (or interrupted): skip
+            continue
         if raw["meta"].get("archive", {}).get("done"):
             continue
         a = audit(p.stem, raw)
