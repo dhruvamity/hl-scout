@@ -17,9 +17,13 @@ log = logging.getLogger(__name__)
 # (name, hour, minute, weekday or None, CLI args)
 JOBS = [
     ("universe", 0, 15, None, ["universe"]),
-    ("links", 1, 0, None, ["links"]),
-    ("score", 2, 0, None, ["score"]),
-    ("backup", 3, 0, None, None),
+    ("enqueue", 0, 45, None, ["enqueue"]),
+    ("discover", 1, 0, None, ["discover"]),
+    ("refresh_watch", 1, 15, None, ["refresh", "--scope", "watch"]),
+    ("links", 3, 0, None, ["links", "--no-enqueue-members"]),
+    ("score", 3, 20, None, ["score"]),
+    ("refresh_all", 4, 0, 6, ["refresh", "--scope", "all"]),  # Sundays
+    ("backup", 5, 0, None, None),
 ]
 
 

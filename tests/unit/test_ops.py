@@ -27,7 +27,7 @@ def test_health_flags_silent_tape_and_stalled_queue(tmp_path):
 def test_due_runs_once_per_day():
     now = datetime(2026, 10, 2, 1, 30, tzinfo=UTC)
     names = {j[0] for j in due(now, {})}
-    assert {"universe", "links"} <= names and "score" not in names
+    assert {"universe", "enqueue", "discover", "refresh_watch"} <= names and "score" not in names
     assert "universe" not in {j[0] for j in due(now, {"universe": "2026-10-02"})}
 
 
