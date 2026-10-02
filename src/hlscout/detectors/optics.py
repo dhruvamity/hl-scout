@@ -102,11 +102,13 @@ def d_c7_beta_not_skill(ctx: Ctx) -> Finding | None:
     if len(xs) < 60:
         return None
     x, y = np.array(xs), np.array(ys)
+    if float(np.std(x)) < 1e-9:  # no BTC variation over the sample (stale/missing marks): cannot regress
+        return None
     X = np.column_stack([np.ones_like(x), x])
     coef, res, *_ = np.linalg.lstsq(X, y, rcond=None)
     resid = y - X @ coef
     s2 = resid @ resid / (len(y) - 2)
-    cov = s2 * np.linalg.inv(X.T @ X)
+    cov = s2 * np.linalg.pinv(X.T @ X)
     t_alpha = float(coef[0] / np.sqrt(cov[0, 0])) if cov[0, 0] > 0 else 0.0
     long_share = float((t["side"] == "long").mean())
     m = {"alpha_t": t_alpha, "beta": float(coef[1]), "long_share": long_share}

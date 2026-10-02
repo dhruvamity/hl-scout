@@ -142,21 +142,51 @@ async def refresh_wallet(info: Any, con: sqlite3.Connection, root: Path, cfg: Co
 
 
 async def hft_prescreen(info: Any, address: str, cfg: Config) -> dict[str, Any] | None:
-    """One `userFills` call (~22 weight, newest <= 2000 fills) to skip HFT/MM books before a
-    full pull that can cost thousands of weight. Returns the reason dict, or None to proceed."""
-    rows = await info.post({"type": "userFills", "user": address, "aggregateByTime": False},
-                           lane="deep_vet")
-    if not isinstance(rows, list) or len(rows) < 1500:
-        return None  # sparse book: cannot be a high-frequency one
+    """Quick vet from ONE `userFills` call (~22 weight + 100 row surcharge, newest <= 2000 fills) before a
+    deep pull that can cost thousands of weight. Rejects only on things the final gates would reject anyway:
+    HFT/MM books (G4), own liquidations in the sample (G9: zero allowed in 180 d), a median hold far outside
+    the intraday band (G3) and heavy martingaling (D-R1). Returns the reason dict, or None to proceed."""
+    rows = await info.post({"type": "userFills", "user": address, "aggregateByTime": False}, lane="deep_vet")
+    return quick_vet(rows, cfg, address)
+
+
+def quick_vet(rows: Any, cfg: Config, address: str = "") -> dict[str, Any] | None:
+    from hlscout.ingest.hydrate import FILL_SCHEMA, norm_fill
+    from hlscout.recon.roundtrips import _is_liq, build_round_trips, perp_only
+
+    if not isinstance(rows, list) or len(rows) < 50:
+        return None
+    g = cfg.gates
     t = [int(r["time"]) for r in rows]
     span_d = max((max(t) - min(t)) / DAY_MS, 1e-3)
-    tpd = len(rows) / span_d
-    maker = sum(1 for r in rows if r.get("crossed") is False) / len(rows)
-    g = cfg.gates
-    if tpd > g.trades_per_day_max:
-        return {"trades_per_day": round(tpd), "span_days": round(span_d, 2)}
-    if maker > g.maker_share_max:
-        return {"maker_share": round(maker, 2)}
+    if len(rows) >= 1500:  # a full page: frequency is measurable
+        tpd = len(rows) / span_d
+        maker = sum(1 for r in rows if r.get("crossed") is False) / len(rows)
+        if tpd > g.trades_per_day_max:
+            return {"trades_per_day": round(tpd), "span_days": round(span_d, 2)}
+        if maker > g.maker_share_max:
+            return {"maker_share": round(maker, 2)}
+    liq = [r for r in rows if _is_liq(r.get("dir", ""), json.dumps(r["liquidation"]) if r.get("liquidation") else None,
+                                      address or None)]
+    if liq:
+        return {"own_liquidation_fills": len(liq)}
+    try:
+        df = perp_only(pl.DataFrame([norm_fill(r) for r in rows], schema=FILL_SCHEMA))
+    except (KeyError, TypeError, ValueError):
+        return None  # malformed/minimal rows: nothing more we can safely conclude
+    trips, _ = build_round_trips(df, None, address or None)
+    trips = trips.filter(pl.col("complete")) if not trips.is_empty() else trips
+    if trips.height >= 30:
+        hold = ((trips["close_ts"] - trips["open_ts"]) / 1000)
+        med = float(hold.median())
+        within_24h = float((hold <= 86_400).mean())
+        # sample noise: use a band wider than G3 so only clear misses are dropped
+        if med < g.hold_median_min_s / 3 or med > g.hold_median_max_s * 3 or within_24h < 0.4:
+            return {"median_hold_s": round(med), "within_24h": round(within_24h, 2)}
+        bad = trips.filter((pl.col("adds") > 0) & (pl.col("underwater_add_share") > 0.5)
+                           & (pl.col("first_clip") > 0) & (pl.col("max_size") / pl.col("first_clip") >= 3))
+        if bad.height / trips.height > 0.25:
+            return {"martingale_freq": round(bad.height / trips.height, 2)}
     return None
 
 

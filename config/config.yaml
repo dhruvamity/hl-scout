@@ -1,3 +1,78 @@
+# HL-Scout configuration. Every threshold lives here (defaults mirror PROJECT_PLAN.md Appendix C;
+# deviations are marked "AUDIT" and explained in docs/AUDIT_AND_PLAN.md).
 window: full_history
 data_dir: data
-# thresholds default to PROJECT_PLAN.md Appendix C; override here.
+
+history:
+  violation_policy: strict
+  forgive_after_months: 24
+  genuine_coverage_min: 0.90
+  genuine_start_max_month: 3
+  rolling90_positive_min: 0.70
+  terciles_all_positive: true
+  coarse_months_count_for_tenure: true
+
+categories:
+  algo_p_threshold: 0.70
+  manual_p_threshold: 0.30
+  rank_separately: true
+
+api:
+  weight_per_min: 1200
+  headroom: 0.90
+  lanes: {monitor: 0.25, deep_vet: 0.50, light_hydrate: 0.15, backfill: 0.10}
+  worker_concurrency: 4
+
+tape:
+  retain_raw_days: 120
+  ping_s: 30
+
+gates:
+  min_track_days: 180
+  min_active_months_of_last6: 6
+  weekly_coverage_min: 0.60
+  max_gap_days: 21
+  hold_median_min_s: 300
+  hold_median_max_s: 28800
+  intraday_close_share_min: 0.70
+  hft_avg_hold_min_s: 180
+  maker_share_max: 0.80
+  trades_per_day_max: 300
+  positive_months_min_of6: 4
+  best_month_share_max: 0.40
+  top5_trades_share_max: 0.35
+  max_dd_twr: 0.30
+  eff_leverage_tw_max: 10
+  margin_usage_p95_max: 0.80
+  liquidations_window_max: 0
+  tstat_min: 2.0
+  dsr_prob_min: 0.90
+  median_equity_min_usd: 5000
+  cut_at_breaks: true              # AUDIT C2: trust fills only after the last material continuity break
+  concentration_mode: robust       # AUDIT C3: ex-top-5 / gross-profit shares instead of share of net PnL
+  top1_lottery_share: 0.5
+
+tiers:                             # AUDIT B: Provisional tier
+  provisional: true
+  dd_slack: 0.10
+  weekly_coverage_min: 0.50
+  max_gap_days: 30
+
+screen:
+  min_account_value: 0             # AUDIT H1: equity floor lives in G12 (median equity), not on current equity
+  min_alltime_pnl: 0
+  min_alltime_vlm: 1000000
+  min_month_vlm: 100000
+  deep_cap: 1500                   # the quick pre-vet (1 call) now filters before the expensive pull
+  max_coarse_dd: 0.5
+  max_open_leverage: 15.0
+  recent_days: 30
+  min_tape_active_days: 60
+
+detectors:
+  rescue: {upnl_eq_max: -0.25, dist_to_liq_max: 0.10, inflow_eq_min: 0.15, window_min: 60, veto_count: 2}
+  martingale: {underwater_add_share: 0.5, size_multiple: 3, freq_veto: 0.10}
+
+forward_validation_days: 30
+alerts:
+  telegram: {enabled: false}

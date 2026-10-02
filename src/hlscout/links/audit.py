@@ -36,7 +36,9 @@ def tape_slice(tape_root: Path, address: str, window_ms: int = 60_000) -> pl.Dat
     if not files:
         return None
     con = duckdb.connect(":memory:")
-    con.execute("CREATE VIEW tape AS SELECT DISTINCT * FROM read_parquet(?)", [[str(f) for f in files]])
+    # view definitions cannot take prepared parameters: inline the (locally generated) file list
+    lst = ", ".join("'" + str(f).replace("'", "''") + "'" for f in files)
+    con.execute(f"CREATE VIEW tape AS SELECT DISTINCT * FROM read_parquet([{lst}], union_by_name=true)")
     q = """
     WITH mine AS (SELECT * FROM tape WHERE buyer = ? OR seller = ?)
     SELECT DISTINCT t.* FROM tape t JOIN mine m

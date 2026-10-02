@@ -124,3 +124,14 @@ def test_copier_flagged():
         rows.append((t + 30_000, "SOL", 50.1, 9.0, "B", tid, "h", me, "0x" + "f" * 40))
     f = d_b4_copier(ctx, tape(rows))
     assert f is not None and f.evidence[0]["leader"] == lead
+
+
+def test_tape_slice_reads_real_parquet(tmp_path):
+    from hlscout.links.audit import tape_slice
+
+    d = tmp_path / "date=2026-10-01" / "hour=00"
+    d.mkdir(parents=True)
+    tape([(1_000, "BTC", 100.0, 1.0, "B", 1, "h", A, B), (30_000, "BTC", 100.0, 1.0, "B", 2, "h", C, D),
+          (9_999_999, "ETH", 10.0, 1.0, "B", 3, "h", C, D)]).write_parquet(d / "p.parquet")
+    out = tape_slice(tmp_path, A)
+    assert out is not None and sorted(out["tid"].to_list()) == [1, 2]  # own trade + same-coin trades within 60 s

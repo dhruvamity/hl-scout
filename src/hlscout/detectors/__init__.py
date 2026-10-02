@@ -23,7 +23,10 @@ DETECTORS = [
 def run_all(ctx: Ctx) -> list[Finding]:
     out = []
     for d in DETECTORS:
-        f = d(ctx)
+        try:
+            f = d(ctx)
+        except Exception as e:  # noqa: BLE001 - one broken detector must not drop the wallet; surface it instead
+            f = Finding(d.__name__, "INFO", "ERR", 0, [], {"error": f"{type(e).__name__}: {e}"})
         if f is not None:
             out.append(f)
     return out

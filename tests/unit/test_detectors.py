@@ -173,3 +173,15 @@ def test_borrow_flagged():
            "raw_json": '{"type":"borrowLend","token":"USDC","operation":"borrow","amount":"900"}'}
     ctx.ledger = pl.concat([ctx.ledger, pl.DataFrame([row], schema=ctx.ledger.schema)])
     assert d_m6_borrowed_buying_power(ctx).metrics["total"] == 900.0
+
+
+def test_a_crashing_detector_is_reported_not_fatal(monkeypatch):
+    from hlscout import detectors
+    from tests.helpers import clean_wallet
+
+    def boom(ctx):
+        raise ValueError("bad data")
+
+    monkeypatch.setattr(detectors, "DETECTORS", [boom])
+    out = detectors.run_all(clean_wallet().ctx())
+    assert out[0].severity == "INFO" and "bad data" in out[0].metrics["error"]

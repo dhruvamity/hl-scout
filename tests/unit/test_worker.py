@@ -108,3 +108,28 @@ def test_tape_candidates(tmp_path):
                       "maker_share_proxy": [0.3, 0.95, 0.4]}).write_parquet(tmp_path / f"date=2026-09-{d:02d}.parquet")
     r = tape_candidates(tmp_path, min_active_days=30).sort("address")
     assert dict(zip(r["address"], r["keep"], strict=True)) == {"0xa": True, "0xmm": False, "0xnew": False}
+
+
+def _api_fills(n_trips, hold_s, liq=False, base=NOW - 400 * DAY):
+    rows, tid = [], 0
+    for k in range(n_trips):
+        t = base + k * (hold_s + 3600) * 1000
+        for side, dt_, d in (("B", 0, "Open Long"), ("A", hold_s * 1000, "Close Long")):
+            tid += 1
+            rows.append({"coin": "BTC", "px": "100", "sz": "1", "side": side, "time": t + dt_, "startPosition":
+                         "0.0" if side == "B" else "1.0", "dir": d, "closedPnl": "0", "hash": "h", "oid": tid,
+                         "crossed": True, "fee": "0.01", "tid": tid, "feeToken": "USDC",
+                         "liquidation": {"liquidatedUser": "0x1", "markPx": "1", "method": "market"}
+                         if liq and k == 3 and side == "A" else None})
+    return rows
+
+
+def test_quick_vet_rules():
+    from hlscout.ingest.worker import quick_vet
+
+    cfg = Config()
+    assert quick_vet(_api_fills(60, 1800), cfg, "0x1") is None                      # 30-minute holds: fine
+    assert "own_liquidation_fills" in quick_vet(_api_fills(60, 1800, liq=True), cfg, "0x1")
+    r = quick_vet(_api_fills(60, 3 * 86_400), cfg, "0x1")                            # 3-day holds: swing trader
+    assert r and r["median_hold_s"] == 3 * 86_400
+    assert quick_vet(_api_fills(60, 20), cfg, "0x1")["median_hold_s"] == 20         # 20-second scalper

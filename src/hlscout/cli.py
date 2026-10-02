@@ -86,7 +86,8 @@ def tape(config: str = "config/config.yaml", duration_s: int = 0) -> None:
 
 
 @app.command()
-def universe(config: str = "config/config.yaml", seeds: str = "", local_file: str = "") -> None:
+def universe(config: str = "config/config.yaml", seeds: str = "", local_file: str = "",
+             rescreen: bool = False) -> None:
     """Snapshot the leaderboard, update the registry, run the S1 screen, diff vs yesterday."""
     from datetime import UTC, datetime
     from pathlib import Path
@@ -115,6 +116,14 @@ def universe(config: str = "config/config.yaml", seeds: str = "", local_file: st
     for a in res.filter(~res["keep"])["address"].to_list():
         con.execute("UPDATE addresses SET stage='screened_out' WHERE address=? AND stage='discovered'", (a,))
     con.execute("COMMIT")
+    if rescreen:  # thresholds changed: promote S1-dropped (never hydrated) wallets that now pass
+        con.execute("BEGIN")
+        n = 0
+        for a in keep["address"].to_list():
+            n += con.execute("UPDATE addresses SET stage='s1_pass' WHERE address=? AND stage='screened_out' "
+                             "AND last_hydrated IS NULL", (a,)).rowcount
+        con.execute("COMMIT")
+        typer.echo(f"rescreen: promoted {n} previously S1-dropped wallets")
     typer.echo(f"rows={df.height} new_registry={new} board_new={len(d['new'])} "
                f"board_gone={len(d['gone'])} s1_pass={keep.height}")
     reasons = res.explode("reasons").group_by("reasons").len().sort("len", descending=True)
@@ -156,7 +165,11 @@ def score(config: str = "config/config.yaml", out: str = "reports/latest.md", n_
     cl = clusters(build_graph(root))
     for i, r in enumerate(results):
         if r["stage"] in ("qualified", "provisional", "needs_qa", "reformed"):
-            extra = cluster_findings(root, root / "tape", r["address"], cl, cfg)
+            try:
+                extra = cluster_findings(root, root / "tape", r["address"], cl, cfg)
+            except Exception as e:  # noqa: BLE001 - multi-wallet pass is best-effort per wallet
+                typer.echo(f"multi-wallet pass skipped for {r['address'][:10]}: {type(e).__name__}: {e}")
+                extra = []
             if extra:
                 results[i] = assess_cached(root, r["address"], cfg, n_trials=n_trials, extra=extra)
     rank_qualified(results)
