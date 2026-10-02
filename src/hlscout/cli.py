@@ -379,7 +379,8 @@ def marks(config: str = "config/config.yaml", concurrency: int = 4) -> None:
     cfg = load_config(config)
     root = Path(cfg.data_dir)
     files = list((root / "raw" / "fills").glob("*.parquet"))
-    coins = sorted(perp_only(pl.scan_parquet([str(f) for f in files]).select("coin").unique().collect())["coin"])
+    coins = sorted(c for c in perp_only(pl.scan_parquet([str(f) for f in files]).select("coin").unique().collect())["coin"]
+                   if not c.startswith("#"))  # HIP-4 outcome markets have no candles
     typer.echo(f"{len(coins)} coins across {len(files)} wallets")
 
     async def main() -> None:
