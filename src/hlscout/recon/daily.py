@@ -19,10 +19,13 @@ import polars as pl
 from hlscout.recon.positions import Timeline
 
 DAY_MS = 86_400_000
+EOD_WINDOW_MS = 3 * 3_600_000   # anchors this close to day end are treated as end-of-day equity
+SOFT_TOL = 0.5                  # a mid-day anchor must differ by > 50% of equity (and 15% of gross) to override us
 DAILY_SCHEMA = {
     "time": pl.Int64, "equity": pl.Float64, "flow": pl.Float64, "pnl": pl.Float64, "r": pl.Float64,
     "stable": pl.Boolean, "twr_index": pl.Float64, "dd": pl.Float64, "dt_h": pl.Float64,
     "gross": pl.Float64, "lev": pl.Float64, "resid": pl.Float64, "marked": pl.Boolean,
+    "eod_anchor": pl.Boolean,
 }
 
 
@@ -83,13 +86,26 @@ def build_daily(fills: pl.DataFrame, funding: pl.DataFrame, flows: pl.DataFrame,
         f = flow.get(d, 0.0)
         e_new = e_prev + pnl + f
         resid = 0.0
-        latest = None
+        eod_hit = False
+        in_day: list[tuple[int, float]] = []
         while ai < len(anchors) and anchors[ai][0] <= t_end:
-            latest = anchors[ai]
+            if anchors[ai][0] >= d * DAY_MS:
+                in_day.append(anchors[ai])
             ai += 1
-        if latest is not None and latest[0] >= d * DAY_MS:  # an anchor fell inside this day: re-anchor
-            resid = e_new - latest[1]
-            e_new = latest[1]
+        if in_day:
+            near_eod = [a for a in in_day if a[0] >= t_end - EOD_WINDOW_MS]
+            if near_eod:  # an anchor within a few hours of day end: exact enough to adopt
+                resid = e_new - near_eod[-1][1]
+                e_new = near_eod[-1][1]
+                eod_hit = True
+            else:
+                # an anchor at some other time of day compares against OUR end-of-day value, so for a leveraged
+                # wallet most of the gap is intraday price movement, not error. Adopt it only when the gap is too
+                # large for timing to explain (a missed flow / unified-margin collateral move).
+                tm, av = in_day[-1]
+                resid = e_new - av
+                if abs(resid) > max(SOFT_TOL * max(abs(av), 1000.0), 0.15 * gross):
+                    e_new = av
         denom = max(e_prev + 0.5 * f, capital_floor * peak_e)
         stable = denom >= max(50.0, 0.25 * abs(f), 0.02 * peak_e)
         r = max(pnl / denom, -0.999) if stable else 0.0
@@ -98,6 +114,20 @@ def build_daily(fills: pl.DataFrame, funding: pl.DataFrame, flows: pl.DataFrame,
         peak_e = max(peak_e, e_new)
         rows.append({"time": t_end, "equity": e_new, "flow": f, "pnl": pnl, "r": r, "stable": stable,
                      "twr_index": idx, "dd": 1 - idx / peak, "dt_h": 24.0, "gross": gross,
-                     "lev": gross / e_prev if e_prev > 100 else 0.0, "resid": resid, "marked": not stale})
+                     "lev": gross / e_prev if e_prev > 100 else 0.0, "resid": resid, "marked": not stale,
+                     "eod_anchor": eod_hit})
         e_prev, u_prev = e_new, u
     return pl.DataFrame(rows, schema=DAILY_SCHEMA)
+
+
+def equity_noise(daily: pl.DataFrame, min_days: int = 10) -> float | None:
+    """Median |our end-of-day equity - platform equity| / equity over days with an end-of-day platform point.
+
+    Our PnL is validated by the reconcile gate, so a large value means the platform's account value moves for reasons
+    the ledger does not explain (collateral moved between spot and perp, other dexes...). The capital base is then
+    unreliable and TWR/drawdown/Sharpe are too. Only measurable where the platform publishes day-end points
+    (the last ~30 days)."""
+    d = daily.filter(pl.col("eod_anchor") & (pl.col("equity") > 1000))
+    if d.height < min_days:
+        return None
+    return float((d["resid"].abs() / d["equity"]).median())

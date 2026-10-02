@@ -231,6 +231,9 @@ def compute_metrics(ctx: Ctx, n_trials: int = 5000) -> dict:
     ent = tf.filter(pl.col("open_notional") > 0)  # notional-weighted: sum(net) / sum(entered notional)
     out["expectancy_bps"] = float(ent["net"].sum() / ent["open_notional"].sum() * 1e4) if ent.height else None
     if ctx.daily is not None and not ctx.daily.is_empty():
+        from hlscout.recon.daily import equity_noise
+
+        out["equity_noise"] = equity_noise(ctx.daily)
         dl = ctx.daily.filter(pl.col("lev") > 0)["lev"]
         if dl.len() >= 20:  # account-level gross notional / equity per day (time-weighted proxy for G8)
             out["lev_daily_p95"] = float(dl.quantile(0.95))

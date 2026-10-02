@@ -110,6 +110,8 @@ def decide_stage(cfg: Any, m: dict, failed: list[str], vetoes: list[str], needs_
         return "provisional"
     if failed or vetoes:
         return "reformed" if reformed and set(failed) <= {"G1b"} else "vet_fail"
+    if (m.get("equity_noise") or 0) > g.equity_noise_max:
+        return "provisional"   # the capital base is unreliable: never a clean pass
     return "needs_qa" if needs_qa else "qualified"
 
 
@@ -135,6 +137,8 @@ def assess(ctx: Ctx, recon_ok: bool = True, history_truncated: bool = False,
         cat = {**cat, "category": "MM_HFT"}
     stage = decide_stage(ctx.cfg, m, failed, vetoes, v["needs_qa"], recon_soft)
     reasons = sorted(set(failed + vetoes)) or (["reconcile_soft"] if recon_soft else [])
+    if stage == "provisional" and not reasons and (m.get("equity_noise") or 0) > ctx.cfg.gates.equity_noise_max:
+        reasons = ["equity_noisy"]
     return {**base, "category": cat, "stage": stage, "gates": gates, "metrics": m, "reasons": reasons}
 
 

@@ -72,6 +72,7 @@ class GatesCfg(_Cfg):
     cut_at_breaks: bool = True       # trust fills only after the last material continuity break (audit C2)
     concentration_mode: str = "legacy"  # "legacy" = plan as written; "robust" = ex-top-5 / gross-profit shares (audit C3)
     top1_lottery_share: float = 0.5
+    equity_noise_max: float = 0.25   # platform equity unexplained by our PnL + ledger flows (median, last ~30 d)
 
 
 class TiersCfg(_Cfg):

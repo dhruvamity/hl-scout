@@ -127,3 +127,16 @@ def test_sensitivity_counterfactuals_match_the_live_stage_rule(tmp_path):
     assert S._stage(cfg, ws[0]) == r["stage"] == "provisional"      # same rule as the live decision
     assert S._stage(cfg, ws[0], ignore="G11") == "qualified"       # counterfactual: ignore the failing gate
     assert "G11" in S.report(con, cfg)
+
+
+def test_noisy_equity_caps_at_provisional():
+    ctx = clean_wallet(n_trips=200, days=260).ctx()
+    from hlscout.scoring import engine
+
+    orig = engine.compute_metrics
+    engine.compute_metrics = lambda c, n=5000: {**orig(c, n), "equity_noise": 0.6}
+    try:
+        r = assess(ctx)
+    finally:
+        engine.compute_metrics = orig
+    assert r["stage"] == "provisional" and r["reasons"] == ["equity_noisy"]

@@ -56,3 +56,30 @@ def test_anchor_merge_prefers_finest_window():
     pf = {"perpAllTime": {"accountValueHistory": [[100, "1"], [200, "2"]]},
           "perpMonth": {"accountValueHistory": [[200, "2.5"], [250, "3"]]}}
     assert platform_anchors(pf) == [(100, 1.0), (200, 2.5), (250, 3.0)]
+
+
+def _flat_pf(points):
+    return {"perpAllTime": {"accountValueHistory": [[t, str(v)] for t, v in points],
+                            "pnlHistory": [[t, "0"] for t, _ in points]}}
+
+
+def test_midday_anchor_within_tolerance_is_not_adopted_but_a_big_gap_is():
+    f = fills([(T0 + 1000, "B", 1, 100, 0.0), (T0 + 2000, "A", 1, 100, 0.0)])
+    noon = T0 + DAY_MS + 12 * 3_600_000
+    small = build_daily(f, empty_funding(), pl.DataFrame(schema=FLOW_SCHEMA), _flat_pf([(T0, 1000), (noon, 1100)]),
+                        build_timeline(f), None, T0 + 3 * DAY_MS)
+    day1 = small.filter(pl.col("time") == T0 + 2 * DAY_MS - 1)
+    assert abs(day1["equity"][0] - 1000) < 1e-9 and abs(day1["resid"][0] + 100) < 1e-9   # 10% gap: timing noise
+    big = build_daily(f, empty_funding(), pl.DataFrame(schema=FLOW_SCHEMA), _flat_pf([(T0, 1000), (noon, 9000)]),
+                      build_timeline(f), None, T0 + 3 * DAY_MS)
+    assert abs(big.filter(pl.col("time") == T0 + 2 * DAY_MS - 1)["equity"][0] - 9000) < 1e-9  # unexplained: adopt
+
+
+def test_equity_noise_measures_unexplained_equity_moves():
+    from hlscout.recon.daily import equity_noise
+
+    n = 12
+    clean = pl.DataFrame({"eod_anchor": [True] * n, "equity": [10_000.0] * n, "resid": [50.0] * n})
+    noisy = pl.DataFrame({"eod_anchor": [True] * n, "equity": [10_000.0] * n, "resid": [4_000.0] * n})
+    assert abs(equity_noise(clean) - 0.005) < 1e-9 and abs(equity_noise(noisy) - 0.4) < 1e-9
+    assert equity_noise(clean.head(5)) is None   # too few day-end points to say anything
