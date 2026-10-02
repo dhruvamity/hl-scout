@@ -1,0 +1,16 @@
+[Unit]
+Description=HL-Scout tape (read-only Hyperliquid scanner)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/hl-scout
+EnvironmentFile=%h/hl-scout/.env
+ExecStart=%h/hl-scout/.venv/bin/hlscout tape
+Restart=always
+RestartSec=15
+Nice=5
+
+[Install]
+WantedBy=default.target

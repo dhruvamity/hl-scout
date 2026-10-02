@@ -18,7 +18,7 @@ UV = shutil.which("uv") or "uv"
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
     (ROOT / "data").mkdir(exist_ok=True)
-    for name in ("tape", "worker", "monitor", "scheduler"):
+    for name in ("tape", "worker", "monitor", "scheduler", "tracker"):
         plist = {
             "Label": f"com.hlscout.{name}",
             "ProgramArguments": ["/usr/bin/caffeinate", "-s", UV, "run", "hlscout", name],
@@ -32,7 +32,7 @@ def main() -> None:
             "EnvironmentVariables": {"PATH": "/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin"},
         }
         (OUT / f"com.hlscout.{name}.plist").write_bytes(plistlib.dumps(plist))
-    print(f"wrote 4 plists to {OUT}", file=sys.stderr)
+    print(f"wrote 5 plists to {OUT}", file=sys.stderr)
 
 
 if __name__ == "__main__":
